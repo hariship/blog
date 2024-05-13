@@ -1,0 +1,239 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 0;
+}
+
+.rss-feed {
+  background-color: #fff;
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.rss-feed-title {
+  font-size: 24px;
+  color: #2C3E50;
+  margin: 0 auto 20px;
+  text-align: center;
+}
+
+.category-dropdown {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.category-dropdown label {
+  margin-top: 10px;
+  margin-right: 10px;
+  font-size: 16px;
+  color: #555;
+}
+
+.category-dropdown select {
+  font-size: 16px;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+}
+
+.rss-feed-list {
+  list-style: none;
+  padding: 0;
+}
+
+.rss-feed-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+}
+
+.rss-feed-item-image {
+  flex: 0 0 120px;
+  height: 120px;
+  margin-right: 20px;
+  cursor: pointer;
+}
+
+.enclosure-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.rss-feed-item-content {
+  flex: 1;
+}
+
+.rss-feed-item-title {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.rss-feed-item-title:hover {
+  color: rgb(82, 109, 244);
+  cursor: pointer;
+}
+
+.rss-feed-item-description {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.rss-feed-item-date {
+  font-size: 14px;
+  color: #999;
+  margin-bottom: 10px;
+}
+
+.rss-feed-item-button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.rss-feed-item-button:hover {
+  background-color: #314987;
+}
+
+.loader {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+@media (max-width: 600px) {
+  .rss-feed {
+      padding: 10px;
+  }
+
+  .rss-feed-title {
+      font-size: 20px; /* Reduced font size for smaller screens */
+  }
+
+  .rss-feed-item {
+      flex-direction: column;
+      align-items: center;
+  }
+
+  .rss-feed-item-image {
+      margin-bottom: 10px;
+      width: 100%; /* Full width for small screens */
+      height: auto; /* Adjust height automatically */
+  }
+}
+
+.loader {
+  margin-top: 50px;
+  width: 60px;
+  height: 40px;
+  color: #000;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  padding: 3px;
+  background: repeating-linear-gradient(90deg, currentColor 0 10px, #0000 0 15px) 0/0% no-repeat content-box content-box;
+  position: relative;
+  box-sizing: border-box;
+  animation: l5 2s infinite steps(6);
+}
+
+.loader::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  left: 100%;
+  width: 10px;
+  background:
+      linear-gradient(#0000 calc(50% - 7px),currentColor 0 calc(50% - 5px),
+      #0000 0 calc(50% + 5px),currentColor 0 calc(50% + 7px),#0000 0) left /100% 100%,
+      linear-gradient(currentColor calc(50% - 5px),#0000 0 calc(50% + 5px),currentColor 0) left /2px 100%,
+      linear-gradient(#0000 calc(50% - 5px),currentColor 0 calc(50% + 5px),#0000 0) right/2px 100%;
+  background-repeat: no-repeat;
+}
+
+@keyframes l5 {
+  100% {background-size: 120%}
+}
+
+.favorite-icon {
+   display:'none'
+}
+
+.favorite-icon .liked {
+  fill: red;
+}
+
+.favorite-icon .not-liked {
+  fill: white;
+  stroke: red;
+  stroke-width: 2px;
+}
+
+
+.load {
+  display: inline-block;
+  width: 50px;
+  height: 20px;
+  position: relative; /* Position relative for absolute positioning of heartbeat */
+}
+
+.load:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10%;
+  height: 10%;
+  -webkit-mask: linear-gradient(90deg, #000 70%, #0000 0) left/20% 100%;
+  background:
+    linear-gradient(#000 0 0) left -25% top 0 /33.33% 100% no-repeat;
+  animation: l7 1s infinite steps(3);
+}
+
+@keyframes l7 {
+  100% {
+    background-position: right -25% top 0;
+  }
+}
+
+.load img{
+  position:absolute;
+  left:0;
+  right:0;
+  margin:0 auto;
+ }
+
+ @keyframes heartFadeInOut {
+  0% {transform: scale(1);}
+  25% {transform: scale(.97);}
+  35% {transform: scale(.9);}
+  45% {transform: scale(1.1);}
+  55% {transform: scale(.9);}
+  65% {transform: scale(1.1);}
+  75% {transform: scale(1.03);}
+  100% {transform: scale(1);}
+}
+
+#heart img.bottom { 
+  animation-name: heartFadeInOut; 
+  animation-iteration-count: infinite;
+  animation-duration: 2s;
+}
+

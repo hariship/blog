@@ -1,0 +1,56 @@
+.post-container {
+    background-color: #f9f9f9;
+    max-width: 740px;
+    margin: 40px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    color: #333;
+    font-family: 'Merriweather', serif;
+}
+
+.post-title {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.post-meta {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.author-name {
+    font-weight: bold;
+    color: #2c4f61;
+}
+
+.post-date {
+    font-style: italic;
+}
+
+.post-content {
+    font-size: 20px;
+    line-height: 1.6;
+}
+
+.post-content p {
+    margin-bottom: 20px;
+}
+
+.post-content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 20px 0;
+    border-radius: 8px;
+}
+
+hr {
+    border: none; /* Remove default border */
+    height: 2px; /* Set height of the line */
+    background-color: #ccc; /* Set color of the line */
+    margin: 20px 0; /* Add margin for spacing */
+  }
