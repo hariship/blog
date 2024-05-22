@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { RiLoader2Line } from 'react-icons/ri'; // Import loader icon
 import { MdHome } from 'react-icons/md'; // Import Material Design home icon
 import './RSSFeed.css'; // Import CSS for styling
 import { useLikes } from './likesContext'; // Import the LikesContext
 
 const targetUrl = 'https://api.haripriya.org/rss-feed';
-const targetUrlScrape = 'https://api.haripriya.org/scrape';
 
 const RSSFeed = () => {
   const [feedItems, setFeedItems] = useState([]);
@@ -15,6 +13,18 @@ const RSSFeed = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { likesData, updateLikesData } = useLikes();
+
+  const handleImageClick = (item) => {
+    const slug = item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-');
+    navigate(`/post/${slug}`, { 
+      state: { 
+        pubDate: item.pubDate, 
+        category: item.category, 
+        title: item.title, 
+        content: item.content 
+      }
+    });
+  };
 
   useEffect(() => {
     const fetchRSSFeed = async () => {
@@ -109,6 +119,7 @@ const RSSFeed = () => {
                     alt="Enclosure"
                     className="enclosure-image"
                     onLoad={() => setFeedItems(feedItems.map((fi, fiIndex) => fiIndex === index ? {...fi, imageLoading: false} : fi))}
+                    onClick={() => handleImageClick(item)}
                   />
                 )}
               </div>
