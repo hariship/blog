@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Merriweather:wght@400;400&display=swap');
+
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Roboto', serif;
   background-color: #f9f9f9;
   margin: 0;
   padding: 0;
@@ -34,6 +36,7 @@ body {
   margin-right: 10px;
   font-size: 16px;
   color: #555;
+  font-family: 'Merriweather', sans-serif;
 }
 
 .category-dropdown select {
@@ -80,6 +83,7 @@ body {
   font-size: 18px;
   color: #333;
   margin-bottom: 10px;
+  font-family: 'Merriweather', sans-serif;
 }
 
 .rss-feed-item-title:hover {
@@ -106,6 +110,7 @@ body {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  font-family: 'Merriweather', sans-serif;
 }
 
 .rss-feed-item-button:hover {

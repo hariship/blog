@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400');
+
 .post-container {
     background-color: #f9f9f9;
     max-width: 740px;
@@ -6,20 +8,21 @@
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     color: #333;
-    font-family: 'Merriweather', serif;
+    font-family: 'Roboto', serif;;
 }
 
 .post-title {
     font-size: 28px;
     color: #333;
     margin-bottom: 8px;
+    font-family: 'Merriweather', sans-serif;
 }
 
 .post-meta {
     font-size: 16px;
     color: #666;
     margin-bottom: 20px;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Merriweather', sans-serif;
 }
 
 .author-name {
