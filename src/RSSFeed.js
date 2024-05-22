@@ -97,7 +97,7 @@ const RSSFeed = () => {
         </select>
       </div>
       {loading ? (
-        <div className="loader"><RiLoader2Line /></div>
+        <div className="loader"></div>
       ) : (
         <ul className="rss-feed-list">
           {filteredFeedItems.map((item, index) => (
