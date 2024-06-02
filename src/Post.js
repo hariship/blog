@@ -4,14 +4,17 @@ import parse from 'html-react-parser';
 import './Post.css';
 import { useLikes } from './likesContext';
 import { IoIosArrowBack } from 'react-icons/io';
+import { Helmet } from 'react-helmet';
 
 const Post = () => {
   const [postContent, setPostContent] = useState('');
   const [postTitle, setPostTitle] = useState('');
   const [postDate, setPostDate] = useState('');
   const [postCategory, setPostCategory] = useState('');
+  const [postImage, setPostImage] = useState(''); // New state for image URL
   const { likesData, updateLikesData } = useLikes();
   const [likesCount, setLikesCount] = useState(0);
+  const [description, setDescription] = useState('');
   const [isLiked, setIsLiked] = useState(false);
   const [loading, setLoading] = useState(true); // Add loading state
   const location = useLocation();
@@ -32,14 +35,18 @@ const Post = () => {
 
       if (rssItem) {
         const title = rssItem.querySelector('title').textContent;
+        const description = rssItem.querySelector('description').textContent;
         const pubDate = rssItem.querySelector('pubDate').textContent;
         const category = rssItem.querySelector('category') ? rssItem.querySelector('category').textContent : '';
         const content = rssItem.querySelector('content\\:encoded, encoded').textContent;
+        const image = rssItem.querySelector('enclosure') ? rssItem.querySelector('enclosure').getAttribute('url') : ''; // Extract image URL
 
         setPostTitle(title);
         setPostDate(pubDate);
         setPostCategory(category);
         setPostContent(content);
+        setPostImage(image);
+        setDescription(description);
 
         const postLikesData = likesData.find(like => like.title === title);
         if (postLikesData) {
@@ -65,7 +72,7 @@ const Post = () => {
     if (!post || post === '' || Object.values(post).length === 0) {
       fetchPostContent();
     } else {
-      const { content, title, pubDate, category } = post;
+      const { content, title, pubDate, category, image } = post;
 
       const date = pubDate;
       const cleanedContent = content ? content.replace(/(<br\s*\/?>\s*){2,}/gi, '<br>').replace(/(<br>\s*<\/(ul|p|li)>)/gi, '</$2>') : '';
@@ -74,6 +81,8 @@ const Post = () => {
       setPostCategory(category || '');
       setPostContent(cleanedContent || '');
       setPostTitle(title || '');
+      setPostImage(image || ''); // Set image URL
+
 
       const postLikesData = likesData.find(like => like.title === title);
       if (postLikesData) {
@@ -121,6 +130,18 @@ const Post = () => {
 
   return (
     <div className="post-container">
+      <Helmet>
+        <title>{postTitle}</title>
+        <meta property="og:title" content={postTitle} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={postImage} />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={postTitle} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={postImage} />
+      </Helmet>
       {loading ? (
         <div className="loader"></div>
       ) : (
