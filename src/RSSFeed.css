@@ -10,7 +10,10 @@ body {
 .rss-feed {
   background-color: #fff;
   max-width: 800px;
-  margin: 40px auto;
+  margin-bottom: 40px;
+  margin-top:5px;
+  margin-left: auto;
+  margin-right: auto;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
