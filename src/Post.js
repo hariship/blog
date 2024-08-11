@@ -20,53 +20,54 @@ const Post = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const fetchPostContent = async () => {
-    const targetUrl = 'https://api.haripriya.org/rss-feed';
-    try {
-      const response = await fetch(targetUrl);
-      const data = await response.text();
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(data, 'text/xml');
-      const items = xmlDoc.querySelectorAll('item');
-      const rssItem = Array.from(items).find(item => {
-        const slug = item.querySelector('title').textContent.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-');
-        return slug === location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
-      });
-
-      if (rssItem) {
-        const title = rssItem.querySelector('title').textContent;
-        const description = rssItem.querySelector('description').textContent;
-        const pubDate = rssItem.querySelector('pubDate').textContent;
-        const category = rssItem.querySelector('category') ? rssItem.querySelector('category').textContent : '';
-        const content = rssItem.querySelector('content\\:encoded, encoded').textContent;
-        const image = rssItem.querySelector('enclosure') ? rssItem.querySelector('enclosure').getAttribute('url') : ''; // Extract image URL
-
-        setPostTitle(title);
-        setPostDate(pubDate);
-        setPostCategory(category);
-        setPostContent(content);
-        setPostImage(image);
-        setDescription(description);
-
-        const postLikesData = likesData.find(like => like.title === title);
-        if (postLikesData) {
-          setLikesCount(postLikesData.likesCount);
-          setIsLiked(postLikesData.isLiked);
-        } else {
-          setLikesCount(0);
-          setIsLiked(false);
-        }
-      } else {
-        console.error('Post not found');
-      }
-    } catch (error) {
-      console.error('Error fetching post content:', error);
-    } finally {
-      setLoading(false); // Set loading to false once data is fetched
-    }
-  };
-
   useEffect(() => {
+
+    const fetchPostContent = async () => {
+      const targetUrl = 'https://api.haripriya.org/rss-feed';
+      try {
+        const response = await fetch(targetUrl);
+        const data = await response.text();
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(data, 'text/xml');
+        const items = xmlDoc.querySelectorAll('item');
+        const rssItem = Array.from(items).find(item => {
+          const slug = item.querySelector('title').textContent.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-');
+          return slug === location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
+        });
+  
+        if (rssItem) {
+          const title = rssItem.querySelector('title').textContent;
+          const description = rssItem.querySelector('description').textContent;
+          const pubDate = rssItem.querySelector('pubDate').textContent;
+          const category = rssItem.querySelector('category') ? rssItem.querySelector('category').textContent : '';
+          const content = rssItem.querySelector('content\\:encoded, encoded').textContent;
+          const image = rssItem.querySelector('enclosure') ? rssItem.querySelector('enclosure').getAttribute('url') : ''; // Extract image URL
+  
+          setPostTitle(title);
+          setPostDate(pubDate);
+          setPostCategory(category);
+          setPostContent(content);
+          setPostImage(image);
+          setDescription(description);
+  
+          const postLikesData = likesData.find(like => like.title === title);
+          if (postLikesData) {
+            setLikesCount(postLikesData.likesCount);
+            setIsLiked(postLikesData.isLiked);
+          } else {
+            setLikesCount(0);
+            setIsLiked(false);
+          }
+        } else {
+          console.error('Post not found');
+        }
+      } catch (error) {
+        console.error('Error fetching post content:', error);
+      } finally {
+        setLoading(false); // Set loading to false once data is fetched
+      }
+    }; 
+
     const post = location.state || {};
 
     if (!post || post === '' || Object.values(post).length === 0) {
@@ -153,7 +154,10 @@ const Post = () => {
           <div className="post-meta">
             <span className="author-name">Haripriya Sridharan</span> &bull;
             <span className="post-date">
-              {postDate && parse(new Date(postDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }))}
+             &nbsp;{postDate && parse(new Date(postDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }))} &bull;
+            </span>
+            <span className="post-category">
+              &nbsp;{postDate && parse(postCategory)}
             </span>
             <hr />
           </div>
