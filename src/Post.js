@@ -136,31 +136,30 @@ const Post = () => {
   const handleLikeToggle = async () => {
     const newIsLiked = !isLiked;
     const updatedLikesCount = newIsLiked ? likesCount + 1 : likesCount - 1;
-
-    // Update UI immediately for responsiveness
+  
+    // Optimistic UI update
     setIsLiked(newIsLiked);
     setLikesCount(updatedLikesCount);
-
+  
     try {
       const response = await fetch('https://api.haripriya.org/update-likes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ title: postTitle, likesCount: updatedLikesCount.toString() }),
+        body: JSON.stringify({ title: postTitle, likesCount: updatedLikesCount }),
       });
+  
       if (response.ok) {
-        // Update context data only when server confirms
-        updateLikesData(
-          likesData.map(like => (like.title === postTitle ? { ...like, likesCount: updatedLikesCount, isLiked: newIsLiked } : like))
-        );
+        // Update context data
+        updateLikesData(postTitle, updatedLikesCount, newIsLiked);
       } else {
         throw new Error('Failed to update likes');
       }
     } catch (error) {
       console.error('Failed to update likes:', error);
-
-      // Revert the UI changes if the server request fails
+  
+      // Revert UI on failure
       setIsLiked(!newIsLiked);
       setLikesCount(likesCount);
     }

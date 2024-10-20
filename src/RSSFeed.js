@@ -45,17 +45,12 @@ const RSSFeed = () => {
   };
 
   const handleLikeToggle = async (title) => {
-    const isAlreadyLiked = likesData.some(like => like.title === title && like.isLiked);
-    const newLikesCount = isAlreadyLiked
-      ? parseInt(likesData.find(like => like.title === title).likesCount) - 1
-      : parseInt(likesData.find(like => like.title === title).likesCount) + 1;
+    const postLikesData = likesData.find(like => like.title === title);
+    const isAlreadyLiked = postLikesData && postLikesData.isLiked;
+    const newLikesCount = isAlreadyLiked ? postLikesData.likesCount - 1 : postLikesData.likesCount + 1;
   
-    // Update the likes immediately in the UI
-    updateLikesData(
-      likesData.map(like =>
-        like.title === title ? { ...like, likesCount: newLikesCount.toString(), isLiked: !isAlreadyLiked } : like
-      )
-    );
+    // Optimistic UI update
+    updateLikesData(title, newLikesCount, !isAlreadyLiked);
   
     try {
       // Update the likes on the backend
@@ -64,13 +59,14 @@ const RSSFeed = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ title, likesCount: newLikesCount.toString() }),
+        body: JSON.stringify({ title, likesCount: newLikesCount }),
       });
       if (!response.ok) throw new Error('Failed to update likes');
     } catch (error) {
       console.error('Failed to update likes in Redis:', error);
-      // Revert likes in case of error
-      updateLikesData(likesData);
+  
+      // Revert UI if there's an error
+      updateLikesData(title, postLikesData.likesCount, isAlreadyLiked);
     }
   };
 
