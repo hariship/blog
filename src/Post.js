@@ -13,9 +13,9 @@ const Post = () => {
   const [postCategory, setPostCategory] = useState('');
   const [postImage, setPostImage] = useState('');
   const { likesData, updateLikesData } = useLikes();
-  const [likesCount, setLikesCount] = useState(0);
+  const [likesCount, setLikesCount] = useState(null); // Set initial likesCount to null
   const [description, setDescription] = useState('');
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(null); // Set initial isLiked to null
   const [loading, setLoading] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
@@ -136,14 +136,18 @@ const Post = () => {
   const handleLikeToggle = async () => {
     const newIsLiked = !isLiked;
     let updatedLikesCount = newIsLiked ? likesCount + 1 : likesCount - 1;
-  
+
     // Ensure likesCount is an integer
     updatedLikesCount = parseInt(updatedLikesCount, 10);
-  
-    // Optimistic UI update (hide the heart initially)
+    
+    updateLikesData(postTitle, updatedLikesCount, newIsLiked);
+    setIsLiked(newIsLiked);
+    setLikesCount(updatedLikesCount);
+
+    // Optimistic UI update (hide the heart and count initially)
     setIsLiked(null);
     setLikesCount(null);
-  
+
     try {
       const response = await fetch('https://api.haripriya.org/update-likes', {
         method: 'POST',
@@ -152,7 +156,7 @@ const Post = () => {
         },
         body: JSON.stringify({ title: postTitle, likesCount: updatedLikesCount }),
       });
-  
+
       if (response.ok) {
         // Update context data only when server confirms
         updateLikesData(postTitle, updatedLikesCount, newIsLiked);
@@ -163,7 +167,7 @@ const Post = () => {
       }
     } catch (error) {
       console.error('Failed to update likes:', error);
-  
+
       // Revert the UI changes if the server request fails
       setIsLiked(isLiked);
       setLikesCount(likesCount);
@@ -196,21 +200,21 @@ const Post = () => {
           </div>
           <div className="post-content">{parse(postContent)}</div>
           <span onClick={handleLikeToggle} style={{ cursor: 'pointer' }}>
-          {likesCount !== null && ( // Only show the heart after likes update
-            <svg
-              stroke="currentColor"
-              fill="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              height="1em"
-              width="1em"
-              style={{ color: 'black', fill: isLiked ? 'red' : 'none', stroke: isLiked ? 'none' : 'red' }}
-            >
-              <path d="m12 21.35-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
-            </svg>
-          )}
-          &nbsp;{likesCount !== null ? likesCount : ''}
-        </span>
+            {likesCount !== null && ( // Only show the heart after likes update
+              <svg
+                stroke="currentColor"
+                fill="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                height="1em"
+                width="1em"
+                style={{ color: 'black', fill: isLiked ? 'red' : 'none', stroke: isLiked ? 'none' : 'red' }}
+              >
+                <path d="m12 21.35-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+              </svg>
+            )}
+            &nbsp;{likesCount !== null ? parseInt(likesCount) || '' : ''}
+          </span>
         </>
       )}
     </div>

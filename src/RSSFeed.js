@@ -36,7 +36,7 @@ const RSSFeed = () => {
 
   const getLikesForPost = (title) => {
     const postLikesData = likesData.find(like => like.title === title);
-    return postLikesData ? postLikesData.likesCount : 0;
+    return postLikesData ? parseInt(postLikesData.likesCount, 10) || '' : '';
   };
 
   const isPostLiked = (title) => {
@@ -48,15 +48,15 @@ const RSSFeed = () => {
     const postLikesData = likesData.find(like => like.title === title);
     const isAlreadyLiked = postLikesData && postLikesData.isLiked;
     let newLikesCount = isAlreadyLiked ? postLikesData.likesCount - 1 : postLikesData.likesCount + 1;
-  
+
     // Ensure likesCount is an integer
     newLikesCount = parseInt(newLikesCount, 10);
-  
-    // Optimistic UI update (hide the heart initially)
-    updateLikesData(title, null, !isAlreadyLiked);
-  
+
+    // Optimistic UI update: update the UI before the server response
+    updateLikesData(title, newLikesCount, !isAlreadyLiked);
+
     try {
-      // Update the likes on the backend
+      // Make server request to update likes
       const response = await fetch('https://api.haripriya.org/update-likes', {
         method: 'POST',
         headers: {
@@ -64,20 +64,16 @@ const RSSFeed = () => {
         },
         body: JSON.stringify({ title, likesCount: newLikesCount }),
       });
-  
-      if (response.ok) {
-        // Update the context with new likes count
-        updateLikesData(title, newLikesCount, !isAlreadyLiked);
-      } else {
+
+      if (!response.ok) {
         throw new Error('Failed to update likes');
       }
     } catch (error) {
       console.error('Failed to update likes in Redis:', error);
-      // Revert UI if there's an error
+      // Revert UI in case of an error
       updateLikesData(title, postLikesData.likesCount, isAlreadyLiked);
     }
   };
-  
 
   return (
     <div className="rss-feed">
@@ -107,27 +103,45 @@ const RSSFeed = () => {
         <ul className="rss-feed-list">
           {filteredFeedItems.map((item, index) => (
             <li key={index} className="rss-feed-item">
-              {/* Other post elements */}
-              <span onClick={() => handleLikeToggle(item.title)} className="favorite-icon">
-                {getLikesForPost(item.title) !== null && ( // Only show the heart after likes update
-                  <svg
-                    stroke="currentColor"
-                    fill="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                    height="1em"
-                    width="1em"
-                    style={{
-                      color: 'black',
-                      fill: isPostLiked(item.title) ? 'red' : 'none',
-                      stroke: isPostLiked(item.title) ? 'none' : 'red',
-                    }}
-                  >
-                    <path d="m12 21.35-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
-                  </svg>
+              <div className="rss-feed-item-image">
+                {item.enclosure && (
+                  <img
+                    src={item.enclosure}
+                    alt="Enclosure"
+                    className="enclosure-image"
+                    onClick={() => navigate(`/post/${item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: item })}
+                  />
                 )}
-                &nbsp;{getLikesForPost(item.title) !== null ? getLikesForPost(item.title) : ''}
-              </span>
+              </div>
+              <div className="rss-feed-item-content">
+                <h2 className="rss-feed-item-title" onClick={() => navigate(`/post/${item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: item })}>
+                  {item.title}
+                </h2>
+                <p className="rss-feed-item-description">{item.description}</p>
+                <p className="rss-feed-item-date">Date: {new Date(item.pubDate).toLocaleDateString()}</p>
+
+                {/* Show heart and likes count if post exists in likesData */}
+                {likesData.length > 0 && (
+                  <span onClick={() => handleLikeToggle(item.title)} className="favorite-icon" style={{ cursor: 'pointer' }}>
+                    <svg
+                      stroke="currentColor"
+                      fill="currentColor"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                      height="1em"
+                      width="1em"
+                      style={{
+                        color: 'black',
+                        fill: isPostLiked(item.title) ? 'red' : 'none',
+                        stroke: isPostLiked(item.title) ? 'none' : 'red',
+                      }}
+                    >
+                      <path d="m12 21.35-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+                    </svg>
+                    &nbsp;{getLikesForPost(item.title)}
+                  </span>
+                )}
+              </div>
             </li>
           ))}
         </ul>
