@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation, useParams } from 'react-router-dom'; // Added useParams for direct access via URL
+import { useNavigate, useParams } from 'react-router-dom';
 import parse from 'html-react-parser';
 import './Post.css';
 import { useLikes } from './likesContext';
 import { IoIosArrowBack } from 'react-icons/io';
 import { Helmet } from 'react-helmet';
+
+// Function to normalize the title (similar to server-side logic)
+const normalizeTitle = (title) => {
+  return title
+    .toLowerCase()
+    .replace(/[^\w\s\-]/g, '')   // Remove special characters
+    .replace(/\s+/g, '-')        // Replace spaces with hyphens
+    .replace(/-+/g, '-');        // Replace multiple hyphens with a single hyphen
+};
 
 const Post = () => {
   const [postContent, setPostContent] = useState('');
@@ -17,13 +26,13 @@ const Post = () => {
   const [description, setDescription] = useState('');
   const [isLiked, setIsLiked] = useState(null); // Set initial isLiked to null
   const [loading, setLoading] = useState(true);
-  const location = useLocation();
   const navigate = useNavigate();
   const { title } = useParams(); // Get title from URL params
 
   // Fetch post content by title
   const fetchPostContent = async (postTitleFromURL) => {
-    const targetUrl = `https://api.haripriya.org/post/${postTitleFromURL}`;
+    const normalizedTitle = normalizeTitle(postTitleFromURL); // Normalize title
+    const targetUrl = `https://api.haripriya.org/post/${normalizedTitle}`;
     try {
       const response = await fetch(targetUrl);
       if (!response.ok) {
@@ -58,76 +67,10 @@ const Post = () => {
     }
   };
 
-  // Fallback: Fetch entire RSS data to find the post if specific post content is not available
-  const fetchRSSFeedFallback = async () => {
-    const targetUrl = `https://api.haripriya.org/rss-feed`;
-    try {
-      const response = await fetch(targetUrl);
-      const rssPosts = await response.json();
-
-      // Find the post by title slug in the fallback RSS data
-      const foundPost = rssPosts.find(rssPost => {
-        const slug = rssPost.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-');
-        return slug === title;
-      });
-
-      if (foundPost) {
-        const { content, title, pubDate, category, enclosure, description } = foundPost;
-        setPostTitle(title);
-        setPostDate(pubDate);
-        setPostCategory(category);
-        setPostContent(content || 'No content available');
-        setPostImage(enclosure || '');
-        setDescription(description);
-
-        const postLikesData = likesData.find(like => like.title === title);
-        if (postLikesData) {
-          setLikesCount(postLikesData.likesCount);
-          setIsLiked(postLikesData.isLiked);
-        } else {
-          setLikesCount(0);
-          setIsLiked(false);
-        }
-      } else {
-        console.error('Post not found in RSS data');
-      }
-    } catch (error) {
-      console.error('Error fetching RSS feed for fallback:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    const postFromState = location.state || {};
-
-    if (!postFromState || Object.keys(postFromState).length === 0) {
-      // No post data in state, fetch from server using title in the URL
-      fetchPostContent(title).catch(() => {
-        // If the specific post is not found, fall back to fetching the entire RSS feed
-        fetchRSSFeedFallback();
-      });
-    } else {
-      // If post data is available in state, use it directly
-      const { content, title, pubDate, category, image } = postFromState;
-      setPostTitle(title);
-      setPostDate(pubDate);
-      setPostCategory(category);
-      setPostContent(content || 'No content available');
-      setPostImage(image || '');
-      setDescription(postFromState.description || '');
-
-      const postLikesData = likesData.find(like => like.title === title);
-      if (postLikesData) {
-        setLikesCount(postLikesData.likesCount);
-        setIsLiked(postLikesData.isLiked);
-      } else {
-        setLikesCount(0);
-        setIsLiked(false);
-      }
-      setLoading(false);
-    }
-  }, [location, title, likesData]);
+    // Fetch from server using title in the URL
+    fetchPostContent(title);
+  }, [title, likesData]);
 
   const handleGoBack = () => {
     navigate('/');
@@ -139,10 +82,6 @@ const Post = () => {
 
     // Ensure likesCount is an integer
     updatedLikesCount = parseInt(updatedLikesCount, 10);
-    
-    updateLikesData(postTitle, updatedLikesCount, newIsLiked);
-    setIsLiked(newIsLiked);
-    setLikesCount(updatedLikesCount);
 
     // Optimistic UI update (hide the heart and count initially)
     setIsLiked(null);
