@@ -40,14 +40,14 @@ const RSSFeed = () => {
       ? parseInt(likesData.find(like => like.title === title).likesCount) - 1
       : parseInt(likesData.find(like => like.title === title).likesCount) + 1;
 
-    const updatedLikesData = likesData.map(like => {
-      if (like.title === title) {
-        return { ...like, likesCount: newLikesCount.toString(), isLiked: !isAlreadyLiked };
-      }
-      return like;
-    });
+    // const updatedLikesData = likesData.map(like => {
+    //   if (like.title === title) {
+    //     return { ...like, likesCount: newLikesCount.toString(), isLiked: !isAlreadyLiked };
+    //   }
+    //   return like;
+    // });
 
-    updateLikesData(updatedLikesData);
+    //updateLikesData(updatedLikesData);
 
     try {
       const response = await fetch('https://api.haripriya.org/update-likes', {
