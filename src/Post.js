@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom'; // Added useParams for direct access via URL
 import parse from 'html-react-parser';
 import './Post.css';
 import { useLikes } from './likesContext';
@@ -11,79 +11,111 @@ const Post = () => {
   const [postTitle, setPostTitle] = useState('');
   const [postDate, setPostDate] = useState('');
   const [postCategory, setPostCategory] = useState('');
-  const [postImage, setPostImage] = useState(''); // New state for image URL
+  const [postImage, setPostImage] = useState('');
   const { likesData, updateLikesData } = useLikes();
   const [likesCount, setLikesCount] = useState(0);
   const [description, setDescription] = useState('');
   const [isLiked, setIsLiked] = useState(false);
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [loading, setLoading] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
+  const { title } = useParams(); // Get title from URL params
+
+  // Fetch post content by title
+  const fetchPostContent = async (postTitleFromURL) => {
+    const targetUrl = `https://api.haripriya.org/post/${postTitleFromURL}`;
+    try {
+      const response = await fetch(targetUrl);
+      if (!response.ok) {
+        throw new Error('Post not found');
+      }
+      const post = await response.json();
+
+      if (post) {
+        const { content, title, pubDate, category, enclosure, description } = post;
+        setPostTitle(title);
+        setPostDate(pubDate);
+        setPostCategory(category);
+        setPostContent(content);
+        setPostImage(enclosure || '');
+        setDescription(description);
+
+        const postLikesData = likesData.find(like => like.title === title);
+        if (postLikesData) {
+          setLikesCount(postLikesData.likesCount);
+          setIsLiked(postLikesData.isLiked);
+        } else {
+          setLikesCount(0);
+          setIsLiked(false);
+        }
+      } else {
+        console.error('Post not found');
+      }
+    } catch (error) {
+      console.error('Error fetching post content:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fallback: Fetch entire RSS data to find the post if specific post content is not available
+  const fetchRSSFeedFallback = async () => {
+    const targetUrl = `https://api.haripriya.org/rss-feed`;
+    try {
+      const response = await fetch(targetUrl);
+      const rssPosts = await response.json();
+
+      // Find the post by title slug in the fallback RSS data
+      const foundPost = rssPosts.find(rssPost => {
+        const slug = rssPost.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-');
+        return slug === title;
+      });
+
+      if (foundPost) {
+        const { content, title, pubDate, category, enclosure, description } = foundPost;
+        setPostTitle(title);
+        setPostDate(pubDate);
+        setPostCategory(category);
+        setPostContent(content);
+        setPostImage(enclosure || '');
+        setDescription(description);
+
+        const postLikesData = likesData.find(like => like.title === title);
+        if (postLikesData) {
+          setLikesCount(postLikesData.likesCount);
+          setIsLiked(postLikesData.isLiked);
+        } else {
+          setLikesCount(0);
+          setIsLiked(false);
+        }
+      } else {
+        console.error('Post not found in RSS data');
+      }
+    } catch (error) {
+      console.error('Error fetching RSS feed for fallback:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
+    const postFromState = location.state || {};
 
-    const fetchPostContent = async () => {
-      const targetUrl = 'https://api.haripriya.org/rss-feed';
-      try {
-        const response = await fetch(targetUrl);
-        const data = await response.text();
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(data, 'text/xml');
-        const items = xmlDoc.querySelectorAll('item');
-        const rssItem = Array.from(items).find(item => {
-          const slug = item.querySelector('title').textContent.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-');
-          return slug === location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
-        });
-  
-        if (rssItem) {
-          const title = rssItem.querySelector('title').textContent;
-          const description = rssItem.querySelector('description').textContent;
-          const pubDate = rssItem.querySelector('pubDate').textContent;
-          const category = rssItem.querySelector('category') ? rssItem.querySelector('category').textContent : '';
-          const content = rssItem.querySelector('content\\:encoded, encoded').textContent;
-          const image = rssItem.querySelector('enclosure') ? rssItem.querySelector('enclosure').getAttribute('url') : ''; // Extract image URL
-  
-          setPostTitle(title);
-          setPostDate(pubDate);
-          setPostCategory(category);
-          setPostContent(content);
-          setPostImage(image);
-          setDescription(description);
-  
-          const postLikesData = likesData.find(like => like.title === title);
-          if (postLikesData) {
-            setLikesCount(postLikesData.likesCount);
-            setIsLiked(postLikesData.isLiked);
-          } else {
-            setLikesCount(0);
-            setIsLiked(false);
-          }
-        } else {
-          console.error('Post not found');
-        }
-      } catch (error) {
-        console.error('Error fetching post content:', error);
-      } finally {
-        setLoading(false); // Set loading to false once data is fetched
-      }
-    }; 
-
-    const post = location.state || {};
-
-    if (!post || post === '' || Object.values(post).length === 0) {
-      fetchPostContent();
+    if (!postFromState || Object.keys(postFromState).length === 0) {
+      // No post data in state, fetch from server using title in the URL
+      fetchPostContent(title).catch(() => {
+        // If the specific post is not found, fall back to fetching the entire RSS feed
+        fetchRSSFeedFallback();
+      });
     } else {
-      const { content, title, pubDate, category, image } = post;
-
-      const date = pubDate;
-      const cleanedContent = content ? content.replace(/(<br\s*\/?>\s*){2,}/gi, '<br>').replace(/(<br>\s*<\/(ul|p|li)>)/gi, '</$2>') : '';
-
-      setPostDate(date || '');
-      setPostCategory(category || '');
-      setPostContent(cleanedContent || '');
-      setPostTitle(title || '');
-      setPostImage(image || ''); // Set image URL
-
+      // If post data is available in state, use it directly
+      const { content, title, pubDate, category, image } = postFromState;
+      setPostTitle(title);
+      setPostDate(pubDate);
+      setPostCategory(category);
+      setPostContent(content);
+      setPostImage(image || '');
+      setDescription(postFromState.description || '');
 
       const postLikesData = likesData.find(like => like.title === title);
       if (postLikesData) {
@@ -93,13 +125,12 @@ const Post = () => {
         setLikesCount(0);
         setIsLiked(false);
       }
-      setLoading(false); // Set loading to false if data is already present
+      setLoading(false);
     }
-
-  }, [location, likesData]);
+  }, [location, title, likesData]);
 
   const handleGoBack = () => {
-    navigate("/");
+    navigate('/');
   };
 
   const handleLikeToggle = async () => {
@@ -114,7 +145,6 @@ const Post = () => {
         },
         body: JSON.stringify({ title: postTitle, likesCount: updatedLikesCount.toString() }),
       });
-      const data = await response.json();
       if (response.ok) {
         updateLikesData(
           likesData.map(like => (like.title === postTitle ? { ...like, likesCount: updatedLikesCount, isLiked: newIsLiked } : like))
@@ -122,7 +152,7 @@ const Post = () => {
         setIsLiked(newIsLiked);
         setLikesCount(updatedLikesCount);
       } else {
-        throw new Error(data.message || 'Failed to update the like status on the server.');
+        throw new Error('Failed to update likes');
       }
     } catch (error) {
       console.error('Failed to update likes:', error);
@@ -136,12 +166,6 @@ const Post = () => {
         <meta property="og:title" content={postTitle} />
         <meta property="og:description" content={description} />
         <meta property="og:image" content={postImage} />
-        <meta property="og:url" content={window.location.href} />
-        <meta property="og:type" content="article" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={postTitle} />
-        <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content={postImage} />
       </Helmet>
       {loading ? (
         <div className="loader"></div>
@@ -154,11 +178,9 @@ const Post = () => {
           <div className="post-meta">
             <span className="author-name">Haripriya Sridharan</span> &bull;
             <span className="post-date">
-             &nbsp;{postDate && parse(new Date(postDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }))} &bull;
+              &nbsp;{postDate && parse(new Date(postDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }))} &bull;
             </span>
-            <span className="post-category">
-              &nbsp;{postDate && parse(postCategory)}
-            </span>
+            <span className="post-category">&nbsp;{postCategory && parse(postCategory)}</span>
             <hr />
           </div>
           <div className="post-content">{parse(postContent)}</div>

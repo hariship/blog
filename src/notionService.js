@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export const fetchNotionPage = async () => {
   try {
-    const response = await axios.get(`http://localhost:3001/notion-page`, {
+    const response = await axios.get(`https://api.haripriya.org/notion-page`, {
     });
     console.log(response)
     return response.data;
