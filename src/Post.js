@@ -135,11 +135,14 @@ const Post = () => {
 
   const handleLikeToggle = async () => {
     const newIsLiked = !isLiked;
-    const updatedLikesCount = newIsLiked ? likesCount + 1 : likesCount - 1;
+    let updatedLikesCount = newIsLiked ? likesCount + 1 : likesCount - 1;
   
-    // Optimistic UI update
-    setIsLiked(newIsLiked);
-    setLikesCount(updatedLikesCount);
+    // Ensure likesCount is an integer
+    updatedLikesCount = parseInt(updatedLikesCount, 10);
+  
+    // Optimistic UI update (hide the heart initially)
+    setIsLiked(null);
+    setLikesCount(null);
   
     try {
       const response = await fetch('https://api.haripriya.org/update-likes', {
@@ -151,16 +154,18 @@ const Post = () => {
       });
   
       if (response.ok) {
-        // Update context data
+        // Update context data only when server confirms
         updateLikesData(postTitle, updatedLikesCount, newIsLiked);
+        setIsLiked(newIsLiked);
+        setLikesCount(updatedLikesCount);
       } else {
         throw new Error('Failed to update likes');
       }
     } catch (error) {
       console.error('Failed to update likes:', error);
   
-      // Revert UI on failure
-      setIsLiked(!newIsLiked);
+      // Revert the UI changes if the server request fails
+      setIsLiked(isLiked);
       setLikesCount(likesCount);
     }
   };
@@ -191,6 +196,7 @@ const Post = () => {
           </div>
           <div className="post-content">{parse(postContent)}</div>
           <span onClick={handleLikeToggle} style={{ cursor: 'pointer' }}>
+          {likesCount !== null && ( // Only show the heart after likes update
             <svg
               stroke="currentColor"
               fill="currentColor"
@@ -202,8 +208,9 @@ const Post = () => {
             >
               <path d="m12 21.35-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
             </svg>
-            &nbsp;{likesCount > 0 ? likesCount : 0}
-          </span>
+          )}
+          &nbsp;{likesCount !== null ? likesCount : ''}
+        </span>
         </>
       )}
     </div>

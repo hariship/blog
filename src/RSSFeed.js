@@ -47,10 +47,13 @@ const RSSFeed = () => {
   const handleLikeToggle = async (title) => {
     const postLikesData = likesData.find(like => like.title === title);
     const isAlreadyLiked = postLikesData && postLikesData.isLiked;
-    const newLikesCount = isAlreadyLiked ? postLikesData.likesCount - 1 : postLikesData.likesCount + 1;
+    let newLikesCount = isAlreadyLiked ? postLikesData.likesCount - 1 : postLikesData.likesCount + 1;
   
-    // Optimistic UI update
-    updateLikesData(title, newLikesCount, !isAlreadyLiked);
+    // Ensure likesCount is an integer
+    newLikesCount = parseInt(newLikesCount, 10);
+  
+    // Optimistic UI update (hide the heart initially)
+    updateLikesData(title, null, !isAlreadyLiked);
   
     try {
       // Update the likes on the backend
@@ -61,14 +64,20 @@ const RSSFeed = () => {
         },
         body: JSON.stringify({ title, likesCount: newLikesCount }),
       });
-      if (!response.ok) throw new Error('Failed to update likes');
+  
+      if (response.ok) {
+        // Update the context with new likes count
+        updateLikesData(title, newLikesCount, !isAlreadyLiked);
+      } else {
+        throw new Error('Failed to update likes');
+      }
     } catch (error) {
       console.error('Failed to update likes in Redis:', error);
-  
       // Revert UI if there's an error
       updateLikesData(title, postLikesData.likesCount, isAlreadyLiked);
     }
   };
+  
 
   return (
     <div className="rss-feed">
@@ -98,32 +107,16 @@ const RSSFeed = () => {
         <ul className="rss-feed-list">
           {filteredFeedItems.map((item, index) => (
             <li key={index} className="rss-feed-item">
-              <div className="rss-feed-item-image">
-                {item.enclosure && (
-                  <img
-                    src={item.enclosure}
-                    alt="Enclosure"
-                    className="enclosure-image"
-                    onClick={() => navigate(`/post/${item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: item })}
-                  />
-                )}
-              </div>
-              <div className="rss-feed-item-content">
-                <h2 className="rss-feed-item-title" onClick={() => navigate(`/post/${item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: item })}>
-                  {item.title}
-                </h2>
-                <p className="rss-feed-item-description">{item.description}</p>
-                <p className="rss-feed-item-date">Date: {new Date(item.pubDate).toLocaleDateString()}</p>
-                <span onClick={() => handleLikeToggle(item.title)} className="favorite-icon">
+              {/* Other post elements */}
+              <span onClick={() => handleLikeToggle(item.title)} className="favorite-icon">
+                {getLikesForPost(item.title) !== null && ( // Only show the heart after likes update
                   <svg
                     stroke="currentColor"
                     fill="currentColor"
                     strokeWidth="2"
                     viewBox="0 0 24 24"
-                    color="black"
                     height="1em"
                     width="1em"
-                    xmlns="http://www.w3.org/2000/svg"
                     style={{
                       color: 'black',
                       fill: isPostLiked(item.title) ? 'red' : 'none',
@@ -132,9 +125,9 @@ const RSSFeed = () => {
                   >
                     <path d="m12 21.35-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
                   </svg>
-                  &nbsp;{getLikesForPost(item.title)}
-                </span>
-              </div>
+                )}
+                &nbsp;{getLikesForPost(item.title) !== null ? getLikesForPost(item.title) : ''}
+              </span>
             </li>
           ))}
         </ul>
