@@ -35,19 +35,11 @@ const RSSFeed = () => {
   }, [selectedCategory, feedItems]);
 
   const handleLikeToggle = async (title) => {
-    const isAlreadyLiked = likesData.some(like => like.title === title && like.isLiked);
+    const post = likesData.find(like => like.title === title);
+    const isAlreadyLiked = post && post.isLiked;
     const newLikesCount = isAlreadyLiked
-      ? parseInt(likesData.find(like => like.title === title).likesCount) - 1
-      : parseInt(likesData.find(like => like.title === title).likesCount) + 1;
-
-    // const updatedLikesData = likesData.map(like => {
-    //   if (like.title === title) {
-    //     return { ...like, likesCount: newLikesCount.toString(), isLiked: !isAlreadyLiked };
-    //   }
-    //   return like;
-    // });
-
-    //updateLikesData(updatedLikesData);
+      ? post.likesCount - 1
+      : post.likesCount + 1;
 
     try {
       const response = await fetch('https://api.haripriya.org/update-likes', {
@@ -55,12 +47,16 @@ const RSSFeed = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ title, likesCount: newLikesCount.toString() }),
+        body: JSON.stringify({ title, likesCount: newLikesCount }),
       });
+
       if (!response.ok) throw new Error('Failed to update likes');
+
+      // Update local state after successful server response
+      updateLikesData(title, newLikesCount, !isAlreadyLiked);
+
     } catch (error) {
       console.error('Failed to update likes in Redis:', error);
-      updateLikesData(likesData); // Revert likes data in case of error
     }
   };
 
@@ -120,13 +116,13 @@ const RSSFeed = () => {
                     xmlns="http://www.w3.org/2000/svg"
                     style={{
                       color: 'black',
-                      fill: likesData.find((like) => like.title === item.title)?.isLiked ? 'red' : 'white',
-                      stroke: 'red',
+                      fill: post && post.isLiked ? 'red' : 'none',
+                      stroke: post && post.isLiked ? 'none' : 'red',
                     }}
                   >
                     <path d="m12 21.35-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
                   </svg>
-                  &nbsp;{likesData.find(like => like.title === item.title)?.likesCount}
+                  &nbsp;{post && post.likesCount}
                 </span>
               </div>
             </li>
