@@ -9,7 +9,7 @@ export const LikesProvider = ({ children }) => {
   const fetchScrapeData = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('https://api.haripriya.org/rss-feed'); // Fetch full post data with likes
+      const response = await fetch('https://api.haripriya.org/scrape'); // Fetch full post data with likes
       const data = await response.json();
       setLikesData(data); // Set data (including likesCount) into state
     } catch (error) {
