@@ -6,13 +6,12 @@ export const LikesProvider = ({ children }) => {
   const [likesData, setLikesData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch data from the scrape endpoint
   const fetchScrapeData = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('https://api.haripriya.org/scrape'); // Assuming this is the correct URL for scraping data
+      const response = await fetch('https://api.haripriya.org/rss-feed'); // Fetch full post data with likes
       const data = await response.json();
-      setLikesData(data); // Set scraped data (including likesCount) into state
+      setLikesData(data); // Set data (including likesCount) into state
     } catch (error) {
       console.error('Error fetching scraped data:', error);
     }
@@ -20,26 +19,23 @@ export const LikesProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchScrapeData(); // Fetch on initial render
+    fetchScrapeData();
   }, []);
 
-  // Function to update likes count locally and update Redis via API
   const updateLikesData = async (postTitle, newLikesCount) => {
     try {
-      // First, update the Redis with the new likesCount
       const response = await fetch('https://api.haripriya.org/update-likes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ title: postTitle, likesCount: newLikesCount }), // Send updated likes count to backend
+        body: JSON.stringify({ title: postTitle, likesCount: newLikesCount }), 
       });
 
       if (!response.ok) {
         throw new Error('Failed to update likes count');
       }
 
-      // Now, update the local state (likesData) with the new likesCount
       setLikesData((prevLikesData) =>
         prevLikesData.map((post) =>
           post.title === postTitle ? { ...post, likesCount: newLikesCount } : post
