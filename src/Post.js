@@ -82,10 +82,12 @@ const Post = () => {
 
     // Ensure likesCount is an integer
     updatedLikesCount = parseInt(updatedLikesCount, 10);
-
-    // Optimistic UI update (hide the heart and count initially)
-    setIsLiked(null);
-    setLikesCount(null);
+    updateLikesData(postTitle, updatedLikesCount, newIsLiked);
+    setIsLiked(newIsLiked);
+    setLikesCount(updatedLikesCount);
+    // // Optimistic UI update (hide the heart and count initially)
+    // setIsLiked(null);
+    // setLikesCount(null);
 
     try {
       const response = await fetch('https://api.haripriya.org/update-likes', {
