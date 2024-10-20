@@ -6,40 +6,40 @@ export const LikesProvider = ({ children }) => {
   const [likesData, setLikesData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Function to fetch post data (including likes)
-  const fetchPostData = async () => {
+  // Fetch data from the scrape endpoint
+  const fetchScrapeData = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('https://api.haripriya.org/rss-feed'); // Fetch the post data with likes count
+      const response = await fetch('https://api.haripriya.org/scrape'); // Assuming this is the correct URL for scraping data
       const data = await response.json();
-      setLikesData(data);
+      setLikesData(data); // Set scraped data (including likesCount) into state
     } catch (error) {
-      console.error('Error fetching post data:', error);
+      console.error('Error fetching scraped data:', error);
     }
     setIsLoading(false);
   };
 
   useEffect(() => {
-    fetchPostData();
+    fetchScrapeData(); // Fetch on initial render
   }, []);
 
-  // Function to update likes data locally and persist to the backend
+  // Function to update likes count locally and update Redis via API
   const updateLikesData = async (postTitle, newLikesCount) => {
     try {
-      // Send the updated likes count to the backend
+      // First, update the Redis with the new likesCount
       const response = await fetch('https://api.haripriya.org/update-likes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ title: postTitle, likesCount: newLikesCount }),
+        body: JSON.stringify({ title: postTitle, likesCount: newLikesCount }), // Send updated likes count to backend
       });
 
       if (!response.ok) {
         throw new Error('Failed to update likes count');
       }
 
-      // Update the local state after the server update is successful
+      // Now, update the local state (likesData) with the new likesCount
       setLikesData((prevLikesData) =>
         prevLikesData.map((post) =>
           post.title === postTitle ? { ...post, likesCount: newLikesCount } : post
