@@ -36,7 +36,7 @@ const Post = () => {
         setPostTitle(title);
         setPostDate(pubDate);
         setPostCategory(category);
-        setPostContent(content);
+        setPostContent(content || 'No content available');
         setPostImage(enclosure || '');
         setDescription(description);
 
@@ -76,7 +76,7 @@ const Post = () => {
         setPostTitle(title);
         setPostDate(pubDate);
         setPostCategory(category);
-        setPostContent(content);
+        setPostContent(content || 'No content available');
         setPostImage(enclosure || '');
         setDescription(description);
 
@@ -113,7 +113,7 @@ const Post = () => {
       setPostTitle(title);
       setPostDate(pubDate);
       setPostCategory(category);
-      setPostContent(content);
+      setPostContent(content || 'No content available');
       setPostImage(image || '');
       setDescription(postFromState.description || '');
 
