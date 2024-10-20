@@ -45,19 +45,20 @@ const RSSFeed = () => {
   };
 
   const handleLikeToggle = async (title) => {
-    // Check the current like status
-    const isAlreadyLiked = isPostLiked(title);
-    
-    // Calculate the new likes count based on the current like status
+    const isAlreadyLiked = likesData.some(like => like.title === title && like.isLiked);
     const newLikesCount = isAlreadyLiked
-      ? getLikesForPost(title) - 1
-      : getLikesForPost(title) + 1;
+      ? parseInt(likesData.find(like => like.title === title).likesCount) - 1
+      : parseInt(likesData.find(like => like.title === title).likesCount) + 1;
   
-    // Update the UI immediately
-    updateLikesData(title, newLikesCount, !isAlreadyLiked);
+    // Update the likes immediately in the UI
+    updateLikesData(
+      likesData.map(like =>
+        like.title === title ? { ...like, likesCount: newLikesCount.toString(), isLiked: !isAlreadyLiked } : like
+      )
+    );
   
     try {
-      // Send the updated likes count to the server
+      // Update the likes on the backend
       const response = await fetch('https://api.haripriya.org/update-likes', {
         method: 'POST',
         headers: {
@@ -65,13 +66,11 @@ const RSSFeed = () => {
         },
         body: JSON.stringify({ title, likesCount: newLikesCount.toString() }),
       });
-  
-      if (!response.ok) throw new Error('Failed to update likes on server');
+      if (!response.ok) throw new Error('Failed to update likes');
     } catch (error) {
       console.error('Failed to update likes in Redis:', error);
-  
-      // Revert the like toggle in case of an error
-      updateLikesData(title, getLikesForPost(title), isAlreadyLiked);
+      // Revert likes in case of error
+      updateLikesData(likesData);
     }
   };
 
