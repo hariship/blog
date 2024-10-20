@@ -22,28 +22,14 @@ export const LikesProvider = ({ children }) => {
     fetchScrapeData();
   }, []);
 
-  const updateLikesData = async (postTitle, newLikesCount) => {
-    try {
-      const response = await fetch('https://api.haripriya.org/update-likes', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ title: postTitle, likesCount: newLikesCount }), 
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update likes count');
-      }
-
-      setLikesData((prevLikesData) =>
-        prevLikesData.map((post) =>
-          post.title === postTitle ? { ...post, likesCount: newLikesCount } : post
-        )
-      );
-    } catch (error) {
-      console.error('Error updating likes count:', error);
-    }
+  const updateLikesData = (postTitle, newLikesCount, isLiked) => {
+    setLikesData((prevLikesData) =>
+      prevLikesData.map((post) =>
+        post.title === postTitle
+          ? { ...post, likesCount: newLikesCount, isLiked } // Update likesCount and isLiked status
+          : post
+      )
+    );
   };
 
   return (
