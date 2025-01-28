@@ -35,15 +35,15 @@ export const LikesProvider = ({ children }) => {
       const rssFeedData = await fetchRSSFeed();
 
       // Check if all posts in the RSS feed also have likesCount === 0
-      const shouldScrape = rssFeedData.every((post) => !post.likesCount || post.likesCount === 0);
+      // const shouldScrape = rssFeedData.every((post) => !post.likesCount || post.likesCount === 0);
       
-      if (shouldScrape) {
-        await fetchScrapeData(); // Trigger scraping only if necessary
-      } else {
+      // if (shouldScrape) {
+        // await fetchScrapeData(); // Trigger scraping only if necessary
+      // } else {
         // Use RSS feed data if likes data is available in it
         setLikesData(rssFeedData);
         setIsLoading(false);
-      }
+      // }
     } else {
       // If likesData is available, we can stop loading
       setIsLoading(false);
