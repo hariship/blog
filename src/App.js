@@ -5,6 +5,7 @@ import Post from './Post';
 import MoviesAndSeries from './MoviesAndSeries';
 import Books from './Books';
 import NavBar from './Navbar';
+import PersonalGoals from './PersonalGoals';
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
         <Route path="/post/:title" element={<Post />} />
         <Route path="/movies-and-series" element={<MoviesAndSeries />} />
         <Route path="/books" element={<Books />} />
+        <Route path="/personal-goals" element={<PersonalGoals />} /> {/* New Route */}
       </Routes>
     </Router>
   );
