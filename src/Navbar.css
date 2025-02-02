@@ -4,7 +4,7 @@
   justify-content: center;
   align-items: center;
   background: #222;
-  padding: 15px 20px;
+  padding: 15px 20px; /* Default padding */
   color: white;
   position: relative;
 }
@@ -32,7 +32,7 @@
 }
 
 .nav-links a:hover {
-  color: #075775;
+  color: #9cb6c0;
 }
 
 /* Mobile Menu Icon (Left-Aligned) */
@@ -46,15 +46,16 @@
   transform: translateY(-50%);
 }
 
-/* Sidebar - Smooth Sliding Mobile Menu */
+/* Sidebar - Adjusted to prevent breaking */
 .sidebar {
   position: fixed;
   top: 0;
-  left: -280px; /* Initially hidden */
-  width: 280px;
+  left: -75vw; /* Initially hidden */
+  width: 75vw; /* Reduced width */
+  max-width: 320px; /* Prevent excessive stretching */
   height: 100vh;
-  background: rgba(15, 15, 15, 0.95); /* Slight transparency */
-  backdrop-filter: blur(8px); /* Subtle blur for depth */
+  background: rgba(15, 15, 15, 0.97);
+  backdrop-filter: blur(6px);
   box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
   transition: left 0.3s ease-in-out;
   border-top-right-radius: 12px;
@@ -78,24 +79,24 @@
   border: none;
   color: white;
   cursor: pointer;
-  font-size: 24px;
+  font-size: 26px;
 }
 
-/* Sidebar Links */
+/* Sidebar Links - Proper Spacing */
 .sidebar ul {
   list-style: none;
-  padding: 30px 20px;
+  padding: 50px 20px;
 }
 
 .sidebar li {
-  margin: 20px 0;
+  margin: 25px 0; /* Better spacing */
   text-align: left;
 }
 
 .sidebar a {
   text-decoration: none;
   color: white;
-  font-size: 18px;
+  font-size: 20px; /* Readable text */
   font-weight: bold;
   display: block;
   padding: 12px;
@@ -103,16 +104,16 @@
   border-radius: 8px;
 }
 
-.sidebar a:hover,
-.sidebar a:focus {
-  background: rgba(255, 255, 255, 0.1);
-  color: #9cb6c0;
-}
-
-/* Active Link */
+/* Active Page */
 .sidebar a.active {
   background: rgba(255, 255, 255, 0.15);
   color: #9cb6c0;
+}
+
+.sidebar a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color:  #9cb6c0;
+  ;
 }
 
 /* Overlay - Darkens Background When Sidebar is Open */
@@ -126,17 +127,36 @@
   z-index: 900;
 }
 
-/* Mobile View */
+/* Mobile-Specific Fixes */
 @media screen and (max-width: 768px) {
-  .nav-links {
-    display: none;
+  .navbar {
+    padding: 25px 25px; /* Increased padding for better spacing */
   }
 
   .menu-icon {
     display: block;
+    font-size: 26px; /* Slightly larger for better tap area */
   }
 
-  .navbar {
-    justify-content: flex-start;
+  .nav-links {
+    display: none;
+  }
+
+  .sidebar {
+    width: 75vw; /* Ensure width doesn't take full screen */
+    max-width: 300px; /* Keep it constrained */
+  }
+
+  .sidebar ul {
+    padding: 60px 20px; /* Adjusted padding */
+  }
+
+  .sidebar li {
+    margin: 28px 0; /* More spacing */
+  }
+
+  .sidebar a {
+    font-size: 20px; /* Bigger text */
+    padding: 16px; /* Comfortable touch area */
   }
 }
