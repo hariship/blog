@@ -1,21 +1,142 @@
+/* Navbar Container */
 .navbar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    background-color: #f9f9f9;
-    border-bottom: 2px solid #f9f9f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #222;
+  padding: 15px 20px;
+  color: white;
+  position: relative;
+}
+
+/* Desktop Navigation (Centered) */
+.nav-links {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.nav-links li {
+  margin: 0 20px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: #075775;
+}
+
+/* Mobile Menu Icon (Left-Aligned) */
+.menu-icon {
+  display: none;
+  cursor: pointer;
+  color: white;
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Sidebar - Smooth Sliding Mobile Menu */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -280px; /* Initially hidden */
+  width: 280px;
+  height: 100vh;
+  background: rgba(15, 15, 15, 0.95); /* Slight transparency */
+  backdrop-filter: blur(8px); /* Subtle blur for depth */
+  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
+  transition: left 0.3s ease-in-out;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+  z-index: 1000;
+}
+
+.sidebar.open {
+  left: 0; /* Slide in */
+}
+
+/* Sidebar Header with Close Button */
+.sidebar-header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 15px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+/* Sidebar Links */
+.sidebar ul {
+  list-style: none;
+  padding: 30px 20px;
+}
+
+.sidebar li {
+  margin: 20px 0;
+  text-align: left;
+}
+
+.sidebar a {
+  text-decoration: none;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  display: block;
+  padding: 12px;
+  transition: background 0.3s, color 0.3s;
+  border-radius: 8px;
+}
+
+.sidebar a:hover,
+.sidebar a:focus {
+  background: rgba(255, 255, 255, 0.1);
+  color: #9cb6c0;
+}
+
+/* Active Link */
+.sidebar a.active {
+  background: rgba(255, 255, 255, 0.15);
+  color: #9cb6c0;
+}
+
+/* Overlay - Darkens Background When Sidebar is Open */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 900;
+}
+
+/* Mobile View */
+@media screen and (max-width: 768px) {
+  .nav-links {
+    display: none;
   }
-  
-  .navbar a {
-    margin: 0 15px;
-    color: #282c34;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: bold;
-    transition: color 0.3s ease;
+
+  .menu-icon {
+    display: block;
   }
-  
-  .navbar a:hover {
-    color: #1653cb;
+
+  .navbar {
+    justify-content: flex-start;
   }
+}
