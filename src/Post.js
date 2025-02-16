@@ -5,7 +5,7 @@ import './Post.css';
 import { useLikes } from './likesContext';
 import { IoIosArrowBack } from 'react-icons/io';
 import { Helmet } from 'react-helmet';
-
+import CommentsWidget from "./CommentsWidget";
 // Function to normalize the title (similar to server-side logic)
 const normalizeTitle = (title) => {
   return title
@@ -156,6 +156,10 @@ const Post = () => {
             )}
             &nbsp;{likesCount !== null ? parseInt(likesCount) || '' : ''}
           </span>
+          <br/>
+          <br/>
+          <hr/>
+          <CommentsWidget pageSlug={`/${normalizeTitle(title)}`} />
         </>
       )}
     </div>
