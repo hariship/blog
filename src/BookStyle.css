@@ -60,9 +60,9 @@
 /* Floating Menu Button */
 .floating-menu {
   position: absolute;
-  top: 15px;
-  right: 15px;
-  z-index: 20;
+  top: 10px;
+  right: 10px;
+  z-index: 100;
 }
 
 .menu-toggle {
@@ -84,12 +84,14 @@
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
   border-radius: 5px;
   width: 160px;
-  z-index: 30;
+  z-index: 110;
   padding: 5px 0;
   display: none;
 }
 
-.floating-menu:hover .dropdown-menu, .menu-toggle:focus + .dropdown-menu, .menu-toggle:active + .dropdown-menu {
+.menu-toggle:focus + .dropdown-menu, 
+.menu-toggle:active + .dropdown-menu, 
+.floating-menu:hover .dropdown-menu {
   display: block;
 }
 
@@ -113,8 +115,8 @@
   }
 
   .floating-menu {
-    top: 10px;
-    right: 10px;
+    top: 5px;
+    right: 5px;
   }
 
   .menu-toggle {
@@ -125,16 +127,14 @@
   .dropdown-menu {
     position: fixed;
     top: 50px;
-    right: 10px;
+    right: 5px;
     width: 180px;
-    display: block;
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    display: none;
   }
 
-  .menu-toggle:focus + .dropdown-menu, .menu-toggle:active + .dropdown-menu {
-    opacity: 1;
-    transform: translateY(0);
+  .menu-toggle:focus + .dropdown-menu, 
+  .menu-toggle:active + .dropdown-menu, 
+  .floating-menu:hover .dropdown-menu {
+    display: block;
   }
 }
