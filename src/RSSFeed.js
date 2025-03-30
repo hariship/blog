@@ -13,6 +13,11 @@ const RSSFeed = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { likesData, updateLikesData } = useLikes();
+  
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     const fetchRSSFeed = async () => {
@@ -31,8 +36,14 @@ const RSSFeed = () => {
   }, []);
 
   useEffect(() => {
-    setFilteredFeedItems(selectedCategory ? feedItems.filter(item => item.category === selectedCategory) : feedItems);
-  }, [selectedCategory, feedItems]);
+    const filtered = selectedCategory 
+      ? feedItems.filter(item => item.category === selectedCategory) 
+      : feedItems;
+    
+    setFilteredFeedItems(filtered);
+    setTotalPages(Math.ceil(filtered.length / itemsPerPage));
+    setCurrentPage(1); // Reset to first page when filter changes
+  }, [selectedCategory, feedItems, itemsPerPage]);
 
   const getLikesForPost = (title) => {
     const postLikesData = likesData.find(like => like.title === title);
@@ -75,6 +86,30 @@ const RSSFeed = () => {
     }
   };
 
+  // Pagination handlers
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  // Get current page's items
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredFeedItems.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Generate page numbers
+  const pageNumbers = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pageNumbers.push(i);
+  }
+
   return (
     <div className="rss-feed">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', background: '#fff' }}>
@@ -86,6 +121,7 @@ const RSSFeed = () => {
         <h1 className="rss-feed-title">Posts</h1>
         <div style={{ width: '50px' }}></div>
       </div>
+      
       <div className="category-dropdown">
         <label htmlFor="category">Category</label>
         <select id="category" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
@@ -100,51 +136,94 @@ const RSSFeed = () => {
       {loading ? (
         <div className="loader"></div>
       ) : (
-        <ul className="rss-feed-list">
-          {filteredFeedItems.map((item, index) => (
-            <li key={index} className="rss-feed-item">
-              <div className="rss-feed-item-image">
-                {item.enclosure && (
-                  <img
-                    src={item.enclosure}
-                    alt="Enclosure"
-                    className="enclosure-image"
-                    onClick={() => navigate(`/post/${item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: item })}
-                  />
-                )}
-              </div>
-              <div className="rss-feed-item-content">
-                <h2 className="rss-feed-item-title" onClick={() => navigate(`/post/${item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: item })}>
-                  {item.title}
-                </h2>
-                <p className="rss-feed-item-description">{item.description}</p>
-                <p className="rss-feed-item-date">Date: {new Date(item.pubDate).toLocaleDateString()}</p>
+        <>
+          <ul className="rss-feed-list">
+            {currentItems.map((item, index) => (
+              <li key={index} className="rss-feed-item">
+                <div className="rss-feed-item-image">
+                  {item.enclosure && (
+                    <img
+                      src={item.enclosure}
+                      alt="Enclosure"
+                      className="enclosure-image"
+                      onClick={() => navigate(`/post/${item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: item })}
+                    />
+                  )}
+                </div>
+                <div className="rss-feed-item-content">
+                  <h2 className="rss-feed-item-title" onClick={() => navigate(`/post/${item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: item })}>
+                    {item.title}
+                  </h2>
+                  <p className="rss-feed-item-description">{item.description}</p>
+                  <p className="rss-feed-item-date">Date: {new Date(item.pubDate).toLocaleDateString()}</p>
 
-                {/* Show heart and likes count if post exists in likesData */}
-                {likesData.length > 0 && (
-                  <span onClick={() => handleLikeToggle(item.title)} className="favorite-icon" style={{ cursor: 'pointer' }}>
-                    <svg
-                      stroke="currentColor"
-                      fill="currentColor"
-                      strokeWidth="2"
-                      viewBox="0 0 24 24"
-                      height="1em"
-                      width="1em"
-                      style={{
-                        color: 'black',
-                        fill: isPostLiked(item.title) ? 'red' : 'none',
-                        stroke: isPostLiked(item.title) ? 'none' : 'red',
-                      }}
-                    >
-                      <path d="m12 21.35-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
-                    </svg>
-                    &nbsp;{getLikesForPost(item.title)}
-                  </span>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
+                  {/* Show heart and likes count if post exists in likesData */}
+                  {likesData.length > 0 && (
+                    <span onClick={() => handleLikeToggle(item.title)} className="favorite-icon" style={{ cursor: 'pointer' }}>
+                      <svg
+                        stroke="currentColor"
+                        fill="currentColor"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                        height="1em"
+                        width="1em"
+                        style={{
+                          color: 'black',
+                          fill: isPostLiked(item.title) ? 'red' : 'none',
+                          stroke: isPostLiked(item.title) ? 'none' : 'red',
+                        }}
+                      >
+                        <path d="m12 21.35-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+                      </svg>
+                      &nbsp;{getLikesForPost(item.title)}
+                    </span>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          {/* Simplified Pagination Controls */}
+          {filteredFeedItems.length > 0 && (
+            <div className="pagination-controls" style={{ marginTop: '20px', textAlign: 'center' }}>
+              <button 
+                onClick={goToPreviousPage} 
+                disabled={currentPage === 1}
+                className="pagination-button"
+                style={{ 
+                  padding: '8px 12px', 
+                  margin: '0 5px',
+                  cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                  backgroundColor: '#f8f8f8',
+                  border: '1px solid #ddd',
+                  borderRadius: '3px'
+                }}
+              >
+                &laquo;
+              </button>
+              
+              <span style={{ margin: '0 10px' }}>
+                Page {currentPage} of {totalPages}
+              </span>
+              
+              <button 
+                onClick={goToNextPage} 
+                disabled={currentPage === totalPages}
+                className="pagination-button"
+                style={{ 
+                  padding: '8px 12px', 
+                  margin: '0 5px',
+                  cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                  backgroundColor: '#f8f8f8',
+                  border: '1px solid #ddd',
+                  borderRadius: '3px'
+                }}
+              >
+                &raquo;
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
