@@ -6,6 +6,10 @@ import { useLikes } from './likesContext';
 import { IoIosArrowBack } from 'react-icons/io';
 import { Helmet } from 'react-helmet';
 import CommentsWidget from "./CommentsWidget";
+
+// Import our local content
+import * as htmlContents from './contents/html-content';
+
 // Function to normalize the title (similar to server-side logic)
 const normalizeTitle = (title) => {
   return title
@@ -13,6 +17,33 @@ const normalizeTitle = (title) => {
     .replace(/[^\w\s\-]/g, '')   // Remove special characters
     .replace(/\s+/g, '-')        // Replace spaces with hyphens
     .replace(/-+/g, '-');        // Replace multiple hyphens with a single hyphen
+};
+
+const formatDate = (dateString) => {
+  try {
+    // If it's already in the right format, return it as is
+    if (typeof dateString === 'string' && dateString.match(/^[A-Za-z]{3}\s\d{1,2}$/)) {
+      return dateString;
+    }
+    
+    // Otherwise, try to parse and format it
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      // If parsing fails, return original or default
+      return dateString || 'Mar 30';
+    }
+    
+    // Format as "Mar 23"
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    const year = date.getFullYear();
+    
+    return `${month} ${day} ${year}`;
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return dateString;
+  }
 };
 
 const Post = () => {
@@ -38,8 +69,9 @@ const Post = () => {
       if (!response.ok) {
         throw new Error('Post not found');
       }
+      
       const post = await response.json();
-
+  
       if (post) {
         const { content, title, pubDate, category, enclosure, description } = post;
         setPostTitle(title);
@@ -48,7 +80,13 @@ const Post = () => {
         setPostContent(content || 'No content available');
         setPostImage(enclosure || '');
         setDescription(description);
-
+  
+        // Check if content is actually available - if not, load from local file
+        if (content === 'No content available' || !content) {
+          console.log('No content from API, loading local content');
+          loadLocalContent(normalizedTitle);
+        }
+  
         const postLikesData = likesData.find(like => like.title === title);
         if (postLikesData) {
           setLikesCount(postLikesData.likesCount);
@@ -59,11 +97,57 @@ const Post = () => {
         }
       } else {
         console.error('Post not found');
+        loadLocalContent(normalizedTitle);
       }
     } catch (error) {
       console.error('Error fetching post content:', error);
+      loadLocalContent(normalizedTitle);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Check if content exists locally
+  const checkLocalContent = (normalizedTitle) => {
+    // Convert dashes to underscores for JavaScript variable naming
+    const contentKey = normalizedTitle.replace(/-/g, '_');
+    return htmlContents[contentKey] !== undefined;
+  };
+
+  // Load content from local files
+  // Add these debug lines to your loadLocalContent function:
+
+  const loadLocalContent = (normalizedTitle) => {
+    try {
+      // Convert dashes to underscores for JavaScript variable naming
+      const contentKey = normalizedTitle.replace(/-/g, '_');
+      
+      console.log("Looking for content with key:", contentKey);
+      console.log("Available content keys:", Object.keys(htmlContents));
+      
+      if (htmlContents[contentKey]) {
+        console.log("Content found? Yes");
+        console.log("Content length:", htmlContents[contentKey].length);
+        console.log("Content preview:", htmlContents[contentKey].substring(0, 100));
+        
+        // Try updating both the state and directly modifying the DOM
+        setPostContent(htmlContents[contentKey]);
+        
+        // Try direct DOM manipulation as a fallback
+        setTimeout(() => {
+          const contentDiv = document.querySelector('.post-content');
+          if (contentDiv && contentDiv.innerHTML.includes('No content available')) {
+            console.log("Directly updating DOM as fallback");
+            contentDiv.innerHTML = htmlContents[contentKey];
+          }
+        }, 500);
+        
+        console.log("No content from API, loading local content");
+      } else {
+        console.error("Content not found for key:", contentKey);
+      }
+    } catch (error) {
+      console.error('Error loading local content:', error);
     }
   };
 
@@ -85,9 +169,6 @@ const Post = () => {
     updateLikesData(postTitle, updatedLikesCount, newIsLiked);
     setIsLiked(newIsLiked);
     setLikesCount(updatedLikesCount);
-    // // Optimistic UI update (hide the heart and count initially)
-    // setIsLiked(null);
-    // setLikesCount(null);
 
     try {
       const response = await fetch('https://api.haripriya.org/update-likes', {
@@ -134,9 +215,9 @@ const Post = () => {
           <div className="post-meta">
             <span className="author-name">Haripriya Sridharan</span> &bull;
             <span className="post-date">
-              &nbsp;{postDate && parse(new Date(postDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }))} &bull;
+              &nbsp;{formatDate(postDate)} &bull;
             </span>
-            <span className="post-category">&nbsp;{postCategory && parse(postCategory)}</span>
+            <span className="post-category">&nbsp;{postCategory}</span>
             <hr />
           </div>
           <div className="post-content">{parse(postContent)}</div>
