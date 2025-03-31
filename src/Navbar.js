@@ -37,7 +37,6 @@ const NavBar = () => {
           <li><Link to="/personal-goals" className={location.pathname === "/personal-goals" ? "active" : ""} onClick={() => setIsOpen(false)}>Personal Goals</Link></li>
           <li><Link to="/books" className={location.pathname === "/books" ? "active" : ""} onClick={() => setIsOpen(false)}>Books</Link></li>
           <li><Link to="/movies-and-series" className={location.pathname === "/movies-and-series" ? "active" : ""} onClick={() => setIsOpen(false)}>Movies & Series</Link></li>
-          <li><Link to="/notebook" className={location.pathname === "/notebook" ? "active" : ""} onClick={() => setIsOpen(false)}>Notebook</Link></li>
         </ul>
       </div>
 
