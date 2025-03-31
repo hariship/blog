@@ -21,7 +21,6 @@ const NavBar = () => {
           <li><Link to="/personal-goals">Personal Goals</Link></li>
           <li><Link to="/books">Books</Link></li>
           <li><Link to="/movies-and-series">Movies & Series</Link></li>
-          <li><Link to="/notebook">Notebook</Link></li>
         </ul>
       </nav>
 
