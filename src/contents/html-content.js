@@ -45,3 +45,57 @@ export const notes_11_12_13_2025 = `
   </div>
 </div>
 `;
+
+export const learning_in_the_noise_the_art_of_filtering = `
+<div class="post-content">
+<div style="
+  background-color: #f2f2f2;
+  padding: 10px;
+  margin: 30px 0;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  font-size: 0.9em;
+  line-height: 1.7;
+  color: #333;
+">
+    <p>There's a moment I often find myself in: standing in front of a buffet with more food than I need. Everything looks inviting, full of variety. I take a bit of everything, thinking I'll enjoy it. But halfway through, I already feel full, sometimes even uneasy, wondering why I didn't choose what I wanted in the first place.</p>
+  </div>
+      <p>That's what the internet feels like to me these days.</p>
+  <hr/>
+
+  <div class="section">
+    <img src="https://static.wixstatic.com/media/2402dd_3730a6ecc9934d7bbd109f27b9dd5f8f~mv2.png/v1/fill/w_1024,h_1024,al_c,q_90,enc_avif,quality_auto/2402dd_3730a6ecc9934d7bbd109f27b9dd5f8f~mv2.png" alt="A visual that captures the feeling of digital consumption">
+   <p style="font-style: italic; font-size: 0.95em; color: #666; margin-top: 8px; text-align: center;">
+  Image I could relate myself to.
+</p>
+  </div>
+
+  <div class="section">
+    <p><blockquote style="font-style: italic; border-left: 4px solid #ccc; padding-left: 16px; margin: 20px 0; color: #555;">
+      I often think or write about the constant consumption we engage in every day: news, social media, trends, tech. It feels endless. While access is easy, my mind, even after four coffees, is slower to process it all. The clutter builds quickly.
+    </blockquote></p>
+
+    <p>Many times, I step back. Quit social media. Turn off notifications. Try to find silence. And then, the urge to stay updated kicks in. I dive back in, consume everything, and soon feel overwhelmed. The mood shifts sometimes subtly, sometimes all at once.</p>
+
+    <p>I used to think I could solve it by making better choices—but even choosing can get exhausting. So, I started consuming less. Followed fewer people. Stopped clicking every link. I try not to let algorithms steer me all the time. But I've realised this isn't something that these detoxes can fix. It needs steady, ongoing care—like what your liver does to your body each day.</p>
+  </div>
+
+  <div class="section">
+    <p>But, I still want to learn. In fact, learning feels more important than ever and it needs space and time, with some fun and mostly grounding.</p>
+    <img src="https://static.wixstatic.com/media/2402dd_d5e634982e9246a4b97c0910cafbc496~mv2.png/v1/fill/w_1024,h_1024,al_c,q_90,enc_avif,quality_auto/2402dd_d5e634982e9246a4b97c0910cafbc496~mv2.png">
+    <p>There is something my friend Ram shared about learning from a sub-reddit.</p>
+    <img src="https://static.wixstatic.com/media/2402dd_9045f2e88e3b47a7a108b1c47a9b6937~mv2.jpeg/v1/fill/w_1089,h_1600,al_c,q_85,enc_avif,quality_auto/2402dd_9045f2e88e3b47a7a108b1c47a9b6937~mv2.jpeg">
+    <p>I like the analogy about "mental equivalent of sweating". Learning is not just about absorbing something new. It often asks for discomfort as it often constructs a neural pathway, and with more practice, a stronger circuit, much like a muscle.</p>
+  </div>
+
+  <div class="section">
+    <p>I am usually slow at learning new languages. My piano classes often remind me that the pleasure of playing is real, but so is the struggle to stay with the process. Focus doesn't always feel rewarding in the moment. But without it, the joy doesn't really land. So, when my mind is already cluttered or overstimulated, it starts reaching for easier rewards—like a scroll, a headline, or a short video or reels. In that state, real learning struggles to settle in.</p>
+    <img src="https://www.penheaven.com/media/mageplaza/blog/post/uploads/2014/02/why-is-handwriting-still-important1.jpg">
+    <p>So, I have started to keep my plate light. I explore during certain times in the day, only when my mind is clear or curious. It's like food, you need it daily, but you don't want to eat heavy meals at odd hours. Especially as I age, I don't want to consume just because it was pushed to me. I want to make a choice, when I really have the space.</p>
+  </div>
+
+  <div class="section">
+    <p>Some days, I still slip. And that's okay. But I always return to this idea: a quiet plate, a healthy but lighter meal, enough space to think, and a few intentional bites at a time. I still have fun with social media, like drinking or eating a heavy meal, but they have become more of intentional bites, which has its dedicated time, because when I make such rooms, learning finds its way back in.</p>
+  </div>
+  </div>
+`
