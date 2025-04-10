@@ -64,13 +64,6 @@ export const learning_in_the_noise_the_art_of_filtering = `
   <hr/>
 
   <div class="section">
-    <img src="https://static.wixstatic.com/media/2402dd_3730a6ecc9934d7bbd109f27b9dd5f8f~mv2.png/v1/fill/w_1024,h_1024,al_c,q_90,enc_avif,quality_auto/2402dd_3730a6ecc9934d7bbd109f27b9dd5f8f~mv2.png" alt="A visual that captures the feeling of digital consumption">
-   <p style="font-style: italic; font-size: 0.95em; color: #666; margin-top: 8px; text-align: center;">
-  Image I could relate myself to.
-</p>
-  </div>
-
-  <div class="section">
     <p><blockquote style="font-style: italic; border-left: 4px solid #ccc; padding-left: 16px; margin: 20px 0; color: #555;">
       I often think or write about the constant consumption we engage in every day: news, social media, trends, tech. It feels endless. While access is easy, my mind, even after four coffees, is slower to process it all. The clutter builds quickly.
     </blockquote></p>
@@ -81,7 +74,7 @@ export const learning_in_the_noise_the_art_of_filtering = `
   </div>
 
   <div class="section">
-    <p>But, I still want to learn. In fact, learning feels more important than ever and it needs space and time, with some fun and mostly grounding.</p>
+    <p>But, <b>I still want to learn</b>. In fact, learning feels more important than ever and it needs space and time, with some fun and mostly grounding.</p>
     <img src="https://static.wixstatic.com/media/2402dd_d5e634982e9246a4b97c0910cafbc496~mv2.png/v1/fill/w_1024,h_1024,al_c,q_90,enc_avif,quality_auto/2402dd_d5e634982e9246a4b97c0910cafbc496~mv2.png">
     <p>There is something my friend Ram shared about learning from a sub-reddit.</p>
     <img src="https://static.wixstatic.com/media/2402dd_9045f2e88e3b47a7a108b1c47a9b6937~mv2.jpeg/v1/fill/w_1089,h_1600,al_c,q_85,enc_avif,quality_auto/2402dd_9045f2e88e3b47a7a108b1c47a9b6937~mv2.jpeg">
@@ -90,7 +83,7 @@ export const learning_in_the_noise_the_art_of_filtering = `
 
   <div class="section">
     <p>I am usually slow at learning new languages. My piano classes often remind me that the pleasure of playing is real, but so is the struggle to stay with the process. Focus doesn't always feel rewarding in the moment. But without it, the joy doesn't really land. So, when my mind is already cluttered or overstimulated, it starts reaching for easier rewards—like a scroll, a headline, or a short video or reels. In that state, real learning struggles to settle in.</p>
-    <img src="https://www.penheaven.com/media/mageplaza/blog/post/uploads/2014/02/why-is-handwriting-still-important1.jpg">
+    <img src="https://elissamilne.com/wp-content/uploads/2010/08/manuscript-plus-glasses.jpg?w=820">
     <p>So, I have started to keep my plate light. I explore during certain times in the day, only when my mind is clear or curious. It's like food, you need it daily, but you don't want to eat heavy meals at odd hours. Especially as I age, I don't want to consume just because it was pushed to me. I want to make a choice, when I really have the space.</p>
   </div>
 
