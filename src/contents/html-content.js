@@ -60,7 +60,7 @@ export const bi_weekly_notes_14_15_2025 = `
                 </ul>
             </li>
             <li>Learning something new takes effort. It's not always joyful—sometimes it's also takes pain. Wrote a <a href="https://blog.haripriya.org/post/learning-in-the-noise-the-art-of-filtering">post</a> about it.</li>
-            <li>Been enjoying others' weekly notes too. Found <strong>Pradx</strong> via Thejesh's blogring. His posts are thoughtful. One X quote he shared really stuck with me.
+            <li>Been enjoying others' weekly notes too. Found <a href="https://pradx.in/">Pradx</a> via Thejesh's blogring. His posts are thoughtful. One X quote he shared really stuck with me.
                 <ul>
                     <li><em>Interesting X thread by Conor White-Sullivan that has a provocative start in the post, <a href="https://x.com/Conaw/status/1902423274002510244">"If your AI won't help you break the law, it doesn't belong to you, it belongs to those who make its laws"</em></a></li>
                 </ul>
