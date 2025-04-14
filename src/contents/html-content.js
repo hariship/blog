@@ -65,8 +65,7 @@ export const bi_weekly_notes_14_15_2025 = `
                     <li><em>Interesting X thread by Conor White-Sullivan that has a provocative start in the post, <a href="https://x.com/Conaw/status/1902423274002510244">"If your AI won't help you break the law, it doesn't belong to you, it belongs to those who make its laws"</em></a></li>
                 </ul>
             </li>
-            <li>We try a lot of tools, but what works is what the whole team is comfortable using. We migrated completely to Notion recently, and I like their templates.</li>
-            <li>Being misunderstood is more common than we think—it's almost the default. Being truly seen and understood, though, feels rare and fleeting. I'm learning not to chase it too hard and instead find peace in expressing myself anyway.</li>
+            <li>Being misunderstood is more common than we think—it's almost the default. Being understood is rare and special. I'm learning not to chase it too hard and instead find peace in expressing myself anyway.</li>
             <li>This week I co-worked with Yash and we had a long conversation on how money works. I learnt about the petrodollar system, Ponzi schemes, and the Bretton Woods Agreement. Ref <a href="https://www.youtube.com/watch?v=hZHLGrV8Fvo&pp=ygUYaG93IGJyZW50d29vZCBzY2hlbSB3b3Jr">here</a> for me. Wild, how economics shapes so much around us.</li>
         </ul>
     </div>
