@@ -6,8 +6,7 @@ import MoviesAndSeries from './MoviesAndSeries';
 import Books from './Books';
 import NavBar from './Navbar';
 import PersonalGoals from './PersonalGoals';
-import EnhancedNotebook from './Notebook';
-
+import ManageSubscription from './ManageSubscription'
 const App = () => {
   return (
     <Router>
@@ -17,6 +16,7 @@ const App = () => {
         <Route path="/post/:title" element={<Post />} />
         <Route path="/movies-and-series" element={<MoviesAndSeries />} />
         <Route path="/books" element={<Books />} />
+        <Route path="/manage-subscription/:email" element={<ManageSubscription />} />
         <Route path="/personal-goals" element={<PersonalGoals />} /> {/* New Route */}
       </Routes>
     </Router>

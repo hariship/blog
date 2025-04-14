@@ -113,16 +113,19 @@ const RSSFeed = () => {
 
   return (
     <div className="rss-feed">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', background: '#fff' }}>
-        <nav className="rss-nav">
-          <a href="https://haripriya.org" className="nav-home">
-            <MdHome color="#35495E" size="3em" />
-          </a>
-        </nav>
-        <h1 className="rss-feed-title">Posts</h1>
-        <div>     
-        <Subscribe /></div>
+    <div className="blog-header">
+      <div className="nav-home-container">
+        <a href="https://haripriya.org" className="nav-home">
+          <MdHome color="#35495E" size="3em" />
+        </a>
       </div>
+      
+      <h1 className="rss-feed-title">Posts</h1>
+      
+      <div className="subscribe-container-wrapper">
+        <Subscribe />
+      </div>
+    </div>
       
       <div className="category-dropdown">
         <label htmlFor="category">Category</label>

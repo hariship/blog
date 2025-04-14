@@ -10,23 +10,35 @@ const Subscribe = () => {
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
   const [availableCategories, setAvailableCategories] = useState([]);
-
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+ 
   // Fetch available categories when component mounts
   React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 667);
+    };
+  
+    checkMobile(); // check on mount
+    window.addEventListener('resize', checkMobile); // update on resize
+  
     const fetchCategories = async () => {
       try {
         const response = await fetch('https://api.haripriya.org/rss-feed');
         const data = await response.json();
-        // Extract unique categories
         const categories = [...new Set(data.map(item => item.category))];
         setAvailableCategories(categories);
       } catch (error) {
         console.error('Error fetching categories:', error);
       }
     };
-    
+  
     fetchCategories();
+  
+    return () => {
+      window.removeEventListener('resize', checkMobile); // cleanup
+    };
   }, []);
+  
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -115,9 +127,25 @@ const Subscribe = () => {
 
   return (
     <div className="subscribe-container">
-      <button onClick={openModal} className="subscribe-button">
-        Subscribe
-      </button>
+      <button className={`subscribe-button ${isMobile ? 'mobile-button' : ''}`} onClick={openModal}>
+      {!isMobile && <span className="subscribe-text">Subscribe</span>}
+          {isMobile && (
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              width="20" 
+              height="20" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="white" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            >
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+          )}
+        </button>
 
       {isModalOpen && (
         <div className="subscribe-modal-overlay">
