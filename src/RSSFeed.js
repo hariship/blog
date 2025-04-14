@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { MdHome } from 'react-icons/md';
 import './RSSFeed.css';
 import { useLikes } from './likesContext';
+import Subscribe from './Subscribe'; // Import the new Subscribe component
 
 const targetUrl = 'https://api.haripriya.org/rss-feed';
 
@@ -119,7 +120,8 @@ const RSSFeed = () => {
           </a>
         </nav>
         <h1 className="rss-feed-title">Posts</h1>
-        <div style={{ width: '50px' }}></div>
+        <div>     
+        <Subscribe /></div>
       </div>
       
       <div className="category-dropdown">
