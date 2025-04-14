@@ -52,7 +52,7 @@ export const bi_weekly_notes_14_15_2025 = `
         <hr/>
         <ul>
             <li>Been trying out a few AI tools. I also learned about MCP <a href="https://youtu.be/7j_NE6Pjv-E?si=nBdQo9apsPH92xHl">(Model Context Protocol)</a> and found a great explanation that finally clicked. It's exciting how MCP can standardise context sharing and reduce LLM hallucinations.</li>
-            <li>I added a subscription button to my blog—top right corner of the home. A friend asked for it, so I waited until it felt useful. If you subscribe now, you'll start getting newsletters from my next post onward.
+            <li>I added a subscription button to my blog—top right corner of my <a href="https://blog.haripriya.org">homepage</a>. A friend asked for it, so I waited until it felt useful. If you subscribe now, you'll start getting newsletters from my next post onward.
                 <ul>
                     <li>I moved my email backend to <a href="https://resend.com/">Resend</a>. Integration was smooth and the service feels really light. No unnecessary bloat, just works.</li>
                     <li>Finally made the switch from Wix to <a href="https://www.cloudflare.com/">cloudfare </a>for hosting. Pages load faster and I have more control now. The difference is noticeable.</li>
