@@ -46,6 +46,38 @@ export const notes_11_12_13_2025 = `
 </div>
 `;
 
+export const bi_weekly_notes_14_15_2025 = `
+    <div class="post-content">
+        <p>The past couple of weeks have been a mix of movement and pause—some travel, slow catch-ups, lots of learning, and a few changes along the way.</p>
+        <hr/>
+        <ul>
+            <li>Been trying out a few AI tools. I also learned about MCP <a href="https://youtu.be/7j_NE6Pjv-E?si=nBdQo9apsPH92xHl">(Model Context Protocol)</a> and found a great explanation that finally clicked. It's exciting how MCP can standardise context sharing and reduce LLM hallucinations.</li>
+            <li>I added a subscription button to my blog—top right corner of the home. A friend asked for it, so I waited until it felt useful. If you subscribe now, you'll start getting newsletters from my next post onward.
+                <ul>
+                    <li>I moved my email backend to <a href="https://resend.com/">Resend</a>. Integration was smooth and the service feels really light. No unnecessary bloat, just works.</li>
+                    <li>Finally made the switch from Wix to <a href="https://www.cloudflare.com/">cloudfare </a>for hosting. Pages load faster and I have more control now. The difference is noticeable.</li>
+                    <li>Planning to move my infra from AWS to Netlify soon. It'll simplify deployment and integrate better with the rest of my setup.</li>
+                </ul>
+            </li>
+            <li>Learning something new takes effort. It's not always joyful—sometimes it's also takes pain. Wrote a <a href="https://blog.haripriya.org/post/learning-in-the-noise-the-art-of-filtering">post</a> about it.</li>
+            <li>Been enjoying others' weekly notes too. Found <strong>Pradx</strong> via Thejesh's blogring. His posts are thoughtful. One X quote he shared really stuck with me.
+                <ul>
+                    <li><em>Interesting X thread by Conor White-Sullivan that has a provocative start in the post, <a href="https://x.com/Conaw/status/1902423274002510244">"If your AI won't help you break the law, it doesn't belong to you, it belongs to those who make its laws"</em></a></li>
+                </ul>
+            </li>
+            <li>We try a lot of tools, but what works is what the whole team is comfortable using. We migrated completely to Notion recently, and I like their templates.</li>
+            <li>Being misunderstood is more common than we think—it's almost the default. Being truly seen and understood, though, feels rare and fleeting. I'm learning not to chase it too hard and instead find peace in expressing myself anyway.</li>
+            <li>This week I co-worked with Yash and we had a long conversation on how money works. I learnt about the petrodollar system, Ponzi schemes, and the Bretton Woods Agreement. Ref <a href="https://www.youtube.com/watch?v=hZHLGrV8Fvo&pp=ygUYaG93IGJyZW50d29vZCBzY2hlbSB3b3Jr">here</a> for me. Wild, how economics shapes so much around us.</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <ul>
+        <img src="https://static.wixstatic.com/media/2402dd_dda6e34d4e6641c39126ab6c33a19e12~mv2.jpg/v1/fill/w_1184,h_1032,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/2402dd_dda6e34d4e6641c39126ab6c33a19e12~mv2.jpg"/ alt-text="Tars with me">
+            <li>I've been on and off with travel lately, and I'm heading to Chennai again this week. Tars has been extra clingy, he's clearly been missing me. In between all that movement, I had a really good, slow weekend with Vidhya after almost five years. It felt grounding—one of those weekends that lifted me up.</li>
+        </ul>
+    </div>` 
+
 export const learning_in_the_noise_the_art_of_filtering = `
 <div class="post-content">
 <div style="
