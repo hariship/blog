@@ -66,7 +66,7 @@ export const bi_weekly_notes_14_15_2025 = `
                 </ul>
             </li>
             <li>Being misunderstood is more common than we think—it's almost the default. Being understood is rare and special. I'm learning not to chase it too hard and instead find peace in expressing myself anyway.</li>
-            <li>This week I co-worked with Yash and we had a long conversation on how money works. I learnt about the petrodollar system, Ponzi schemes, and the Bretton Woods Agreement. Ref <a href="https://www.youtube.com/watch?v=hZHLGrV8Fvo&pp=ygUYaG93IGJyZW50d29vZCBzY2hlbSB3b3Jr">here</a> for me. Wild, how economics shapes so much around us.</li>
+            <li>This week I co-worked with Yash and we had a long conversation on how money works. I learnt about the petrodollar system, Ponzi schemes, and the Bretton Woods Agreement. Ref <a href="https://www.youtube.com/watch?v=hZHLGrV8Fvo&pp=ygUYaG93IGJyZW50d29vZCBzY2hlbSB3b3Jr">here</a>. Wild, how economics shapes so much around us.</li>
         </ul>
     </div>
 
