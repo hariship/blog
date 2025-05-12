@@ -123,3 +123,53 @@ export const learning_in_the_noise_the_art_of_filtering = `
   </div>
   </div>
 `
+
+export const weekly_notes_16_17_18_19_2025 = `
+<div class="post-content">
+
+ <p>It's been a while since I wrote any notes. Work has been hectic, and while I did collate my thoughts, I never made the time to post them.</p>
+   <hr/>
+<div class="section"> 
+ <p>I paid a visit to Chennai to receive my mom, and that trip brought with it a beautiful moment: I became an aunt. My niece, Anaika, was born, and it's already been over a month since her arrival.</p>
+</div>
+
+  <ul class="section">
+    <li>The way I approach work and time management has been shaped by people I admire:</li>
+    <ul>
+      <li><b>Jagan</b> introduced me to empathy.</li>
+      <li><b>Thejesh</b> encouraged me to reflect more and bring structure to my thoughts. He's the reason I started writing notes.</li>
+      <li><b>Ellie</b> taught me how to be assertive without letting go of kindness.</li>
+      <li><b>Rahul</b> showed me how clarity and empathy can go hand in hand.</li>
+      <li><b>Ashwin</b> brings a quiet patience that I'm still learning from. His steady way of thinking has had a lasting impact.</li>
+    </ul>
+  </div>
+
+  <ul>
+    <li>Work filled most days this month — usually starting by 9 AM and stretching past midnight. I've been getting around 6 hours of sleep, trying to move development along as much as possible. The pace has been intense, but I've enjoyed staying close to the code.</li>
+    <li>I reminded myself this month that it's okay not to immediately understand everything. Just because something doesn't make sense at first glance doesn't mean it's a rule I've failed to follow.</li>
+
+    <li>We hosted Eva for a week and it was fun. We're glad we were able to share our days with her as they prepare to move back to Kerala soon.</li>
+
+    <li>I've noticed that quick reactions — especially through emojis — sometimes make real conversations feel distant. That disconnect between screen and self can quietly affect how we relate.</li>
+
+    <li>One quiet frustration this month has been with how some LLMs respond — often with too much certainty, even when they're wrong. They are predictions, probabilities, not certainties. It's like working with someone who rarely admits they might be off.</li>
+    <li>One of the days, we had a hackathon-style session with my cousins and a few college students. It was a fun and productive experience.</li>
+</ul>
+  <div class="section">
+    <img src="https://static.wixstatic.com/media/2402dd_b1570fe8ded749b089a9dbbe78cfb4de~mv2.jpeg/v1/fill/w_704,h_704,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/2402dd_b1570fe8ded749b089a9dbbe78cfb4de~mv2.jpeg">
+  </div>
+  <ul>
+    <li>I've been reading <i><a href="https://neildegrassetyson.com/books/2022-09-starry-messenger/">Starry Messenger</a></i> by Neil deGrasse Tyson and I'm thoroughly enjoying it.</li>
+
+    <li>I've been imagining a more anchored morning — one where I wake up to small things like the weather, health stats, or key events around where I live. Not just threads of news. I've been working on a platform to bring this to life, and it's still a work in progress.</li>
+
+    <li>Tars turned 1 on May 9th! He had a specially baked cake but unfortunately got sick the next day. Thankfully, he's recovered now.</li>
+
+    <li>My dreams have felt more vivid lately. Some of them stay with me after I wake up, and I've started noting them down. Holding onto a sense of curiosity — even through small experiments in thought, routine, or work — has made a difference. Staying curious feels like a quiet way to stay open.</li>
+
+    <li>It's important to remind ourselves that we are not slaves to anyone. Each country's affairs are its own, and sovereignty should be respected. Treating all people with respect is essential — there are no "aliens" among us. We are all human beings sharing this earth.</li>
+</ul>
+
+
+</div>
+`
