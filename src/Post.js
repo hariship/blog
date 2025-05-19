@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import parse from 'html-react-parser';
+import parse, { domToReact } from 'html-react-parser';
 import './Post.css';
 import { useLikes } from './likesContext';
 import { IoIosArrowBack } from 'react-icons/io';
@@ -59,10 +59,13 @@ const Post = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { title } = useParams(); // Get title from URL params
+  const normalized = normalizeTitle(title); // Normalize title
+  const isJournal = normalized === 'life-lately-20-2025';
 
   // Fetch post content by title
   const fetchPostContent = async (postTitleFromURL) => {
     const normalizedTitle = normalizeTitle(postTitleFromURL); // Normalize title
+
     const targetUrl = `https://api.haripriya.org/post/${normalizedTitle}`;
     try {
       const response = await fetch(targetUrl);
@@ -197,7 +200,7 @@ const Post = () => {
   };
 
   return (
-    <div className="post-container">
+    <div className={`post-container ${isJournal ? 'journal-post' : ''}`}>
       <Helmet>
         <title>{postTitle}</title>
         <meta property="og:title" content={postTitle} />
@@ -207,7 +210,7 @@ const Post = () => {
       {loading ? (
         <div className="loader"></div>
       ) : (
-        <>
+          <>
           <div className="back-button" onClick={handleGoBack}>
             <IoIosArrowBack className="back-icon" style={{ cursor: 'pointer' }} />
           </div>
@@ -218,9 +221,20 @@ const Post = () => {
               &nbsp;{formatDate(postDate)} &bull;
             </span>
             <span className="post-category">&nbsp;{postCategory}</span>
-            <hr />
+            {isJournal && <hr style={{ marginTop: '2rem' }} />}
           </div>
-          <div className="post-content">{parse(postContent)}</div>
+          <div className="post-content">
+                {
+                    parse(postContent, {
+                    replace: (domNode) => {
+                        if (domNode.attribs && domNode.attribs.style) {
+                        delete domNode.attribs.style;
+                        }
+                    }
+                    })
+                }
+        </div>
+
           <span onClick={handleLikeToggle} style={{ cursor: 'pointer' }}>
             {likesCount !== null && ( // Only show the heart after likes update
               <svg

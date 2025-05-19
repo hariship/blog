@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap');
 
 .post-container {
     background-color: #f9f9f9;
@@ -57,3 +58,114 @@ hr {
     background-color: #ccc; /* Set color of the line */
     margin: 20px 0; /* Add margin for spacing */
   }
+
+/* Only apply when it's a journal post */
+.journal-post #comments,
+.journal-post .blogextras-comments {
+  font-family: 'Georgia', serif;
+  background-color: #fdfaf6;
+  color: #3a3a3a;
+  border-radius: 12px;
+  padding-top: 1rem;
+}
+
+.journal-post p{
+    margin-right: 1rem;
+}
+
+
+.journal-post .blogextras-comments h2,
+.journal-post .blogextras-comments h3 {
+  font-family: 'Georgia', serif;
+  font-size: 1.3rem;
+  color: #2f2f2f;
+  margin-top: 2rem;
+}
+
+.journal-post .blogextras-comments input,
+.journal-post .blogextras-comments textarea {
+  background: #fffdf9;
+  border: 1px solid #e0dbd4;
+  font-family: 'Georgia', serif;
+  font-size: 1rem;
+  color: #3a3a3a;
+  border-radius: 6px;
+  padding: 0.5rem;
+  transition: border-color 0.2s ease;
+}
+
+.journal-post > .post-content{
+    font-size: 'medium' !important;
+}
+
+.journal-post .blogextras-comments input:focus,
+.journal-post .blogextras-comments textarea:focus {
+  border-color: #d6cfc4;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(221, 210, 197, 0.3);
+}
+
+.journal-post .blogextras-comments button {
+  background-color: #e5e0d8 !important;
+  color: #3a3a3a !important;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  transition: background 0.3s ease;
+}
+
+.journal-post .blogextras-comments button:hover {
+  background-color: #dcd6ce !important;
+}
+
+
+.journal-post,
+.journal-post input,
+.journal-post textarea,
+.journal-post button {
+  font-family: 'IBM Plex Mono', monospace !important;
+  line-height: 1.6;
+  letter-spacing: -0.01em;    /* Slightly tighter tracking */
+  color: #3a3a3a;
+}
+  
+.image-slider {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 1rem 0;
+    scrollbar-width: thin;
+  }
+  
+  .image-slider::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  .image-slider::-webkit-scrollbar-thumb {
+    background: #d2c7ba;
+    border-radius: 4px;
+  }
+  
+  .slide-track {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+  
+  .slide-track img {
+    border-radius: 12px;
+    max-height: 320px;
+    object-fit: cover;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  }
+
+  .journal-post .post-content {
+    font-size: 0.88rem !important;
+    line-height: 1.65;
+  }
+  
+  
+  

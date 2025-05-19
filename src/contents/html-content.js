@@ -124,6 +124,42 @@ export const learning_in_the_noise_the_art_of_filtering = `
   </div>
 `
 
+export const life_lately_20_2025 = `
+<div class="post-content" style="background: linear-gradient(135deg, #fefbf5, #f3ece3); padding: 2rem; border-radius: 16px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05); font-family: 'IBM Plex Mono', monospace; color: #3a2f2f; line-height: 1.7; font-size: 0.9rem;">
+
+  <p><b>Tars</b> has gone for board and train in <a href="https://hachi.dog/listing/quadrant-conditioned-k9-institute/">Quadrant K9 Institute</a>. It's like a school for him. Hemanth and Jagan had been nudging me for a while, but I resisted a lot at first, convinced that his training was our responsibility alone as parents. What changed my mind was realising that our packed days were shrinking his world; if he's ever to trek and travel with us, 
+  he needs space and time to explore on his own. Overtime he had grown to develop fear and anxiety around unfamiliar places without us. I cried the whole way back, but this break feels right. Seeing him running around and learn in videos eases the ache. I'm learning too to be a better parent.</p>
+
+  <p>With BB and Chooku, he has got company, and maybe a secret plan by the three to return home. All are happy and safe</p>
+
+  <hr/>
+
+  <ul>
+   <li><p>With more time in hand over weekends, I've been pausing to watch movies. I've always enjoyed Thiyagaraja Kumararaja's films and interviews, so I ended up watching the <a href="https://www.primevideo.com/detail/Modern-Love-Chennai/0NK5H61EYM4LTX6IM4CMF4SQ9O"><i>Modern Love Chennai</i></a> anthology. I liked <i>Ninaivo Oru Paravai</i>. </p></li>
+   <ul> <li><p>The style is unusual, it feels like a deliberate choice by the director to make it a film you can't fully grasp in one sitting. With OTT platforms, this kind of storytelling works well, with clues scattered throughout, and different doors opening each time you watch. </p></li> </ul>
+
+   <div class="image-slider">
+    <div class="slide-track">
+    <img src="https://static.wixstatic.com/media/2402dd_15757aac266041f286dcb25f7817939d~mv2.png" />
+    <img src="https://static.wixstatic.com/media/2402dd_72b04629640148089778dcb73483773b~mv2.png" />
+    <img src="https://static.wixstatic.com/media/2402dd_0638a216c044455b85deb489005b5731~mv2.png" />
+    <img src="https://static.wixstatic.com/media/2402dd_c271a85acd8248e7a445740aa02d61bc~mv2.png" alt="Gallery image 1" />
+    <img src="https://static.wixstatic.com/media/2402dd_98709cff87494bd7a90efccbc516d1c3~mv2.png" alt="Gallery image 2" />  
+    </div>
+  </div>
+
+  <li><p>It also inspired me to take photos of mundane, inanimate objects around me; Frames I don't usually visit, but which now feel quietly alive.I used <a href="https://www.amazon.in/Sony-ILCE-6400-24-2MP-Mirrorless-Digital/dp/B07NF3SNLT">Sony Alpha 6400 mirrorless</a></p></li>
+  <li> <p>I also purchased <a href="https://en.wikipedia.org/wiki/Ukulele">Ukulele</a>. I got curious about strings, and I find it fascinating how much of its sound depend on regular tuning; even with my stiff hands, I'm enjoying the strumming and singing along. </p></li>
+  <li><p>On one of the days, I spent a quiet evening on Church Street, my favorite part of the city with much memories. Picked up a few books at Blossoms and have already started Ted Chiang's <a href="https://en.wikipedia.org/wiki/Exhalation:_Stories">Exhalation</a>.</p></li>
+  </ul>
+
+  <p>Art has a way to yield pause to busy life. I may get bored if I stay still for a long time but this is a much needed relief.</p>
+
+</div>
+`;
+
+
+
 export const weekly_notes_16_17_18_19_2025 = `
 <div class="post-content">
 
