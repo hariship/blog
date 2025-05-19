@@ -149,7 +149,7 @@ export const life_lately_20_2025 = `
   </div>
 
   <li><p>It also inspired me to take photos of mundane, inanimate objects around me; Frames I don't usually visit, but which now feel quietly alive.I used <a href="https://www.amazon.in/Sony-ILCE-6400-24-2MP-Mirrorless-Digital/dp/B07NF3SNLT">Sony Alpha 6400 mirrorless</a></p></li>
-  <li> <p>I also purchased <a href="https://en.wikipedia.org/wiki/Ukulele">Ukulele</a>. I got curious about strings, and I find it fascinating how much of its sound depend on regular tuning; even with my stiff hands, I'm enjoying the strumming and singing along. </p></li>
+  <li> <p>Hemanth gifted me <a href="https://en.wikipedia.org/wiki/Ukulele">Ukulele</a>. I got curious about strings, and I find it fascinating how much of its sound depend on regular tuning; even with my stiff hands, I'm enjoying the strumming and singing along. </p></li>
   <li><p>On one of the days, I spent a quiet evening on Church Street, my favorite part of the city with much memories. Picked up a few books at Blossoms and have already started Ted Chiang's <a href="https://en.wikipedia.org/wiki/Exhalation:_Stories">Exhalation</a>.</p></li>
   </ul>
 
