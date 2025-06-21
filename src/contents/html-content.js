@@ -224,7 +224,7 @@ export const notes_21_22_23_24_2025 = `
       <li>Reading <a href='https://www.goodreads.com/book/show/62192261-the-door-to-door-bookstore'>The Door-to-Door bookstore</a>. </li>
       <li>Watched <i><a href='https://tv.apple.com/in/show/sunny/umc.cmc.7c5t9dde8dxoaxwyl5rkuw38p'>Sunny</a></i> on Apple TV. I personally liked as it had to do with robots and love</li>
       <li>Watched <i><a href='https://en.wikipedia.org/wiki/Tourist_Family'>Tourist Family</a></i> and <i><a href='https://en.wikipedia.org/wiki/Thug_Life_(2025_film)'>Thug Life</a></i>. I liked <i>Tourist Family</i>.</li>
-      <li>Revisited a few old <a href='https://en-m-wikipedia-org.translate.goog/wiki/Balu_Mahendra?_x_tr_sl=en&_x_tr_tl=ta&_x_tr_hl=ta&_x_tr_pto=tc'>Balu Mahendra</a> stories from Sun TV in the name of <i>Kathai Neram</i> - the kind of stories I keep going back to.</li>
+      <li>Revisited a few old <a href='https://en-m-wikipedia-org.translate.goog/wiki/Balu_Mahendra?_x_tr_sl=en&_x_tr_tl=ta&_x_tr_hl=ta&_x_tr_pto=tc'>Balu Mahendra</a> series from Sun TV in the name of <i>Kathai Neram</i> - the kind of stories I keep going back to.</li>
     </ul>
 
     <div class="section">
