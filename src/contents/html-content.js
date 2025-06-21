@@ -209,3 +209,64 @@ export const weekly_notes_16_17_18_19_2025 = `
 
 </div>
 `
+export const notes_21_22_23_24_2025 = `
+<div class="post-content">
+
+  <p>For a month I had not been publishing any notes, but I did collate them — almost every day whenever I could. I didn't have the mental space to post them. So, this one might be a bit long.</p>
+  <hr/>
+
+  <div class="section">
+    <h3>Week 21-22</h3>
+    <p>I was down for most part of the weeks, realising how hard it is to collect your thoughts and write when you're not feeling well. I mostly stayed occupied with reading and watching things.</p>
+    <p> Among other things:</p>
+    <ul>
+      <li>Finished <i><a href='https://www.amazon.in/Exhalation-Stories-Ted-Chiang/dp/1101947888'>Exhalation</a></i> by Ted Chiang. </li>
+      <li>Reading <a href='https://www.goodreads.com/book/show/62192261-the-door-to-door-bookstore'>The Door-to-Door bookstore</a>. </li>
+      <li>Watched <i><a href='https://tv.apple.com/in/show/sunny/umc.cmc.7c5t9dde8dxoaxwyl5rkuw38p'>Sunny</a></i> on Apple TV. I personally liked as it had to do with robots and love</li>
+      <li>Watched <i><a href='https://en.wikipedia.org/wiki/Tourist_Family'>Tourist Family</a></i> and <i><a href='https://en.wikipedia.org/wiki/Thug_Life_(2025_film)'>Thug Life</a></i>. I liked <i>Tourist Family</i>.</li>
+      <li>Revisited a few old <a href='https://en-m-wikipedia-org.translate.goog/wiki/Balu_Mahendra?_x_tr_sl=en&_x_tr_tl=ta&_x_tr_hl=ta&_x_tr_pto=tc'>Balu Mahendra</a> stories from Sun TV in the name of <i>Kathai Neram</i> - the kind of stories I keep going back to.</li>
+    </ul>
+
+    <div class="section">
+    <img src='https://static.wixstatic.com/media/2402dd_82e36944f6f14d459ab73bfc73942bf4~mv2.jpeg'>
+    </div>
+
+   <p>Work has been steady, and focus has held up well overall. We released the first version recently , a solid step forward. I've started enjoying early mornings more, and when I'm blocked, I often end up fixing bugs late at night. I try not to pick up anything new unless I've cleared my head. I genuinely enjoy working with my team - there's a good rhythm and energy right now.</p>
+
+    <ul>
+    <li>I've been thinking about how important it is to practise “being nice” consistently at work. I remember reading a <a href='https://thejeshgn.com/2024/04/22/be-nice/'>post</a> once, for many of us, work takes up most of our lives, especially in IT. So how we communicate really matters, especially in a remote environment.</li></ul>
+
+    <p>My MacBook's display broke on one of the weeks, and I ended up getting a new one <a href='https://www.apple.com/in/shop/buy-mac/macbook-air'>(M4 Air)</a> through an exchange. It was an unexpected expense, but the migration was surprisingly smooth. I wanted to get a <a href='https://www.lenovo.com/in/en/p/laptops/thinkpad/thinkpadt/thinkpad-t14-gen-5-14-inch-intel/21mmcto1wwin2'>ThinkPad</a> — I always liked how compact and handy it was — but it felt like too big of an investment right now. The Apple ecosystem is a big plus, and I prefer macOS/Linux over Windows any day, especially since I live in the terminal most of the time.</p>
+
+    <p>Recently I've started recognising that even saying “I'm off social media” is a form of privilege. For most parts, it becomes an essential platform for connection and growth. So, I've been lately appreciating social connections but I am still mindful. Also, without Tars around, I found myself waking up and reaching for my phone first thing — which I end up regretting the later part of the day.</p>
+  </div>
+
+  <hr/>
+
+  <div class="section">
+    <h3>Week 23-24</h3>
+    <p>Hemanth and I got to spend some good time together too. We worked out of co-working spaces most days. We also went to Church Street on one of the days, picked up a few books, and sat at the open section of <a href='https://www.zomato.com/bangalore/kling-brewery-church-street-bangalore'>Kling</a> — the food was great.</p>
+    <div class="section">
+    <img src='https://static.wixstatic.com/media/2402dd_f5603db0435c4f06909cbab8e31b0bce~mv2.jpeg/v1/fill/w_3204,h_2403,al_c,q_90/2402dd_f5603db0435c4f06909cbab8e31b0bce~mv2.webp'>
+    </div>
+    <ul>
+    <li>The kids upstairs still drop by now and then. They danced at our apartment recently. We talk stories, they write, and I've been setting up a small space for them to feel comfortable. They mostly enjoy juices and ice creams, and they miss Tars too.</li>
+    <li>Photos are one of the few ways we attempt to hold time still. They offer a glimpse into something that no longer exists, except in memory. This very thought often makes me want to take that 'click', as if preserving it might help me stay connected to it later. But I've started questioning the need to preserve everything. And most importantly, the phone gallery gets cluttered and messy. If every moment is photographed, none of them feel rare. It's been on my mind lately, and I'm open to ideas.</li>
+
+    <li>A good friend of mine, Bobby, recently bought a house in Hebbal. I went for the housewarming and we kept it low-key. He wasn't too into the whole ceremony bit, so we just chilled with Ambili and their kid. I'm genuinely happy for him as I know how much this place means to him. We had some food and boiled milk, and I left early to pick up Tars.</li>
+    <div class="section">
+        <img src='https://static.wixstatic.com/media/2402dd_d62a06ec7e2c4ebbb3c92d1154a8f14f~mv2.jpg/v1/fill/w_1184,h_1666,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/2402dd_d62a06ec7e2c4ebbb3c92d1154a8f14f~mv2.jpg'>
+    </div>
+    <li>When Tars wasn't around, we slipped back into our old, lazy routine of waking and sleeping at odd hours. It often reminded us how much he grounded us. He's back now after a month at boarding , a bit leaner but well-fed and rested. He had a good time there, made friends, followed a routine, though he's still a little anxious. Ever since he returned, things have felt more balanced again. Even my sleep has been better for the past week. He's grumpy at times, but doing well overall. He's truly our companion.</li>
+
+    <div class="section">
+    <img src='https://static.wixstatic.com/media/2402dd_030cd4d68ef84ffc95246429bdc06223~mv2.jpeg/v1/fill/w_1480,h_1110,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/2402dd_030cd4d68ef84ffc95246429bdc06223~mv2.jpeg'>
+    </div>
+    
+    <li>I'm not someone who regularly keeps in touch with family, and I'm not proud of it. Slowly trying to build the habit , maybe by blocking out time just for that. I already do it with one or two close friends, and I think it's time I do that with family too, especially as they're getting older.  Jagan has been exploring a really interesting space, and I'm looking forward to writing more about it once he shares his work. </li>
+    </ul>
+  </div>
+
+
+</div>
+`;
