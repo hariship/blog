@@ -212,7 +212,7 @@ export const weekly_notes_16_17_18_19_2025 = `
 export const notes_21_22_23_24_2025 = `
 <div class="post-content">
 
-  <p>For a month I had not been publishing any notes, but I did collate them — almost every day whenever I could. I didn't have the mental space to post them. So, this one might be a bit long.</p>
+  <p>For a month I had not been publishing any notes, but I did collate them — almost every day whenever I could. I didn't have the mental space to post them. So, this one might be a bit long. </p>
   <hr/>
 
   <div class="section">
@@ -238,7 +238,7 @@ export const notes_21_22_23_24_2025 = `
 
     <p>My MacBook's display broke on one of the weeks, and I ended up getting a new one <a href='https://www.apple.com/in/shop/buy-mac/macbook-air'>(M4 Air)</a> through an exchange. It was an unexpected expense, but the migration was surprisingly smooth. I wanted to get a <a href='https://www.lenovo.com/in/en/p/laptops/thinkpad/thinkpadt/thinkpad-t14-gen-5-14-inch-intel/21mmcto1wwin2'>ThinkPad</a> — I always liked how compact and handy it was — but it felt like too big of an investment right now. The Apple ecosystem is a big plus, and I prefer macOS/Linux over Windows any day, especially since I live in the terminal most of the time.</p>
 
-    <p>Recently I've started recognising that even saying “I'm off social media” is a form of privilege. For most parts, it becomes an essential platform for connection and growth. So, I've been lately appreciating social connections but I am still mindful. Also, without Tars around, I found myself waking up and reaching for my phone first thing — which I end up regretting the later part of the day.</p>
+    <p>Recently I've started recognising that even saying “I'm off social media” is a form of privilege. For most parts, it becomes an essential platform for connection and growth. From a distance, its easy to scroll past the current political scenario, but the ache still comes through. Maybe it's the shift in tone.  That even through all the noise, something quieter and more steady will take shape again.</p>
   </div>
 
   <hr/>
@@ -262,7 +262,7 @@ export const notes_21_22_23_24_2025 = `
     <div class="section">
     <img src='https://static.wixstatic.com/media/2402dd_030cd4d68ef84ffc95246429bdc06223~mv2.jpeg/v1/fill/w_1480,h_1110,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/2402dd_030cd4d68ef84ffc95246429bdc06223~mv2.jpeg'>
     </div>
-    
+
     <li>I'm not someone who regularly keeps in touch with family, and I'm not proud of it. Slowly trying to build the habit , maybe by blocking out time just for that. I already do it with one or two close friends, and I think it's time I do that with family too, especially as they're getting older.  Jagan has been exploring a really interesting space, and I'm looking forward to writing more about it once he shares his work. </li>
     </ul>
   </div>
