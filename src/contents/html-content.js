@@ -262,7 +262,7 @@ export const notes_21_22_23_24_2025 = `
     <img src='https://static.wixstatic.com/media/2402dd_030cd4d68ef84ffc95246429bdc06223~mv2.jpeg/v1/fill/w_1480,h_1110,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/2402dd_030cd4d68ef84ffc95246429bdc06223~mv2.jpeg'>
     </div>
     <li>Jagan has been exploring a really interesting space, and I'm looking forward to writing more about it once he shares his work.</li>
-    <li>I'm not someone who regularly keeps in touch with family, and I'm not proud of it. Slowly trying to build the habit , maybe by blocking out time just for that. I already do it with one or two close friends, and I think it's time I do that with family too, especially as they're getting older.  Jagan has been exploring a really interesting space, and I'm looking forward to writing more about it once he shares his work. </li>
+    <li>I'm not someone who regularly keeps in touch with family, and I'm not proud of it. Slowly trying to build the habit , maybe by blocking out time just for that. I already do it with one or two close friends, and I think it's time I do that with family too, especially as they're getting older. </li>
     </ul>
   </div>
 
