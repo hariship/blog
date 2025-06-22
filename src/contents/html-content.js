@@ -224,21 +224,20 @@ export const notes_21_22_23_24_2025 = `
       <li>Reading <a href='https://www.goodreads.com/book/show/62192261-the-door-to-door-bookstore'>The Door-to-Door bookstore</a> </li>
       <li>Watched <i><a href='https://tv.apple.com/in/show/sunny/umc.cmc.7c5t9dde8dxoaxwyl5rkuw38p'>Sunny</a></i> on Apple TV. I personally liked as it had to do with robots and love.</li>
       <li>Watched <i><a href='https://en.wikipedia.org/wiki/Tourist_Family'>Tourist Family</a></i> and <i><a href='https://en.wikipedia.org/wiki/Thug_Life_(2025_film)'>Thug Life</a></i>. I liked <i>Tourist Family.</i></li>
-      <li>Revisited a few old <a href='https://en-m-wikipedia-org.translate.goog/wiki/Balu_Mahendra?_x_tr_sl=en&_x_tr_tl=ta&_x_tr_hl=ta&_x_tr_pto=tc'>Balu Mahendra</a> series from Sun TV in the name of <i>Kathai Neram</i> - the kind of stories I keep going back to.</li>
+      <li>Revisited a few old <a href='https://en-m-wikipedia-org.translate.goog/wiki/Balu_Mahendra?_x_tr_sl=en&_x_tr_tl=ta&_x_tr_hl=ta&_x_tr_pto=tc'>Balu Mahendra</a> series from Sun TV under the title <i>Kathai Neram</i> - the kind of stories I keep going back to.</li>
     </ul>
 
     <div class="section">
     <img src='https://static.wixstatic.com/media/2402dd_82e36944f6f14d459ab73bfc73942bf4~mv2.jpeg'>
     </div>
 
-   <p>Work has been steady, and focus has held up well overall. We released the first version recently , a solid step forward. I've started enjoying early mornings more, and when I'm blocked, I often end up fixing bugs late at night. I try not to pick up anything new unless I've cleared my head. I genuinely enjoy working with my team - there's a good rhythm and energy right now.</p>
+   <p>Work has been steady, and focus has held up well overall. We released the first version recently. I often end up fixing bugs late at night and try not to pick up anything new unless I've cleared my head. I genuinely enjoy working with my team - there's a good rhythm and energy right now.</p>
 
     <ul>
     <li>I've been thinking about how important it is to practise “being nice” consistently at work. I remember reading a <a href='https://thejeshgn.com/2024/04/22/be-nice/'>post</a> once, for many of us, work takes up most of our lives, especially in IT. So how we communicate really matters, especially in a remote environment.</li></ul>
 
-    <p>My MacBook's display broke one of the weeks, and I ended up getting a new one <a href='https://www.apple.com/in/shop/buy-mac/macbook-air'>(M4 Air)</a> through an exchange. It was an unexpected expense, but the migration was surprisingly smooth. I wanted to get a <a href='https://www.lenovo.com/in/en/p/laptops/thinkpad/thinkpadt/thinkpad-t14-gen-5-14-inch-intel/21mmcto1wwin2'>ThinkPad</a> — I always liked how compact and handy it was — but it felt like too big of an investment right now. The Apple ecosystem is a big plus, and I prefer macOS/Linux over Windows any day, especially since I live in the terminal most of the time.</p>
-
-    <p>Recently I've started recognising that even saying “I'm off social media” is a form of privilege. For most parts, it becomes an essential platform for connection and growth. From a distance, its easy to scroll past the current political scenario, but the ache still comes through. Maybe it's the shift in tone.  That even through all the noise, something quieter and more steady will take shape again.</p>
+    <p>My MacBook's display broke one of the weeks, and I ended up getting a new one <a href='https://www.apple.com/in/shop/buy-mac/macbook-air'>(M4 Air)</a> through an exchange. It was an unexpected expense, but the migration was surprisingly smooth. I wanted to get a <a href='https://www.lenovo.com/in/en/p/laptops/thinkpad/thinkpadt/thinkpad-t14-gen-5-14-inch-intel/21mmcto1wwin2'>ThinkPad</a> but it felt like too big of an investment right now. The Apple ecosystem is a big plus, and since I spend most of my time in the terminal, my preference is over macOS or Linux over Windows anyday.</p>
+    <p>I've come to see that even saying “I'm off social media” is a kind of privilege, when for many it's a lifeline for connection and awareness. It's easy to scroll past the political noise, but the ache still cuts through. Maybe it's the shift in tone, a quiet sense that something steadier might yet take shape and there is still hope. </p>
   </div>
 
   <hr/>
