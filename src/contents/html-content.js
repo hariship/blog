@@ -253,7 +253,7 @@ export const notes_21_22_23_24_2025 = `
     <li>The kids upstairs still drop by now and then. They danced at our apartment recently. We talk stories, they write, and I've been setting up a small space for them to feel comfortable. They mostly enjoy juices and ice creams, and they miss Tars too.</li>
     <li>Photos are one of the few ways we attempt to hold time still. They offer a glimpse into something that no longer exists, except in memory. This very thought often makes me want to take that 'click', as if preserving it might help me stay connected to it later. But I've started questioning the need to preserve everything. And most importantly, the phone gallery gets cluttered and messy. If every moment is photographed, none of them feel rare. It's been on my mind lately, and I'm open to ideas.</li>
 
-    <li>A good friend of mine, Bobby, recently bought a house in Hebbal. I went for the housewarming and we kept it low-key. He wasn't too into the whole ceremony bit, so we just chilled with Ambili and their kid. I'm genuinely happy for him as I know how much this place means to him. We had some food and boiled milk, and I left early to pick up Tars.</li>
+    <li>Bobby recently bought a house in Hebbal. I went for the housewarming and we kept it low-key. He wasn't too into the whole ceremony bit, so we just chilled with Ambili and their kid. I'm genuinely happy for him as I know how much this place means to him. We had some food and boiled milk, and I left early to pick up Tars.</li>
     <div class="section">
         <img src='https://static.wixstatic.com/media/2402dd_d62a06ec7e2c4ebbb3c92d1154a8f14f~mv2.jpg/v1/fill/w_1184,h_1666,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/2402dd_d62a06ec7e2c4ebbb3c92d1154a8f14f~mv2.jpg'>
     </div>
@@ -262,7 +262,7 @@ export const notes_21_22_23_24_2025 = `
     <div class="section">
     <img src='https://static.wixstatic.com/media/2402dd_030cd4d68ef84ffc95246429bdc06223~mv2.jpeg/v1/fill/w_1480,h_1110,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/2402dd_030cd4d68ef84ffc95246429bdc06223~mv2.jpeg'>
     </div>
-
+    <li>Jagan has been exploring a really interesting space, and I'm looking forward to writing more about it once he shares his work.</li>
     <li>I'm not someone who regularly keeps in touch with family, and I'm not proud of it. Slowly trying to build the habit , maybe by blocking out time just for that. I already do it with one or two close friends, and I think it's time I do that with family too, especially as they're getting older.  Jagan has been exploring a really interesting space, and I'm looking forward to writing more about it once he shares his work. </li>
     </ul>
   </div>
