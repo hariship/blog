@@ -212,7 +212,7 @@ export const weekly_notes_16_17_18_19_2025 = `
 export const notes_21_22_23_24_2025 = `
 <div class="post-content">
 
-  <p>For a month I had not been publishing any notes, but I did collate them — almost every day whenever I could. I didn't have the mental space to post them. So, this one might be a bit long. </p>
+  <p>For a month I had not been publishing any notes, but I did collate them — whenever I could. I didn't have the mental space to post them. So, this one might be a bit long. </p>
   <hr/>
 
   <div class="section">
