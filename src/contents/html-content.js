@@ -252,7 +252,7 @@ export const notes_21_22_23_24_2025 = `
     <li>The kids upstairs still drop by now and then. They danced at our apartment recently. We talk stories, they write, and I've been setting up a small space for them to feel comfortable. They mostly enjoy juices and ice creams, and they miss Tars too.</li>
     <li>Photos are one of the few ways we attempt to hold time still. They offer a glimpse into something that no longer exists, except in memory. This very thought often makes me want to take that 'click', as if preserving it might help me stay connected to it later. But I've started questioning the need to preserve everything. And most importantly, the phone gallery gets cluttered and messy. If every moment is photographed, none of them feel rare. It's been on my mind lately, and I'm open to ideas.</li>
 
-    <li>Bobby recently bought a house in Hebbal. I went for the housewarming and we kept it low-key. He wasn't too into the whole ceremony bit, so we just chilled with Ambili and their kid. I'm genuinely happy for him as I know how much this place means to him. We had some food and boiled milk, and I left early to pick up Tars.</li>
+    <li>Bobby recently bought a house in Hebbal. I went for the housewarming and we kept it low-key. He wasn't too into the whole ceremony bit, so we just chilled with Ambili and their kid. I'm genuinely happy as I know how much this place means to him. We had some food and boiled milk, and I left early to pick up Tars.</li>
     <div class="section">
         <img src='https://static.wixstatic.com/media/2402dd_d62a06ec7e2c4ebbb3c92d1154a8f14f~mv2.jpg/v1/fill/w_1184,h_1666,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/2402dd_d62a06ec7e2c4ebbb3c92d1154a8f14f~mv2.jpg'>
     </div>
