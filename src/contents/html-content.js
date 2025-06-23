@@ -269,3 +269,32 @@ export const notes_21_22_23_24_2025 = `
 
 </div>
 `;
+
+
+export const social_media_and_focus = `
+ <div class="section">
+  <p>Over the past few months, I've spent a fair bit of time thinking (and writing) about social media — what's okay, what's not, if it's healthy or addictive. I think it's time I wrap that loop with this one post and let it go for now.</p>
+  <hr/>
+  <p>Last year was hard in terms of focus. I used to release most of my mental clutter through workouts; stress would sweat itself out. But when I lost that routine, I slowly slipped into a coping mechanism of endless scrolling. The next morning always came with a trace of regret. If not social media, I'd rewatch familiar shows just to feel something comforting. Star Trek was a frequent escape (a big time fan).</p>
+  <div class="section">
+    <img src='https://static.wixstatic.com/media/2402dd_5f36a03bd605431e9da02d1255007657~mv2.jpeg'/>
+  </div>
+  <p>There was a point, after bingeing through Star Trek again, when I felt I needed a screen with less noise. I even <a href='https://medium.com/@haripriya.sr/4-things-that-star-trek-the-next-gen-made-me-question-our-current-gen-841ba48ba6c2'>wrote</a> about it (how I prefer screens that offer minimal, intentional experiences). That memory reminded me of how deeply I once resonated with minimalism. These days, everything feels excessive: food, tech, money and content. Staying present now feels like a luxury in itself.</p>
+
+  <p>It all seems to circle back to four things I care about deeply:</p>
+  <ul>
+    <li>Better, more mindful consumption of food</li>
+    <li>Healthier processing of thoughts</li>
+    <li>Sharper focus on the present</li>
+    <li>Willingness to embrace boredom without chasing dopamine</li>
+  </ul>
+
+  <p>In college and right after, I had people around all the time. I'd drop in at a friend's house, make coffee, talk for hours. Conversations were easy, flowing, unstructured. Even if I didn't feel okay, I had people to talk it out with. Now, with remote work and distance, that's changed. I still talk to close friends, but the frequency is low, and it shows. That vacuum often gets filled with social media or reruns, maybe because I've slowly become more of an introvert. Small talk rarely satisfies; the things I want to share have weight.</p>
+
+  <p>This year, I've been learning new skills like piano & swimming, which surprised me because it brought back a kind of focus and curiosity I thought I had lost. The past few weeks were a little off again, but maybe that's just part of the rhythm. I'm not too hard on myself about it anymore.</p>
+
+  <p>I think of social media like a tea shop. It's okay to walk in, sit for a while, talk to whoever's around, and then head back to your day. But if I'm spending all my time there, something's off. And I wouldn't take medical advice from someone hanging out at a tea shop either. I'd rather visit a doctor's clinic. That analogy stuck with me. Not everything online needs to be taken as truth. Some things are just tea-time talk. And I think I have that clarity now.</p>
+
+  <p>If not YouTube, we'd be saying the same things at a tea stall. The urge to share confidently without context has always been there. Earlier it happened in physical spaces. Now it's all online. And that's fine, if we treat it as such. What becomes dangerous is assuming that's all there is, without verifying, thinking through, or talking to someone who knows more. For now, I think I'm comfortable to draw that line.</p>
+</div>
+`
