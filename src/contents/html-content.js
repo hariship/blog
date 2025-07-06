@@ -299,7 +299,7 @@ export const social_media_and_focus = `
 </div>
 `
 
-export const bi_weekly_notes_25_26_27_2025 = `
+export const notes_25_26_27_2025 = `
 <div class="section">
   <hr/>
    <p>Past few weeks have mostly been about music, books, and people. Each in their own way kept me going.</p>
