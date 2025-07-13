@@ -327,7 +327,7 @@ export const notes_25_26_27_2025 = `
 
 `
 
-export const notes_28_2025 = `
+export const notes_28_2025_ = `
 <div class="section">
   <hr/>
   <p>Ramya recently asked why my notes have become monthly. Honestly, it's either laziness sometimes or just feeling like I don't have much to say. But I would likely not want to give in to that. So here's a small effort (thanks to her) to get back to bi-weekly (sometimes even weekly) writing. Also, this week has been quite a handful.</p>
