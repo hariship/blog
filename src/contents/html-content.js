@@ -326,3 +326,35 @@ export const notes_25_26_27_2025 = `
 </div>
 
 `
+
+export const notes_28_2025 = `
+<div class="section">
+  <hr/>
+  <p>Ramya recently asked why my notes have become monthly. Honestly, it's either laziness sometimes or just feeling like I don't have much to say. But I would likely not want to give in to that. So here's a small effort (thanks to her) to get back to bi-weekly (sometimes even weekly) writing. Also, this week has been quite a handful.</p>
+  <hr/>
+  <p>My health has been on and off, and I've been commuting most of the time for work. But I did manage to focus quite well on Wednesday <b>(July 9)</b>. Personally, that day felt unusually long, like staring at boiling milk. Ironically, it happened to be the <a href='https://www.space.com/astronomy/earth/did-you-feel-it-earth-just-had-one-of-its-shortest-days-ever-and-2-more-are-coming'>shortest day on Earth</a> till date. Our planet spun faster than usual because the moon was unusually closer that day, creating a higher gravitational pull and slightly altering the planet's axial wobble. We may encounter this again on <b>July 22 and August 5</b> this year.</p>
+  <hr/>
+  <p>On Tuesday, I worked from <a href="https://underline.center/">Underline Center</a> although I was a bit sick. I had lunch with a bunch of interesting folks, including a few from <a href="https://indieweb.org/Bangalore">IndieWebClub</a>. I ended up pondering once again about psychological sovereignty. Staying curious helps. And being around a thoughtful community gives me hope. I'm not chasing grand achievements, just trying to participate, learn, and stay present.</p>
+  <ul>
+  <li>I also met <a href='https://tanvibhakta.mataroa.blog/'>Tanvi</a> and <a href='https://jackerhack.ing/'>Kiran</a> (who I found out later that day to be the co-founder of <i>Fifth Elephant</i>). I showed them KnowledgeKeeper, and we ended up having a long, meandering chat about Bangalore's history and all kinds of side quests over coffee. Just four of us, lounging around and chatting even after work hours.</li>
+  <li>Kiran came with a handheld <a href='https://en.wikipedia.org/wiki/Software-defined_radio'>SDR</a> and talked about its usage. He also taught us about beam forming. Until that day, I didn't know normal BLE-5 earbud phones would <a href='http://gravastar.com/blogs/learn/why-bluetooth-headphones-keep-cutting-out?srsltid=AfmBOoozVz23z7a0zdF90uzRAxEB9tCDvQhVVKCxJZ3jjW6Z2GdVHwgt&utm_source=chatgpt.com'>break the connection</a> if you rotated your head to the left. In many headphones, the right earbud acts as the primary receiver and relays to the left. If the phone is in your right pocket, turning your head left might disrupt the relay. This only applies to BLE-5 headphones—AirPods, for instance, have receivers in both earbuds.</li>
+  </ul>
+  <hr/>
+  <p>Later that week, I visited my cousin's place. He casually asked me to drop by, and I walked into his house to find 30+ kids listening to a talk by <a href='https://www.linkedin.com/in/thevishnureddy'>Vishnu</a> (Swiggy's first employee and former business head). I also met <a href='https://www.linkedin.com/in/rk-radhakrishnan/'>Radhakrishnan</a>, who recently published a book. His work explores some meaningful themes. The evening was overwhelming in a good way.</p>
+  <div class='section'>
+  <img src='https://static.wixstatic.com/media/2402dd_8cf9149c525440a69d1f7446a7b7fd25~mv2.jpeg/v1/fill/w_740,h_555,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/2402dd_8cf9149c525440a69d1f7446a7b7fd25~mv2.jpeg'/>
+  </div>
+  <hr/>
+  <p><b>Ram's</b> short story got <a href='https://scienceandfiction.net/stories/31_dream-oracle/'>published</a> last week, and I'm so happy for her. It's a lovely piece and definitely worth a read.</p>
+  <hr/>
+  <p>I couldn't continue piano classes as they started clashing with other commitments. So I've been practicing by myself using YouTube videos. Also, I like stencil art—it's a better way to kill time. I sketched <b>A.R. Rahman</b> on one of the days.</p>
+  <div class='section'>
+  <img src='https://static.wixstatic.com/media/2402dd_109aea5114b7412e83ca91615cfefaac~mv2.jpeg/v1/fill/w_740,h_987,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/2402dd_109aea5114b7412e83ca91615cfefaac~mv2.jpeg' />
+  </div>
+  <hr/>
+  <p>Over time, I've realized that at work, it's not the pace that burns you out but, constant sense of running without direction. Slowing down doesn't mean doing less. It means being clear about why you're doing what you're doing, even if it's mundane. Work isn't just output. It also includes relationships, timing, clarity, and care. When you lead your work with intention, take ownership of your choices, and hold space for others to do the same, you move forward with less drama and more focus. And that, to me, is what a slow, grounded life looks like.</p>
+  <hr/>
+  <p>Lately, I've been noticing how some relationships don't fall apart from distance but from quiet forms of control. It's painful to watch someone you care about slowly shrink themselves just to avoid conflict.</p>
+  <p>I want to end with a note that making space to be with myself and not outsourcing my restlessness to someone else (even if it's your partner) helps. That doesn't mean being detached or hyper-independent. To me, it just means remembering that we are responsible for shaping our own days and time. And when we stop blaming others for how our life feels, it's surprisingly liberating. Not easy, but honest. And that's a better place to start from.</p>
+</div>
+`;
