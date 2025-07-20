@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function RSSFeedButton() {
-  const rssFeedUrl = 'https://api.haripriya.org/rss-feed';
+  const rssFeedUrl = 'https://api.haripriya.org/blog-feed.xml';
 
   return (
     <a
