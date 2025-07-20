@@ -167,5 +167,31 @@ hr {
     line-height: 1.65;
   }
   
+
+
+  .rss-feed-icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ff7f00;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    margin-left: 8px;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+  
+  .rss-feed-icon-button:hover {
+    background-color: #e06600;
+  }
+  
+  .rss-feed-icon {
+    width: 18px;
+    height: 18px;
+    fill: white;
+  }
+  
+  
   
   

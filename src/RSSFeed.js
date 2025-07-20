@@ -4,6 +4,8 @@ import { MdHome } from 'react-icons/md';
 import './RSSFeed.css';
 import { useLikes } from './likesContext';
 import Subscribe from './Subscribe'; // Import the new Subscribe component
+import 'react-quill/dist/quill.snow.css';
+import RSSFeedButton from './RSSFeedButton';
 
 const targetUrl = 'https://api.haripriya.org/rss-feed';
 
@@ -125,6 +127,9 @@ const RSSFeed = () => {
       <div className="subscribe-container-wrapper">
         <Subscribe />
       </div>
+      <div style={{ textAlign: 'center', margin: '10px 0' }}>
+        <RSSFeedButton />
+    </div>
     </div>
       
       <div className="category-dropdown">
@@ -233,5 +238,6 @@ const RSSFeed = () => {
     </div>
   );
 };
+
 
 export default RSSFeed;

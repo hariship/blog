@@ -7,6 +7,7 @@ import Books from './Books';
 import NavBar from './Navbar';
 import PersonalGoals from './PersonalGoals';
 import ManageSubscription from './ManageSubscription'
+import CMSDashboard from './CMSDashboard';
 const App = () => {
   return (
     <Router>
@@ -18,6 +19,7 @@ const App = () => {
         <Route path="/books" element={<Books />} />
         <Route path="/manage-subscription/:email" element={<ManageSubscription />} />
         <Route path="/personal-goals" element={<PersonalGoals />} /> {/* New Route */}
+        <Route path="/admin/cms" element={<CMSDashboard />} />
       </Routes>
     </Router>
   );

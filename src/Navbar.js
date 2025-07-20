@@ -38,7 +38,6 @@ const NavBar = () => {
           <li><Link to="/movies-and-series" className={location.pathname === "/movies-and-series" ? "active" : ""} onClick={() => setIsOpen(false)}>Movies & Series</Link></li>
         </ul>
       </div>
-
       {/* Overlay to Close Sidebar on Click */}
       {isOpen && <div className="overlay" onClick={() => setIsOpen(false)}></div>}
     </>
