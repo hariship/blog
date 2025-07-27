@@ -92,11 +92,23 @@ export default function CMSPostEditor() {
     setIsSubmitting(true);
     setSubmitStatus(null);
 
+    // Upload and replace base64 images in content HTML
+    let processedContent = content.trim();
+    try {
+      const { uploadAndReplaceImagesInHtml } = await import('./utils/imageUploadReplace');
+      processedContent = await uploadAndReplaceImagesInHtml(processedContent, 'https://api.haripriya.org/upload-image');
+    } catch (err) {
+      console.error('Failed to upload/replace images:', err);
+      setSubmitStatus({ type: 'error', message: 'Failed to upload images in content.' });
+      setIsSubmitting(false);
+      return;
+    }
+
     const postData = {
       title: title.trim(),
       description: description.trim(),
       image_url: imageUrl.trim(),
-      content: content.trim(),
+      content: processedContent,
       category,
       enclosure: imageUrl.trim()
     };
