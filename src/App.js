@@ -1,13 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import RSSFeed from './RSSFeed';
-import Post from './Post';
-import MoviesAndSeries from './MoviesAndSeries';
-import Books from './Books';
-import NavBar from './Navbar';
-import PersonalGoals from './PersonalGoals';
-import ManageSubscription from './ManageSubscription'
-import CMSDashboard from './CMSDashboard';
+import RSSFeed from './pages/Blog/RSSFeed';
+import Post from './pages/Blog/Post';
+import MoviesAndSeries from './pages/Content/MoviesAndSeries';
+import Books from './pages/Content/Books';
+import NavBar from './components/layout/Navbar';
+import PersonalGoals from './pages/Content/PersonalGoals';
+import ManageSubscription from './pages/Subscribe/ManageSubscription';
+import CMSDashboard from './pages/Admin/CMSDashboard';
 const App = () => {
   return (
     <Router>

@@ -1,0 +1,161 @@
+/* Container */
+.cms-editor-container {
+    max-width: 800px;
+    margin: 40px auto;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  /* Header with Logout Button */
+  .cms-editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .cms-logout-button {
+    padding: 8px 16px;
+    background-color: #8c241d;
+    color: white;
+    font-size: 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .cms-logout-button:hover {
+    background-color: #bc4b4b;
+  }
+  
+  /* Inputs & Select Styling (Exact Match) */
+  .cms-editor-input,
+  select.cms-editor-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+  }
+  
+  /* Ensure select matches inputs visually */
+  select.cms-editor-input {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23999"><polygon points="0,0 16,0 8,8"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px;
+    padding-right: 30px; /* Ensure space for the arrow */
+  }
+  
+  /* Editor */
+  .cms-editor-quill {
+    height: 400px;
+    margin-bottom: 30px;
+  }
+  
+  /* HR Styling in Editor */
+  .ql-editor hr {
+    border: none;
+    border-top: 2px solid #ccc;
+    margin: 20px 0;
+    height: 1px;
+  }
+  
+  /* Status Messages */
+  .cms-status-message {
+    text-align: center;
+    font-size: 14px;
+    margin: 15px 0;
+    padding: 10px;
+    border-radius: 6px;
+  }
+  
+  .cms-status-message.success {
+    color: #155724;
+    background-color: #d4edda;
+  }
+  
+  .cms-status-message.error {
+    color: #721c24;
+    background-color: #f8d7da;
+  }
+  
+  /* Action Buttons Row */
+  .cms-editor-buttons-row {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+  }
+  
+  .cms-editor-button {
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .cms-editor-button:hover {
+    background-color: #45a049;
+  }
+  
+  .cms-editor-button-secondary {
+    background-color: #ddd;
+    color: #333;
+  }
+  
+  .cms-editor-button-secondary:hover {
+    background-color: #bbb;
+  }
+  
+  .cms-editor-button,
+  .cms-editor-button-secondary {
+    margin: 0;
+  }
+
+  .ql-editor pre.ql-syntax {
+    display: block;
+    overflow-x: auto;            /* Horizontal scroll only when needed */
+    white-space: pre;            /* No wrapping */
+    background-color: #f5f5f5;
+    color: #222;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: monospace;
+    font-size: 12px;
+    max-width: 100%;             /* Stay inside container */
+    box-sizing: border-box;      /* Include padding in width calculation */
+  }
+  
+  
+  /* Optional: Customize scrollbar (Webkit browsers) */
+  .ql-editor pre.ql-syntax::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  .ql-editor pre.ql-syntax::-webkit-scrollbar-thumb {
+    background: #bbb;
+    border-radius: 3px;
+  }
+  
+  
+  
+  
+  
+
+  
+  
+  
