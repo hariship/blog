@@ -4,15 +4,18 @@ import './styles/index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { LikesProvider } from './contexts/LikesContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Failed to find the root element');
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-        <LikesProvider> {/* Wrap App component with LikesProvider */}
-         <App />
-      </LikesProvider> {/* Wrap App component with LikesProvider */}
+    <ThemeProvider>
+      <LikesProvider>
+        <App />
+      </LikesProvider>
+    </ThemeProvider>
   </React.StrictMode>
 );
 

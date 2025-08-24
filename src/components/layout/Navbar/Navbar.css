@@ -3,10 +3,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #222;
+  background: var(--color-bg-card);
   padding: 15px 20px; /* Default padding */
-  color: white;
+  color: var(--color-text-primary);
   position: relative;
+  border-bottom: 1px solid var(--color-border-light);
+  transition: background-color var(--transition-normal), border-color var(--transition-normal);
 }
 
 /* Desktop Navigation (Centered) */
@@ -25,25 +27,26 @@
 
 .nav-links a {
   text-decoration: none;
-  color: white;
+  color: var(--color-text-primary);
   font-size: 16px;
   font-weight: 600;
-  transition: color 0.3s;
+  transition: color var(--transition-fast);
 }
 
 .nav-links a:hover {
-  color: #9cb6c0;
+  color: var(--color-link);
 }
 
 /* Mobile Menu Icon (Left-Aligned) */
 .menu-icon {
   display: none;
   cursor: pointer;
-  color: white;
+  color: var(--color-text-primary);
   position: absolute;
   left: 15px;
   top: 50%;
   transform: translateY(-50%);
+  transition: color var(--transition-fast);
 }
 
 /* Sidebar - Adjusted to prevent breaking */
@@ -54,12 +57,13 @@
   width: 75vw; /* Reduced width */
   max-width: 320px; /* Prevent excessive stretching */
   height: 100vh;
-  background: rgba(15, 15, 15, 0.97);
+  background: var(--color-bg-card);
   backdrop-filter: blur(6px);
-  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
-  transition: left 0.3s ease-in-out;
+  box-shadow: var(--shadow-heavy);
+  transition: left 0.3s ease-in-out, background-color var(--transition-normal);
   border-top-right-radius: 12px;
   border-bottom-right-radius: 12px;
+  border-right: 1px solid var(--color-border-medium);
   z-index: 1000;
 }
 
@@ -77,9 +81,14 @@
 .close-btn {
   background: none;
   border: none;
-  color: white;
+  color: var(--color-text-primary);
   cursor: pointer;
   font-size: 26px;
+  transition: color var(--transition-fast);
+}
+
+.close-btn:hover {
+  color: var(--color-link);
 }
 
 /* Sidebar Links - Proper Spacing */
@@ -95,25 +104,24 @@
 
 .sidebar a {
   text-decoration: none;
-  color: white;
+  color: var(--color-text-primary);
   font-size: 20px; /* Readable text */
   font-weight: bold;
   display: block;
   padding: 12px;
-  transition: background 0.3s, color 0.3s;
+  transition: background var(--transition-fast), color var(--transition-fast);
   border-radius: 8px;
 }
 
 /* Active Page */
 .sidebar a.active {
-  background: rgba(255, 255, 255, 0.15);
-  color: #9cb6c0;
+  background: var(--color-bg-secondary);
+  color: var(--color-link);
 }
 
 .sidebar a:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color:  #9cb6c0;
-  ;
+  background: var(--color-bg-secondary);
+  color: var(--color-link);
 }
 
 /* Overlay - Darkens Background When Sidebar is Open */

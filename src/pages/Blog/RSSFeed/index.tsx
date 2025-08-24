@@ -6,6 +6,7 @@ import { useLikes } from '../../../contexts/LikesContext';
 import Subscribe from '../../Subscribe/Subscribe'; // Import the new Subscribe component
 import 'react-quill/dist/quill.snow.css';
 import RSSFeedButton from '../../../components/widgets/RSSFeedButton';
+import ThemeToggle from '../../../components/common/ThemeToggle';
 
 const targetUrl = `${process.env.REACT_APP_API_BASE_URL}/rss-feed`;
 
@@ -124,18 +125,21 @@ const RSSFeed: React.FC = () => {
     <div className="blog-header">
       <div className="nav-home-container">
         <a href="/" className="nav-home">
-          <MdHome color="#35495E" size="3em" />
+          <MdHome className="home-icon" size="3em" />
         </a>
       </div>
       
       <h1 className="rss-feed-title">Posts</h1>
       
-      <div className="subscribe-container-wrapper">
-        <Subscribe />
+      <div className="header-controls">
+        <div className="controls-group">
+          <ThemeToggle />
+          <Subscribe />
+          <div className="rss-button-wrapper">
+            <RSSFeedButton />
+          </div>
+        </div>
       </div>
-      <div style={{ textAlign: 'center', margin: '10px 0' }}>
-        <RSSFeedButton />
-    </div>
     </div>
       
       <div className="category-dropdown">
@@ -175,23 +179,19 @@ const RSSFeed: React.FC = () => {
 
                   {/* Show heart and likes count if post exists in likesData */}
                   {likesData.length > 0 && (
-                    <span onClick={() => handleLikeToggle(item.title)} className="favorite-icon" style={{ cursor: 'pointer' }}>
+                    <span onClick={() => handleLikeToggle(item.title)} className="favorite-icon">
                       <svg
+                        className={isPostLiked(item.title) ? 'liked' : 'not-liked'}
                         stroke="currentColor"
                         fill="currentColor"
                         strokeWidth="2"
                         viewBox="0 0 24 24"
                         height="1em"
                         width="1em"
-                        style={{
-                          color: 'black',
-                          fill: isPostLiked(item.title) ? 'red' : 'none',
-                          stroke: isPostLiked(item.title) ? 'none' : 'red',
-                        }}
                       >
                         <path d="m12 21.35-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
                       </svg>
-                      &nbsp;{getLikesForPost(item.title)}
+                      <span>{getLikesForPost(item.title)}</span>
                     </span>
                   )}
                 </div>
@@ -201,24 +201,16 @@ const RSSFeed: React.FC = () => {
 
           {/* Simplified Pagination Controls */}
           {filteredFeedItems.length > 0 && (
-            <div className="pagination-controls" style={{ marginTop: '20px', textAlign: 'center' }}>
+            <div className="pagination-controls">
               <button 
                 onClick={goToPreviousPage} 
                 disabled={currentPage === 1}
                 className="pagination-button"
-                style={{ 
-                  padding: '8px 12px', 
-                  margin: '0 5px',
-                  cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-                  backgroundColor: '#f8f8f8',
-                  border: '1px solid #ddd',
-                  borderRadius: '3px'
-                }}
               >
                 &laquo;
               </button>
               
-              <span style={{ margin: '0 10px' }}>
+              <span className="pagination-info">
                 Page {currentPage} of {totalPages}
               </span>
               
@@ -226,14 +218,6 @@ const RSSFeed: React.FC = () => {
                 onClick={goToNextPage} 
                 disabled={currentPage === totalPages}
                 className="pagination-button"
-                style={{ 
-                  padding: '8px 12px', 
-                  margin: '0 5px',
-                  cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-                  backgroundColor: '#f8f8f8',
-                  border: '1px solid #ddd',
-                  borderRadius: '3px'
-                }}
               >
                 &raquo;
               </button>

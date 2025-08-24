@@ -252,16 +252,7 @@ export default function CMSPostEditor(): React.ReactElement {
         type="button"
         onClick={insertHr}
         disabled={isSubmitting}
-        style={{
-          fontWeight: 'bold',
-          marginLeft: '3px',
-          padding: '4px 8px',
-          background: 'white',
-          border: 'none',
-          cursor: 'pointer',
-          borderRadius: '3px',
-          alignItems: 'center'
-        }}
+        className="cms-hr-button"
         title="Insert Horizontal Rule"
       >
         HR

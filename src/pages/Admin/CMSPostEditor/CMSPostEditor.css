@@ -1,11 +1,12 @@
 /* Container */
 .cms-editor-container {
     max-width: 800px;
-    margin: 40px auto;
+    margin: var(--spacing-2xl) auto;
     font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
+    background-color: var(--color-bg-card);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-medium);
   }
   
   /* Header with Logout Button */
@@ -13,22 +14,23 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: var(--spacing-lg);
   }
   
   .cms-logout-button {
-    padding: 8px 16px;
-    background-color: #8c241d;
-    color: white;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--color-error);
+    color: var(--color-text-inverse);
     font-size: 14px;
     border: none;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color var(--transition-fast);
   }
   
   .cms-logout-button:hover {
     background-color: #bc4b4b;
+    transform: translateY(-1px);
   }
   
   /* Inputs & Select Styling (Exact Match) */
@@ -36,12 +38,13 @@
   select.cms-editor-input {
     width: 100%;
     box-sizing: border-box;
-    padding: 10px;
+    padding: var(--spacing-md);
     margin-bottom: 15px;
     font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: white;
+    border: 1px solid var(--color-border-medium);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-bg-card);
+    color: var(--color-text-primary);
   }
   
   /* Ensure select matches inputs visually */
@@ -65,8 +68,8 @@
   /* HR Styling in Editor */
   .ql-editor hr {
     border: none;
-    border-top: 2px solid #ccc;
-    margin: 20px 0;
+    border-top: 2px solid var(--color-border-medium);
+    margin: var(--spacing-lg) 0;
     height: 1px;
   }
   
@@ -75,18 +78,18 @@
     text-align: center;
     font-size: 14px;
     margin: 15px 0;
-    padding: 10px;
-    border-radius: 6px;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
   }
   
   .cms-status-message.success {
-    color: #155724;
-    background-color: #d4edda;
+    color: var(--color-success);
+    background-color: var(--color-success-light);
   }
   
   .cms-status-message.error {
-    color: #721c24;
-    background-color: #f8d7da;
+    color: var(--color-error);
+    background-color: var(--color-error-light);
   }
   
   /* Action Buttons Row */
@@ -94,31 +97,32 @@
     display: flex;
     justify-content: center;
     gap: 15px;
-    margin-top: 20px;
+    margin-top: var(--spacing-lg);
   }
   
   .cms-editor-button {
-    background-color: #4CAF50;
-    color: white;
+    background-color: var(--color-success);
+    color: var(--color-text-inverse);
     font-size: 16px;
     padding: 12px 24px;
     border: none;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color var(--transition-normal);
   }
   
   .cms-editor-button:hover {
     background-color: #45a049;
+    transform: translateY(-1px);
   }
   
   .cms-editor-button-secondary {
-    background-color: #ddd;
-    color: #333;
+    background-color: var(--color-button-secondary);
+    color: var(--color-text-primary);
   }
   
   .cms-editor-button-secondary:hover {
-    background-color: #bbb;
+    background-color: var(--color-button-secondary-hover);
   }
   
   .cms-editor-button,
@@ -128,16 +132,16 @@
 
   .ql-editor pre.ql-syntax {
     display: block;
-    overflow-x: auto;            /* Horizontal scroll only when needed */
-    white-space: pre;            /* No wrapping */
-    background-color: #f5f5f5;
-    color: #222;
-    padding: 10px;
-    border-radius: 5px;
+    overflow-x: auto;
+    white-space: pre;
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
     font-family: monospace;
     font-size: 12px;
-    max-width: 100%;             /* Stay inside container */
-    box-sizing: border-box;      /* Include padding in width calculation */
+    max-width: 100%;
+    box-sizing: border-box;
   }
   
   
@@ -147,15 +151,30 @@
   }
   
   .ql-editor pre.ql-syntax::-webkit-scrollbar-thumb {
-    background: #bbb;
-    border-radius: 3px;
+    background: var(--color-border-medium);
+    border-radius: var(--radius-sm);
   }
-  
-  
-  
-  
-  
 
-  
-  
-  
+/* HR Button in Toolbar */
+.cms-hr-button {
+  font-weight: bold;
+  margin-left: 3px;
+  padding: 4px 8px;
+  background: var(--color-bg-card);
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  align-items: center;
+  color: var(--color-text-primary);
+  transition: var(--transition-fast);
+}
+
+.cms-hr-button:hover {
+  background-color: var(--color-bg-secondary);
+  transform: translateY(-1px);
+}
+
+.cms-hr-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

@@ -1,0 +1,178 @@
+/* Dark theme overrides for BlogExtras comments widget */
+[data-theme="dark"] #blogextras-comments {
+  /* Main container styling */
+  background-color: var(--color-bg-card) !important;
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--color-border-light) !important;
+  padding: var(--spacing-lg) !important;
+}
+
+/* Target all possible BlogExtras wrapper elements */
+[data-theme="dark"] #blogextras-comments > div,
+[data-theme="dark"] #blogextras-comments .blogextras-widget,
+[data-theme="dark"] #blogextras-comments .blogextras-container,
+[data-theme="dark"] #blogextras-comments .comments-section,
+[data-theme="dark"] #blogextras-comments .comments-wrapper {
+  background-color: var(--color-bg-card) !important;
+  color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] #blogextras-comments * {
+  /* Force text colors */
+  color: var(--color-text-primary) !important;
+  border-color: var(--color-border-medium) !important;
+}
+
+[data-theme="dark"] #blogextras-comments input,
+[data-theme="dark"] #blogextras-comments textarea,
+[data-theme="dark"] #blogextras-comments select {
+  /* Form inputs */
+  background-color: var(--color-bg-secondary) !important;
+  color: var(--color-text-primary) !important;
+  border: 1px solid var(--color-border-medium) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+[data-theme="dark"] #blogextras-comments input:focus,
+[data-theme="dark"] #blogextras-comments textarea:focus,
+[data-theme="dark"] #blogextras-comments select:focus {
+  /* Focus states */
+  border-color: var(--color-border-dark) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px var(--color-border-light) !important;
+}
+
+[data-theme="dark"] #blogextras-comments button,
+[data-theme="dark"] #blogextras-comments input[type="submit"],
+[data-theme="dark"] #blogextras-comments .submit-button,
+[data-theme="dark"] #blogextras-comments .btn,
+[data-theme="dark"] #blogextras-comments .btn-primary,
+[data-theme="dark"] #blogextras-comments [class*="submit"],
+[data-theme="dark"] #blogextras-comments [class*="post"],
+[data-theme="dark"] #blogextras-comments [class*="send"] {
+  /* Submit buttons */
+  background-color: var(--color-button-primary) !important;
+  background: var(--color-button-primary) !important;
+  color: var(--color-text-inverse) !important;
+  border: 2px solid var(--color-button-primary) !important;
+  border-radius: var(--radius-sm) !important;
+  padding: var(--spacing-sm) var(--spacing-md) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all var(--transition-fast) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: inline-block !important;
+  min-height: 36px !important;
+  min-width: 80px !important;
+}
+
+[data-theme="dark"] #blogextras-comments button:hover,
+[data-theme="dark"] #blogextras-comments input[type="submit"]:hover,
+[data-theme="dark"] #blogextras-comments .submit-button:hover,
+[data-theme="dark"] #blogextras-comments .btn:hover {
+  /* Button hover */
+  background-color: var(--color-button-primary-hover) !important;
+  background: var(--color-button-primary-hover) !important;
+  border-color: var(--color-button-primary-hover) !important;
+  transform: translateY(-1px) !important;
+}
+
+[data-theme="dark"] #blogextras-comments .comment,
+[data-theme="dark"] #blogextras-comments .comment-item,
+[data-theme="dark"] #blogextras-comments .comment-container {
+  /* Individual comments */
+  background-color: var(--color-bg-secondary) !important;
+  border: 1px solid var(--color-border-light) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+[data-theme="dark"] #blogextras-comments .comment-author,
+[data-theme="dark"] #blogextras-comments .comment-date,
+[data-theme="dark"] #blogextras-comments .comment-text {
+  /* Comment content */
+  color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] #blogextras-comments .comment-date {
+  /* Comment metadata */
+  color: var(--color-text-muted) !important;
+}
+
+[data-theme="dark"] #blogextras-comments a,
+[data-theme="dark"] #blogextras-comments .link {
+  /* Links */
+  color: var(--color-link) !important;
+}
+
+[data-theme="dark"] #blogextras-comments a:hover,
+[data-theme="dark"] #blogextras-comments .link:hover {
+  /* Link hover */
+  color: var(--color-link-hover) !important;
+}
+
+[data-theme="dark"] #blogextras-comments .form-group label,
+[data-theme="dark"] #blogextras-comments .form-label {
+  /* Form labels */
+  color: var(--color-text-primary) !important;
+  font-weight: 500 !important;
+}
+
+[data-theme="dark"] #blogextras-comments .loading,
+[data-theme="dark"] #blogextras-comments .spinner {
+  /* Loading states */
+  border-color: var(--color-border-medium) !important;
+  border-top-color: var(--color-text-primary) !important;
+}
+
+/* Specific overrides for common BlogExtras class names */
+[data-theme="dark"] #blogextras-comments .be-widget,
+[data-theme="dark"] #blogextras-comments .be-comments,
+[data-theme="dark"] #blogextras-comments .be-form {
+  background-color: transparent !important;
+  color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] #blogextras-comments .be-comment {
+  background-color: var(--color-bg-secondary) !important;
+  border-left: 3px solid var(--color-border-medium) !important;
+  margin: var(--spacing-sm) 0 !important;
+  padding: var(--spacing-md) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+[data-theme="dark"] #blogextras-comments .be-comment-reply {
+  margin-left: var(--spacing-lg) !important;
+  border-left: 2px solid var(--color-border-light) !important;
+}
+
+/* Force background on all child elements */
+[data-theme="dark"] #blogextras-comments > *,
+[data-theme="dark"] #blogextras-comments div[class*="blogextras"],
+[data-theme="dark"] #blogextras-comments div[class*="comments"],
+[data-theme="dark"] #blogextras-comments div[class*="widget"] {
+  background-color: var(--color-bg-card) !important;
+  background: var(--color-bg-card) !important;
+}
+
+/* Override any inline styles */
+[data-theme="dark"] #blogextras-comments [style*="background"] {
+  background-color: var(--color-bg-card) !important;
+  background: var(--color-bg-card) !important;
+}
+
+[data-theme="dark"] #blogextras-comments [style*="color"] {
+  color: var(--color-text-primary) !important;
+}
+
+/* Target common CSS frameworks/reset that might be used */
+[data-theme="dark"] #blogextras-comments .container,
+[data-theme="dark"] #blogextras-comments .wrapper,
+[data-theme="dark"] #blogextras-comments .section,
+[data-theme="dark"] #blogextras-comments .block,
+[data-theme="dark"] #blogextras-comments .panel,
+[data-theme="dark"] #blogextras-comments .card {
+  background-color: var(--color-bg-card) !important;
+  color: var(--color-text-primary) !important;
+}

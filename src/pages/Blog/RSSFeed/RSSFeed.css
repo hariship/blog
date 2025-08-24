@@ -3,50 +3,55 @@
 
 body {
   font-family: 'Roboto', serif;
-  background-color: #f9f9f9;
+  background-color: var(--color-bg-primary);
   margin: 0;
   padding: 0;
 }
 
 /* --- RSS Feed Container --- */
 .rss-feed {
-  background-color: #fff;
+  background-color: var(--color-bg-card);
   max-width: 800px;
-  margin-bottom: 40px;
+  margin-bottom: var(--spacing-2xl);
   margin-top: 5px;
   margin-left: auto;
   margin-right: auto;
-  padding: 20px 16px; /* 🔁 previously padding: 20px */
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: var(--spacing-lg) var(--spacing-md);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-medium);
 }
 
 
 .rss-feed-title {
-  font-size: 24px;
-  color: #2C3E50;
-  margin: 0 auto 20px;
-  text-align: center;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+  text-align: left;
   white-space: nowrap;
+  letter-spacing: -0.025em;
+  transition: color var(--transition-fast);
+  margin-left: calc(-48px - var(--spacing-md) + var(--spacing-2xl));
+  padding-left: calc(48px + var(--spacing-md) - var(--spacing-2xl));
 }
 
 /* --- Category Dropdown --- */
 .category-dropdown {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 20px;
-  background: #f8f8f8;
-  border-bottom: 1px solid #eee;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: center;     /* ✅ center it horizontally */
+  justify-content: center;
 }
 
 .category-dropdown label {
   font-weight: 500;
   font-size: 16px;
-  color: #333;
+  color: var(--color-text-primary);
   margin: 0 !important;
   line-height: 1;
   white-space: nowrap;
@@ -55,10 +60,11 @@ body {
 .category-dropdown select {
   height: 36px;
   padding: 4px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-md);
   font-size: 15px;
-  background-color: white;
+  background-color: var(--color-bg-card);
+  color: var(--color-text-primary);
   line-height: 1.2;
   appearance: none;
 }
@@ -107,22 +113,29 @@ body {
 .rss-feed-list {
   list-style: none;
   padding: 0;
-  padding: 20px 12px;
+  padding: 2px var(--spacing-sm) var(--spacing-lg);
+  margin: 0;
+  margin-top: -2px;
 }
 
 .rss-feed-item {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
-  padding: 10px;
-  background-color: #f9f9f9;
-  border-radius: 5px;
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+}
+
+.rss-feed-item:first-child {
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  margin-top: 0;
 }
 
 .rss-feed-item-image {
   flex: 0 0 120px;
   height: 120px;
-  margin-right: 20px;
+  margin-right: var(--spacing-lg);
   cursor: pointer;
 }
 
@@ -130,7 +143,7 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 5px;
+  border-radius: var(--radius-md);
 }
 
 .rss-feed-item-content {
@@ -139,26 +152,26 @@ body {
 
 .rss-feed-item-title {
   font-size: 18px;
-  color: #333;
-  margin-bottom: 10px;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-md);
   font-family: 'Merriweather', sans-serif;
   cursor: pointer;
 }
 
 .rss-feed-item-title:hover {
-  color: rgb(82, 109, 244);
+  color: var(--color-link);
 }
 
 .rss-feed-item-description {
   font-size: 16px;
-  color: #666;
-  margin-bottom: 10px;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-md);
 }
 
 .rss-feed-item-date {
   font-size: 14px;
-  color: #999;
-  margin-bottom: 10px;
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-md);
 }
 
 /* --- Subscribe Styles --- */
@@ -171,26 +184,26 @@ body {
 }
 
 .subscribe-button {
-  background-color: #35495E;
-  color: white;
+  background-color: var(--color-button-primary);
+  color: var(--color-text-inverse);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   height: 40px;
-  padding: 0 20px;
+  padding: 0 var(--spacing-lg);
   font-size: 15px;
   font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
+  box-shadow: var(--shadow-light);
+  transition: background-color var(--transition-normal);
   line-height: 1;
 }
 
 .subscribe-button:hover {
-  background-color: #2c3e50;
+  background-color: var(--color-button-primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-medium);
 }
 
 .subscribe-text {
@@ -213,32 +226,54 @@ body {
 
 /* --- Blog Header --- */
 .blog-header {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: space-between;
-  background: #fff;
-  padding: 10px 24px;
+  background: var(--color-bg-card);
+  padding: var(--spacing-md) 24px;
   width: 100%;
   box-sizing: border-box;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--color-border-light);
   height: auto;
+  transition: background-color var(--transition-normal), border-color var(--transition-normal);
 }
 
-.nav-home-container,
-.subscribe-container-wrapper {
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
+.home-icon {
+  color: var(--color-icon-primary);
+  transition: color var(--transition-fast);
+}
+
+.home-icon:hover {
+  color: var(--color-link);
+}
+
+.nav-home-container {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 48px;
+  height: 48px;
   margin: 0;
   padding: 0;
 }
 
-.subscribe-container-wrapper {
-  height: 40px;
-  width: auto;
+.header-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: auto;
+  margin: 0;
+  padding: 0;
+}
+
+.controls-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.rss-button-wrapper {
+  margin-left: calc(-1 * var(--spacing-sm));
 }
 
 /* --- Responsive Styles --- */
@@ -275,4 +310,97 @@ body {
   .subscribe-modal {
     width: 95vw;
   }
+  
+  .controls-group {
+    gap: var(--spacing-sm);
+  }
+  
+  .blog-header {
+    grid-template-columns: auto 1fr auto;
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  .rss-feed-title {
+    font-size: 24px;
+  }
+}
+
+/* RSS Feed Button Container */
+.rss-feed-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}
+
+/* Like Button and Heart Icon */
+.favorite-icon {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  transition: var(--transition-fast);
+}
+
+.favorite-icon:hover {
+  transform: scale(1.05);
+}
+
+.favorite-icon svg {
+  color: var(--color-text-primary);
+  transition: var(--transition-fast);
+}
+
+.favorite-icon svg.liked {
+  fill: var(--color-button-primary);
+  stroke: none;
+}
+
+.favorite-icon svg.not-liked {
+  fill: none;
+  stroke: var(--color-text-secondary);
+  stroke-width: 2;
+}
+
+.favorite-icon svg.not-liked:hover {
+  stroke: var(--color-button-primary);
+}
+
+/* Pagination */
+.pagination-controls {
+  margin-top: var(--spacing-lg);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+}
+
+.pagination-button {
+  padding: var(--spacing-sm) 12px;
+  margin: 0 5px;
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.pagination-button:hover:not(:disabled) {
+  background-color: var(--color-border-light);
+  transform: translateY(-1px);
+}
+
+.pagination-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  background-color: var(--color-bg-tertiary);
+}
+
+.pagination-info {
+  margin: 0 var(--spacing-md);
+  color: var(--color-text-secondary);
+  font-size: 14px;
 }

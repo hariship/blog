@@ -6,6 +6,7 @@ import { useLikes } from '../../../contexts/LikesContext';
 import { IoIosArrowBack } from 'react-icons/io';
 import { Helmet } from 'react-helmet';
 import CommentsWidget from "../../../components/widgets/CommentsWidget";
+import ThemeToggle from '../../../components/common/ThemeToggle';
 
 // Import our local content
 import htmlContents from '../../../data/html-content';
@@ -211,8 +212,13 @@ const Post: React.FC = () => {
         <div className="loader"></div>
       ) : (
           <>
-          <div className="back-button" onClick={handleGoBack}>
-            <IoIosArrowBack className="back-icon" style={{ cursor: 'pointer' }} />
+          <div className="post-header">
+            <div className="back-button" onClick={handleGoBack}>
+              <IoIosArrowBack className="back-icon" />
+            </div>
+            <div className="post-theme-toggle">
+              <ThemeToggle />
+            </div>
           </div>
           <h1 className="post-title">{parse(postTitle)}</h1>
           <div className="post-meta">
@@ -221,7 +227,7 @@ const Post: React.FC = () => {
               &nbsp;{formatDate(postDate)} &bull;
             </span>
             <span className="post-category">&nbsp;{postCategory}</span>
-            {isJournal && <hr style={{ marginTop: '2rem' }} />}
+            {isJournal && <hr className="hr-journal" />}
           </div>
           <div className="post-content">
                 {
@@ -235,21 +241,21 @@ const Post: React.FC = () => {
                 }
         </div>
 
-          <span onClick={handleLikeToggle} style={{ cursor: 'pointer' }}>
+          <span className="like-button" onClick={handleLikeToggle}>
             {likesCount !== null && ( // Only show the heart after likes update
               <svg
+                className={`heart-icon ${isLiked ? 'liked' : 'not-liked'}`}
                 stroke="currentColor"
                 fill="currentColor"
                 strokeWidth="2"
                 viewBox="0 0 24 24"
                 height="1em"
                 width="1em"
-                style={{ color: 'black', fill: isLiked ? 'red' : 'none', stroke: isLiked ? 'none' : 'red' }}
               >
                 <path d="m12 21.35-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
               </svg>
             )}
-            &nbsp;{likesCount !== null ? likesCount || '' : ''}
+            <span>{likesCount !== null ? likesCount || '' : ''}</span>
           </span>
           <br/>
           <br/>
