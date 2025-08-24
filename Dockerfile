@@ -1,20 +1,32 @@
-# Use an official Node runtime as a parent image
-FROM node:16-alpine
+# Multi-stage build for optimized production
+FROM node:18-alpine AS build
 
-# Set the working directory in the container
+# Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json (or yarn.lock) into the working directory
+# Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Install dependencies with legacy peer deps to resolve React version conflicts
+RUN npm install --legacy-peer-deps
 
-# Copy the rest of the application code
+# Copy source code
 COPY . .
 
-# Expose the port the app runs on
-EXPOSE 3000
+# Build the app
+RUN npm run build
 
-# Command to run the app
-CMD ["npm", "start"]
+# Production stage
+FROM nginx:alpine
+
+# Copy built app from build stage
+COPY --from=build /app/build /usr/share/nginx/html
+
+# Copy custom nginx config if needed
+# COPY nginx.conf /etc/nginx/nginx.conf
+
+# Expose port 80
+EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
