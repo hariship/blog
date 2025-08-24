@@ -6,18 +6,6 @@ export const LikesProvider = ({ children }) => {
   const [likesData, setLikesData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchScrapeData = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/scrape`); // Fetch full post data with likes
-      const data = await response.json();
-      setLikesData(data); // Set scraped data (including likesCount) into state
-    } catch (error) {
-      console.error('Error fetching scraped data:', error);
-    }
-    setIsLoading(false);
-  };
-
   const fetchRSSFeed = async () => {
     try {
       const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/rss-feed`);
@@ -29,29 +17,19 @@ export const LikesProvider = ({ children }) => {
     }
   };
 
-  const checkAndScrapeIfNeeded = async () => {
+  const loadLikesData = async () => {
     if (!likesData.length) {
-      // If no likesData exists, fetch the RSS feed
+      setIsLoading(true);
       const rssFeedData = await fetchRSSFeed();
-
-      // Check if all posts in the RSS feed also have likesCount === 0
-      // const shouldScrape = rssFeedData.every((post) => !post.likesCount || post.likesCount === 0);
-      
-      // if (shouldScrape) {
-        // await fetchScrapeData(); // Trigger scraping only if necessary
-      // } else {
-        // Use RSS feed data if likes data is available in it
-        setLikesData(rssFeedData);
-        setIsLoading(false);
-      // }
+      setLikesData(rssFeedData);
+      setIsLoading(false);
     } else {
-      // If likesData is available, we can stop loading
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    checkAndScrapeIfNeeded(); // Check and scrape only if needed
+    loadLikesData();
   }, [likesData]);
 
   const updateLikesData = (postTitle, newLikesCount, isLiked) => {

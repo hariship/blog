@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function SubscribeToRSS() {
-  const rssFeedUrl = 'https://api.haripriya.org/rss-feed';
+  const rssFeedUrl = `${process.env.REACT_APP_API_BASE_URL}/rss-feed`;
 
   return (
     <div style={{ textAlign: 'center', padding: '40px' }}>
