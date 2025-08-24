@@ -6,7 +6,7 @@ import axios from 'axios';
  * @param {string} uploadEndpoint - API endpoint for image upload
  * @returns {Promise<string>} - HTML with <img> srcs replaced
  */
-export async function uploadAndReplaceImagesInHtml(html, uploadEndpoint = 'https://api.haripriya.org/upload-image') {
+export async function uploadAndReplaceImagesInHtml(html, uploadEndpoint = `${process.env.REACT_APP_API_BASE_URL}/upload-image`) {
   // Parse HTML
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, 'text/html');

@@ -9,6 +9,7 @@
     "axios": "^1.7.2",
     "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
+    "dotenv": "^17.2.1",
     "html-react-parser": "^5.1.10",
     "lucide-react": "^0.474.0",
     "marked": "^15.0.7",

@@ -7,7 +7,7 @@ import Subscribe from './Subscribe'; // Import the new Subscribe component
 import 'react-quill/dist/quill.snow.css';
 import RSSFeedButton from './RSSFeedButton';
 
-const targetUrl = 'https://api.haripriya.org/rss-feed';
+const targetUrl = `${process.env.REACT_APP_API_BASE_URL}/rss-feed`;
 
 const RSSFeed = () => {
   const [feedItems, setFeedItems] = useState([]);
@@ -71,7 +71,7 @@ const RSSFeed = () => {
 
     try {
       // Make server request to update likes
-      const response = await fetch('https://api.haripriya.org/update-likes', {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/update-likes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -117,7 +117,7 @@ const RSSFeed = () => {
     <div className="rss-feed">
     <div className="blog-header">
       <div className="nav-home-container">
-        <a href="https://haripriya.org" className="nav-home">
+        <a href={process.env.REACT_APP_BLOG_BASE_URL} className="nav-home">
           <MdHome color="#35495E" size="3em" />
         </a>
       </div>

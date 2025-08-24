@@ -9,7 +9,7 @@ export const LikesProvider = ({ children }) => {
   const fetchScrapeData = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('https://api.haripriya.org/scrape'); // Fetch full post data with likes
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/scrape`); // Fetch full post data with likes
       const data = await response.json();
       setLikesData(data); // Set scraped data (including likesCount) into state
     } catch (error) {
@@ -20,7 +20,7 @@ export const LikesProvider = ({ children }) => {
 
   const fetchRSSFeed = async () => {
     try {
-      const response = await fetch('https://api.haripriya.org/rss-feed');
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/rss-feed`);
       const rssData = await response.json();
       return rssData;
     } catch (error) {

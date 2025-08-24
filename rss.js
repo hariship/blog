@@ -1,9 +1,10 @@
+require('dotenv').config();
 const fs = require('fs');
 const axios = require('axios');
 const cheerio = require('cheerio');
 
 async function fetchPosts() {
-    const url = 'https://haripriya.org/blog'; // Your blog URL
+    const url = `${process.env.REACT_APP_BLOG_BASE_URL || 'https://haripriya.org'}/blog`; // Your blog URL
     const { data } = await axios.get(url);
     const $ = cheerio.load(data);
     const posts = [];
@@ -26,7 +27,7 @@ function generateXML(posts) {
     xml += '<rss version="2.0">';
     xml += '<channel>';
     xml += '<title>Your Blog Title</title>';
-    xml += '<link>https://haripriya.org/blog</link>';
+    xml += `<link>${process.env.REACT_APP_BLOG_BASE_URL || 'https://haripriya.org'}/blog</link>`;
     xml += '<description>Your blog description</description>';
 
     posts.forEach(post => {

@@ -6,7 +6,7 @@ const MoviesAndSeries = () => {
     <div>
       <div style={containerStyle}>
       <iframe
-        src="https://e.notionhero.io/e1/p/dc8f145-35c40ff8e0aa290d98b7f1fd7afdd11"
+        src={process.env.REACT_APP_NOTION_HERO_MOVIES_EMBED}
         style={iframeStyle}
         title="Movies and Categories"
       />

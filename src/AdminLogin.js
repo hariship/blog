@@ -30,7 +30,7 @@ const AdminLogin = ({ onLoginSuccess }) => {
       // Encrypt the password before sending
       const encryptedPassword = encryptPassword(password);
       
-      const response = await axios.post('https://api.haripriya.org/admin/auth', {
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/admin/auth`, {
         password: encryptedPassword,
         timestamp: Date.now() // Add timestamp for additional security
       }, {

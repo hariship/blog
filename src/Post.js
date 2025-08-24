@@ -66,7 +66,7 @@ const Post = () => {
   const fetchPostContent = async (postTitleFromURL) => {
     const normalizedTitle = normalizeTitle(postTitleFromURL); // Normalize title
 
-    const targetUrl = `https://api.haripriya.org/post/${normalizedTitle}`;
+    const targetUrl = `${process.env.REACT_APP_API_BASE_URL}/post/${normalizedTitle}`;
     try {
       const response = await fetch(targetUrl);
       if (!response.ok) {
@@ -174,7 +174,7 @@ const Post = () => {
     setLikesCount(updatedLikesCount);
 
     try {
-      const response = await fetch('https://api.haripriya.org/update-likes', {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/update-likes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

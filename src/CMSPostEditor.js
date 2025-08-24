@@ -96,7 +96,7 @@ export default function CMSPostEditor() {
     let processedContent = content.trim();
     try {
       const { uploadAndReplaceImagesInHtml } = await import('./utils/imageUploadReplace');
-      processedContent = await uploadAndReplaceImagesInHtml(processedContent, 'https://api.haripriya.org/upload-image');
+      processedContent = await uploadAndReplaceImagesInHtml(processedContent, `${process.env.REACT_APP_API_BASE_URL}/upload-image`);
     } catch (err) {
       console.error('Failed to upload/replace images:', err);
       setSubmitStatus({ type: 'error', message: 'Failed to upload images in content.' });
@@ -115,7 +115,7 @@ export default function CMSPostEditor() {
 
     try {
       // Make API call to your backend
-      const response = await axios.post('https://api.haripriya.org/admin/post', postData, {
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/admin/post`, postData, {
         headers: {
           'Content-Type': 'application/json',
         },

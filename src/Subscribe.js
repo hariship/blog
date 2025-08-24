@@ -23,7 +23,7 @@ const Subscribe = () => {
   
     const fetchCategories = async () => {
       try {
-        const response = await fetch('https://api.haripriya.org/rss-feed');
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/rss-feed`);
         const data = await response.json();
         const categories = [...new Set(data.map(item => item.category))];
         setAvailableCategories(categories);
@@ -85,7 +85,7 @@ const Subscribe = () => {
     setMessage('');
     
     try {
-      const response = await fetch('https://api.haripriya.org/subscribe', {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/subscribe`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

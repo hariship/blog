@@ -6,7 +6,7 @@ const Books = () => {
     <div>
       <div style ={containerStyle}>
       <iframe
-        src="https://e.notionhero.io/e1/p/9ad5bf5-fe66aa5863eb8a441a15f5aac7b865a"
+        src={process.env.REACT_APP_NOTION_HERO_BOOKS_EMBED}
         style={iframeStyle}
         title="Movies and Categories"
       />

@@ -24,14 +24,14 @@ const ManageSubscription = () => {
         setIsLoading(true);
         
         // Fetch available categories
-        const categoriesResponse = await fetch('https://api.haripriya.org/rss-feed');
+        const categoriesResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL}/rss-feed`);
         const categoriesData = await categoriesResponse.json();
         const uniqueCategories = [...new Set(categoriesData.map(item => item.category).filter(Boolean))];
         setAvailableCategories(uniqueCategories);
         
         // Only fetch subscriber if email is provided
         if (decodedEmail) {
-          const subscriberResponse = await fetch(`https://api.haripriya.org/subscriber/${decodedEmail}`);
+          const subscriberResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL}/subscriber/${decodedEmail}`);
           const subscriberData = await subscriberResponse.json();
           
           if (subscriberData.success && subscriberData.subscriber) {
@@ -71,7 +71,7 @@ const ManageSubscription = () => {
     setMessage('');
     
     try {
-      const response = await fetch('https://api.haripriya.org/update-subscription', {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/update-subscription`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -106,7 +106,7 @@ const ManageSubscription = () => {
     if (window.confirm('Are you sure you want to unsubscribe from all newsletters?')) {
       try {
         setIsSubmitting(true);
-        const response = await fetch(`https://api.haripriya.org/unsubscribe/${decodedEmail}`);
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/unsubscribe/${decodedEmail}`);
         const data = await response.json();
         
         if (response.ok) {
