@@ -8,35 +8,53 @@ import 'react-quill/dist/quill.snow.css';
 import RSSFeedButton from '../../../components/widgets/RSSFeedButton';
 import ThemeToggle from '../../../components/common/ThemeToggle';
 
-const targetUrl = `${process.env.REACT_APP_API_BASE_URL}/rss-feed`;
+const targetUrl = `${process.env.REACT_APP_API_BASE_URL}/posts`;
 
 interface FeedItem {
   title: string;
   category?: string;
-  pubDate: string;
-  [key: string]: any;
+  pub_date: string;
+  description: string;
+  link: string;
+  content: string;
+  enclosure: string;
+  normalized_title: string;
+}
+
+interface PaginationInfo {
+  page: number;
+  limit: number;
+  totalPosts: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrev: boolean;
 }
 
 const RSSFeed: React.FC = () => {
   const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [filteredFeedItems, setFilteredFeedItems] = useState<FeedItem[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
   const { likesData, updateLikesData } = useLikes();
   
-  // Pagination states
+  // Pagination states - now using backend pagination
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage: number = 5;
-  const [totalPages, setTotalPages] = useState<number>(0);
+  const [itemsPerPage] = useState<number>(5);
+  const [paginationInfo, setPaginationInfo] = useState<PaginationInfo | null>(null);
 
   useEffect(() => {
     const fetchRSSFeed = async () => {
       setLoading(true);
       try {
-        const response = await fetch(targetUrl);
+        let url = `${targetUrl}?page=${currentPage}&limit=${itemsPerPage}`;
+        if (selectedCategory) {
+          url += `&category=${encodeURIComponent(selectedCategory)}`;
+        }
+        const response = await fetch(url);
         const data = await response.json();
-        setFeedItems(data);
+        setFeedItems(data.posts);
+        setPaginationInfo(data.pagination);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching posts:', error);
@@ -44,17 +62,28 @@ const RSSFeed: React.FC = () => {
       }
     };
     fetchRSSFeed();
+  }, [currentPage, itemsPerPage, selectedCategory]);
+
+  // Fetch categories on component mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/categories`);
+        const categoriesData = await response.json();
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+    fetchCategories();
   }, []);
 
+  // Reset to page 1 when category filter changes
   useEffect(() => {
-    const filtered = selectedCategory 
-      ? feedItems.filter(item => item.category === selectedCategory) 
-      : feedItems;
-    
-    setFilteredFeedItems(filtered);
-    setTotalPages(Math.ceil(filtered.length / itemsPerPage));
-    setCurrentPage(1); // Reset to first page when filter changes
-  }, [selectedCategory, feedItems, itemsPerPage]);
+    if (currentPage !== 1) {
+      setCurrentPage(1);
+    }
+  }, [selectedCategory]);
 
   const getLikesForPost = (title: string) => {
     const postLikesData = likesData.find(like => like.title === title);
@@ -96,29 +125,18 @@ const RSSFeed: React.FC = () => {
     }
   };
 
-  // Pagination handlers
+  // Pagination handlers - now using backend pagination
   const goToNextPage = () => {
-    if (currentPage < totalPages) {
+    if (paginationInfo?.hasNext) {
       setCurrentPage(currentPage + 1);
     }
   };
 
   const goToPreviousPage = () => {
-    if (currentPage > 1) {
+    if (paginationInfo?.hasPrev) {
       setCurrentPage(currentPage - 1);
     }
   };
-
-  // Get current page's items
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredFeedItems.slice(indexOfFirstItem, indexOfLastItem);
-
-  // Generate page numbers
-  const pageNumbers = [];
-  for (let i = 1; i <= totalPages; i++) {
-    pageNumbers.push(i);
-  }
 
   return (
     <div className="rss-feed">
@@ -143,22 +161,49 @@ const RSSFeed: React.FC = () => {
     </div>
       
       <div className="category-dropdown">
-        <label htmlFor="category">Category</label>
-        <select id="category" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
-          <option value="">All</option>
-          {[...new Set(feedItems.map((item) => item.category))].map((category, index) => (
-            <option key={index} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
+        <div className="filter-section">
+          <label htmlFor="category">Category</label>
+          <select id="category" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+            <option value="">All</option>
+            {categories.map((category, index) => (
+              <option key={index} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+        </div>
+        
+        {/* Pagination Controls */}
+        {paginationInfo && paginationInfo.totalPosts > 0 && (
+          <div className="pagination-controls-inline">
+            <button 
+              onClick={goToPreviousPage} 
+              disabled={!paginationInfo.hasPrev}
+              className="pagination-button"
+            >
+              &laquo;
+            </button>
+            
+            <span className="pagination-info">
+              Page {paginationInfo.page} of {paginationInfo.totalPages}
+            </span>
+            
+            <button 
+              onClick={goToNextPage} 
+              disabled={!paginationInfo.hasNext}
+              className="pagination-button"
+            >
+              &raquo;
+            </button>
+          </div>
+        )}
       </div>
       {loading ? (
         <div className="loader"></div>
       ) : (
         <>
           <ul className="rss-feed-list">
-            {currentItems.map((item, index) => (
+            {feedItems.map((item, index) => (
               <li key={index} className="rss-feed-item">
                 <div className="rss-feed-item-image">
                   {item.enclosure && (
@@ -175,7 +220,7 @@ const RSSFeed: React.FC = () => {
                     {item.title}
                   </h2>
                   <p className="rss-feed-item-description">{item.description}</p>
-                  <p className="rss-feed-item-date">Date: {new Date(item.pubDate).toLocaleDateString()}</p>
+                  <p className="rss-feed-item-date">Date: {new Date(item.pub_date).toLocaleDateString()}</p>
 
                   {/* Show heart and likes count if post exists in likesData */}
                   {likesData.length > 0 && (
@@ -198,31 +243,6 @@ const RSSFeed: React.FC = () => {
               </li>
             ))}
           </ul>
-
-          {/* Simplified Pagination Controls */}
-          {filteredFeedItems.length > 0 && (
-            <div className="pagination-controls">
-              <button 
-                onClick={goToPreviousPage} 
-                disabled={currentPage === 1}
-                className="pagination-button"
-              >
-                &laquo;
-              </button>
-              
-              <span className="pagination-info">
-                Page {currentPage} of {totalPages}
-              </span>
-              
-              <button 
-                onClick={goToNextPage} 
-                disabled={currentPage === totalPages}
-                className="pagination-button"
-              >
-                &raquo;
-              </button>
-            </div>
-          )}
         </>
       )}
     </div>

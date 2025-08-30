@@ -39,13 +39,18 @@ body {
 .category-dropdown {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--spacing-sm);
   padding: var(--spacing-sm) var(--spacing-lg);
   background: var(--color-bg-secondary);
   border-radius: var(--radius-md) var(--radius-md) 0 0;
   flex-wrap: wrap;
+}
+
+.filter-section {
+  display: flex;
   align-items: center;
-  justify-content: center;
+  gap: var(--spacing-sm);
 }
 
 .category-dropdown label {
@@ -375,6 +380,12 @@ body {
   align-items: center;
   justify-content: center;
   gap: var(--spacing-sm);
+}
+
+.pagination-controls-inline {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
 }
 
 .pagination-button {
