@@ -58,6 +58,7 @@ const Post: React.FC = () => {
   const [description, setDescription] = useState<string>('');
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const [showComments, setShowComments] = useState<boolean>(false);
   const navigate = useNavigate();
   const { title } = useParams<{ title: string }>(); // Get title from URL params
   const normalized = normalizeTitle(title || ''); // Normalize title
@@ -260,7 +261,24 @@ const Post: React.FC = () => {
           <br/>
           <br/>
           <hr/>
-          <CommentsWidget pageSlug={`/${normalizeTitle(title || '')}`} />
+          <div className="comments-section">
+            <button 
+              className="comments-toggle" 
+              onClick={() => setShowComments(!showComments)}
+            >
+              <div className="comments-toggle-icon">
+                {showComments ? '▼' : '▶'}
+              </div>
+              <span className="comments-toggle-text">
+                Comments
+              </span>
+            </button>
+            {showComments && (
+              <div className="comments-widget-container">
+                <CommentsWidget pageSlug={`/${normalizeTitle(title || '')}`} />
+              </div>
+            )}
+          </div>
         </>
       )}
     </div>

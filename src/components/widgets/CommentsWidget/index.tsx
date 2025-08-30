@@ -25,37 +25,61 @@ const CommentsWidget: React.FC<CommentsWidgetProps> = ({ pageSlug }) => {
     const applyThemeToComments = () => {
       const commentsContainer = document.getElementById('blogextras-comments');
       if (commentsContainer) {
+        // Apply theme to container
+        if (theme === 'dark') {
+          commentsContainer.style.setProperty('background-color', 'var(--color-bg-card)', 'important');
+          commentsContainer.style.setProperty('color', 'var(--color-text-primary)', 'important');
+        } else {
+          commentsContainer.style.setProperty('background-color', 'var(--color-bg-card)', 'important');
+          commentsContainer.style.setProperty('color', 'var(--color-text-primary)', 'important');
+        }
+
         // Force re-apply theme classes to all child elements
         const allElements = commentsContainer.querySelectorAll('*');
         allElements.forEach((element) => {
           if (element instanceof HTMLElement) {
-            // Remove any light theme classes and force dark theme styling
-            if (theme === 'dark') {
-              element.style.setProperty('background-color', 'var(--color-bg-card)', 'important');
-              element.style.setProperty('color', 'var(--color-text-primary)', 'important');
-            }
+            element.style.setProperty('background-color', 'var(--color-bg-card)', 'important');
+            element.style.setProperty('color', 'var(--color-text-primary)', 'important');
+            element.style.setProperty('font-family', '-apple-system, BlinkMacSystemFont, "Segoe UI Variable", "Segoe UI", system-ui, ui-sans-serif, Helvetica, Arial, sans-serif', 'important');
           }
         });
 
-        // Specifically target submit buttons
-        const submitButtons = commentsContainer.querySelectorAll('button, input[type="submit"], .submit-button, .btn, [class*="submit"], [class*="post"], [class*="send"]');
+        // Target input fields
+        const inputFields = commentsContainer.querySelectorAll('input[type="text"], input[type="email"], textarea');
+        inputFields.forEach((input) => {
+          if (input instanceof HTMLElement) {
+            input.style.setProperty('background-color', 'var(--color-bg-secondary)', 'important');
+            input.style.setProperty('color', 'var(--color-text-primary)', 'important');
+            input.style.setProperty('border', '1px solid var(--color-border-medium)', 'important');
+            input.style.setProperty('border-radius', 'var(--radius-sm)', 'important');
+          }
+        });
+
+        // Target submit buttons with more aggressive selectors
+        const submitButtons = commentsContainer.querySelectorAll('button, input[type="submit"], .submit-button, .btn, [class*="submit"], [class*="post"], [class*="send"], [class*="button"]');
         submitButtons.forEach((button) => {
-          if (button instanceof HTMLElement && theme === 'dark') {
-            button.style.setProperty('background-color', 'var(--color-button-primary)', 'important');
-            button.style.setProperty('background', 'var(--color-button-primary)', 'important');
-            button.style.setProperty('color', 'var(--color-text-inverse)', 'important');
-            button.style.setProperty('border', '2px solid var(--color-button-primary)', 'important');
-            button.style.setProperty('opacity', '1', 'important');
-            button.style.setProperty('visibility', 'visible', 'important');
-            button.style.setProperty('display', 'inline-block', 'important');
+          if (button instanceof HTMLElement) {
+            // Use earthy/muted colors for dark theme
+            const bgColor = theme === 'dark' ? '#6b7280' : '#374151'; // slate colors
+            const hoverColor = theme === 'dark' ? '#9ca3af' : '#4b5563';
+            
+            button.style.setProperty('background-color', bgColor, 'important');
+            button.style.setProperty('background', bgColor, 'important');
+            button.style.setProperty('color', '#ffffff', 'important');
+            button.style.setProperty('border', `1px solid ${bgColor}`, 'important');
+            button.style.setProperty('border-radius', '4px', 'important');
+            button.style.setProperty('padding', '8px 16px', 'important');
             button.style.setProperty('cursor', 'pointer', 'important');
+            button.style.setProperty('font-weight', '500', 'important');
           }
         });
       }
     };
 
     // Apply theme immediately and after potential async content loads
-    const timer = setTimeout(applyThemeToComments, 1000);
+    const timer1 = setTimeout(applyThemeToComments, 1000);
+    const timer2 = setTimeout(applyThemeToComments, 3000);
+    const timer3 = setTimeout(applyThemeToComments, 5000);
     
     // Also apply when content changes (MutationObserver)
     const commentsContainer = document.getElementById('blogextras-comments');
@@ -65,11 +89,17 @@ const CommentsWidget: React.FC<CommentsWidgetProps> = ({ pageSlug }) => {
       
       return () => {
         observer.disconnect();
-        clearTimeout(timer);
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+        clearTimeout(timer3);
       };
     }
     
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);  
+      clearTimeout(timer3);
+    };
   }, [theme]);
 
   return (

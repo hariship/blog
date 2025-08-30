@@ -300,3 +300,171 @@ hr {
     stroke: var(--color-text-secondary);
     stroke-width: 2;
 }
+
+/* Comments Section */
+.comments-section {
+  margin-top: var(--spacing-lg);
+}
+
+.comments-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: var(--color-bg-secondary);
+  border: 2px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-sm) var(--spacing-md);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-light);
+  margin-bottom: var(--spacing-lg);
+}
+
+.comments-toggle:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-border-medium);
+  box-shadow: var(--shadow-medium);
+  transform: translateY(-1px);
+}
+
+.comments-toggle:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-light);
+}
+
+.comments-toggle-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition-normal);
+  font-size: 16px;
+}
+
+.comments-toggle:hover .comments-toggle-icon {
+  transform: rotate(90deg);
+}
+
+.comments-toggle-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+}
+
+.comments-widget-container {
+  margin-top: var(--spacing-md);
+}
+
+/* BlogExtras Comments Theme Override */
+#blogextras-comments {
+  background-color: var(--color-bg-card) !important;
+  color: var(--color-text-primary) !important;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Variable", "Segoe UI", system-ui, ui-sans-serif, Helvetica, Arial, sans-serif !important;
+}
+
+#blogextras-comments * {
+  background-color: var(--color-bg-card) !important;
+  color: var(--color-text-primary) !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Variable", "Segoe UI", system-ui, ui-sans-serif, Helvetica, Arial, sans-serif !important;
+}
+
+#blogextras-comments input[type="text"],
+#blogextras-comments input[type="email"],
+#blogextras-comments textarea {
+  background-color: var(--color-bg-secondary) !important;
+  color: var(--color-text-primary) !important;
+  border: 1px solid var(--color-border-medium) !important;
+  border-radius: var(--radius-sm) !important;
+  padding: var(--spacing-sm) !important;
+}
+
+#blogextras-comments button,
+#blogextras-comments input[type="submit"],
+#blogextras-comments .submit-button,
+#blogextras-comments [class*="button"],
+#blogextras-comments [class*="submit"],
+#blogextras-comments [class*="post"],
+#blogextras-comments [class*="send"] {
+  background-color: #374151 !important;
+  background: #374151 !important;
+  color: #ffffff !important;
+  border: 1px solid #374151 !important;
+  border-radius: 4px !important;
+  padding: 8px 16px !important;
+  cursor: pointer !important;
+  font-weight: 500 !important;
+  transition: background-color 0.2s ease !important;
+}
+
+#blogextras-comments button:hover,
+#blogextras-comments input[type="submit"]:hover,
+#blogextras-comments .submit-button:hover,
+#blogextras-comments [class*="button"]:hover,
+#blogextras-comments [class*="submit"]:hover {
+  background-color: #4b5563 !important;
+  background: #4b5563 !important;
+}
+
+/* Dark theme buttons - super aggressive overrides */
+[data-theme="dark"] #blogextras-comments button,
+[data-theme="dark"] #blogextras-comments input[type="submit"],
+[data-theme="dark"] #blogextras-comments .submit-button,
+[data-theme="dark"] #blogextras-comments [class*="button"],
+[data-theme="dark"] #blogextras-comments [class*="submit"],
+[data-theme="dark"] #blogextras-comments [class*="post"],
+[data-theme="dark"] #blogextras-comments [class*="send"],
+[data-theme="dark"] #blogextras-comments button[type],
+[data-theme="dark"] #blogextras-comments button[class],
+[data-theme="dark"] #blogextras-comments *[role="button"] {
+  background-color: #d97706 !important;
+  background: #d97706 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  border: 1px solid #d97706 !important;
+}
+
+[data-theme="dark"] #blogextras-comments button:hover,
+[data-theme="dark"] #blogextras-comments input[type="submit"]:hover,
+[data-theme="dark"] #blogextras-comments .submit-button:hover,
+[data-theme="dark"] #blogextras-comments [class*="button"]:hover,
+[data-theme="dark"] #blogextras-comments [class*="submit"]:hover,
+[data-theme="dark"] #blogextras-comments button[type]:hover,
+[data-theme="dark"] #blogextras-comments button[class]:hover,
+[data-theme="dark"] #blogextras-comments *[role="button"]:hover {
+  background-color: #ea580c !important;
+  background: #ea580c !important;
+  background-image: none !important;
+}
+
+/* Focus styles for accessibility */
+.comments-toggle:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .post-container {
+    padding: 15px;
+  }
+  
+  .post-content {
+    margin-bottom: 60px;
+  }
+
+  .comments-toggle {
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    justify-content: center;
+  }
+  
+  .comments-toggle-text {
+    display: none;
+  }
+}

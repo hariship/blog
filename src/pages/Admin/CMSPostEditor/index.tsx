@@ -28,12 +28,74 @@ export default function CMSPostEditor(): React.ReactElement {
   const [category, setCategory] = useState<string>('Life');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitStatus, setSubmitStatus] = useState<SubmitStatus | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState<boolean>(false);
 
   const quillRef = useRef<ReactQuill>(null);
+  
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
     localStorage.removeItem('adminTokenExpiry');
     window.location.reload(); // Simple reset, shows login again
+  };
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setSubmitStatus({
+        type: 'error',
+        message: 'Please select an image file'
+      });
+      return;
+    }
+
+    // Validate file size (e.g., 5MB limit)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      setSubmitStatus({
+        type: 'error',
+        message: 'Image size must be less than 5MB'
+      });
+      return;
+    }
+
+    setIsUploadingImage(true);
+    setSubmitStatus(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/upload-image`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        timeout: 30000, // 30 second timeout for image upload
+      });
+
+      if (response.data.success) {
+        setImageUrl(response.data.imageUrl);
+        setSubmitStatus({
+          type: 'success',
+          message: 'Image uploaded successfully!'
+        });
+      } else {
+        throw new Error(response.data.message || 'Upload failed');
+      }
+
+    } catch (error: any) {
+      console.error('Image upload error:', error);
+      setSubmitStatus({
+        type: 'error',
+        message: error.response?.data?.message || 'Failed to upload image. Please try again.'
+      });
+    } finally {
+      setIsUploadingImage(false);
+      // Clear the file input
+      event.target.value = '';
+    }
   };
   const insertHr = () => {
     if (quillRef.current) {
@@ -212,14 +274,37 @@ export default function CMSPostEditor(): React.ReactElement {
       disabled={isSubmitting}
     />
 
-    <input
-      type="url"
-      placeholder="Image URL"
-      value={imageUrl}
-      onChange={(e) => setImageUrl(e.target.value)}
-      className="cms-editor-input"
-      disabled={isSubmitting}
-    />
+    <div className="cms-image-input-container">
+      <input
+        type="url"
+        placeholder="Image URL"
+        value={imageUrl}
+        onChange={(e) => setImageUrl(e.target.value)}
+        className="cms-editor-input cms-image-url-input"
+        disabled={isSubmitting || isUploadingImage}
+      />
+      <div className="cms-image-upload-section">
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          className="cms-file-input"
+          id="image-file-input"
+          disabled={isSubmitting || isUploadingImage}
+        />
+        <label 
+          htmlFor="image-file-input" 
+          className={`cms-upload-button ${isUploadingImage ? 'uploading' : ''}`}
+        >
+          <div className="cms-upload-icon">
+            📁
+          </div>
+          <span className="cms-upload-text">
+            {isUploadingImage ? 'Uploading...' : 'Upload'}
+          </span>
+        </label>
+      </div>
+    </div>
 
     <select
       value={category}

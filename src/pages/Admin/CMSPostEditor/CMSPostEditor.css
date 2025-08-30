@@ -25,7 +25,7 @@
   
   .cms-logout-button {
     padding: var(--spacing-sm) var(--spacing-md);
-    background-color: var(--color-error);
+    background-color: #e57373;
     color: var(--color-text-inverse);
     font-size: 14px;
     border: none;
@@ -35,8 +35,18 @@
   }
   
   .cms-logout-button:hover {
-    background-color: #d32f2f;
+    background-color: #f44336;
     transform: translateY(-1px);
+  }
+
+  /* Dark theme logout button - muted red */
+  [data-theme="dark"] .cms-logout-button {
+    background-color: #8d4b4b;
+    color: #ffffff;
+  }
+  
+  [data-theme="dark"] .cms-logout-button:hover {
+    background-color: #a05555;
   }
   
   /* Inputs & Select Styling (Exact Match) */
@@ -63,6 +73,89 @@
     background-position: right 10px center;
     background-size: 10px;
     padding-right: 30px; /* Ensure space for the arrow */
+  }
+
+  /* Image Upload Container */
+  .cms-image-input-container {
+    display: flex;
+    align-items: stretch;
+    gap: var(--spacing-sm);
+    margin-bottom: 15px;
+  }
+
+  .cms-image-url-input {
+    flex: 1;
+    margin-bottom: 0 !important;
+  }
+
+  .cms-image-upload-section {
+    display: flex;
+    align-items: stretch;
+  }
+
+  .cms-file-input {
+    display: none;
+  }
+
+  .cms-upload-button {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: var(--color-bg-secondary);
+    border: 2px solid var(--color-border-light);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-sm) var(--spacing-md);
+    color: var(--color-text-primary);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-light);
+    white-space: nowrap;
+    min-width: 100px;
+    height: auto;
+  }
+
+  .cms-upload-button:hover {
+    background: var(--color-bg-tertiary);
+    border-color: var(--color-border-medium);
+    box-shadow: var(--shadow-medium);
+    transform: translateY(-1px);
+  }
+
+  .cms-upload-button:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-light);
+  }
+
+  .cms-upload-button.uploading {
+    background-color: var(--color-bg-tertiary);
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  .cms-upload-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform var(--transition-normal);
+    font-size: 16px;
+  }
+
+  .cms-upload-button:hover .cms-upload-icon {
+    transform: scale(1.1);
+  }
+
+  .cms-upload-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.025em;
+  }
+
+  /* Focus styles for accessibility */
+  .cms-upload-button:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
   }
   
   /* Editor */
@@ -124,11 +217,12 @@
   
   .cms-editor-button-secondary {
     background-color: var(--color-button-secondary);
-    color: var(--color-text-primary);
+    color: var(--color-text-inverse);
   }
   
   .cms-editor-button-secondary:hover {
     background-color: var(--color-button-secondary-hover);
+    color: var(--color-text-inverse);
   }
   
   .cms-editor-button,
