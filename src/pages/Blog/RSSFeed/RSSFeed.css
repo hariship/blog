@@ -1,12 +1,4 @@
 /* --- Global Styles --- */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Merriweather:wght@400;400&display=swap');
-
-body {
-  font-family: 'Roboto', serif;
-  background-color: var(--color-bg-primary);
-  margin: 0;
-  padding: 0;
-}
 
 /* --- RSS Feed Container --- */
 .rss-feed {
@@ -159,8 +151,10 @@ body {
   font-size: 18px;
   color: var(--color-text-primary);
   margin-bottom: var(--spacing-md);
-  font-family: 'Merriweather', sans-serif;
+  font-weight: 600;
   cursor: pointer;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .rss-feed-item-title:hover {
@@ -169,8 +163,12 @@ body {
 
 .rss-feed-item-description {
   font-size: 16px;
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary);
+  opacity: 0.85;
   margin-bottom: var(--spacing-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .rss-feed-item-date {

@@ -2,7 +2,7 @@
     max-width: 700px;
     margin: 40px auto;
     padding: 40px;
-    background-color: #ffffff;
+    background-color: var(--color-bg-card);
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     position: relative;
@@ -26,7 +26,7 @@
   }
   
   .manage-subscription-header h1 {
-    color: rgb(53, 73, 94);
+    color: var(--color-text-primary);
     margin-bottom: 15px;
     font-size: 32px;
     font-weight: 700;
@@ -73,7 +73,7 @@
     display: block;
     margin-bottom: 10px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-text-secondary);
     font-size: 15px;
     letter-spacing: 0.2px;
     transition: color 0.2s;
@@ -87,30 +87,31 @@
   .form-group select {
     width: 100%;
     padding: 14px 16px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--color-border-light);
     border-radius: 8px;
     font-size: 15px;
     transition: all 0.3s;
-    background-color: #f9f9fa;
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-primary);
   }
   
   .form-group input:hover,
   .form-group select:hover {
-    border-color: #ccc;
+    border-color: var(--color-border-medium);
   }
   
   .form-group input:focus,
   .form-group select:focus {
-    border-color: rgb(53, 73, 94);
+    border-color: var(--color-button-primary);
     outline: none;
-    box-shadow: 0 0 0 4px rgba(53, 73, 94, 0.1);
-    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(var(--color-button-primary-rgb, 53, 73, 94), 0.1);
+    background-color: var(--color-bg-card);
   }
   
   .disabled-input {
-    background-color: #f2f3f4 !important;
+    background-color: var(--color-bg-tertiary) !important;
     cursor: not-allowed;
-    color: #777;
+    color: var(--color-text-tertiary);
   }
   
   .category-checkboxes {
@@ -141,6 +142,7 @@
     font-weight: 400;
     margin-bottom: 0;
     font-size: 14px;
+    color: var(--color-text-primary);
   }
   
   .form-actions {
@@ -198,8 +200,8 @@
   }
   
   .unsubscribe-button {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border-light);
     color: #d93025;
     flex: 1;
     transition: all 0.25s;
@@ -272,7 +274,7 @@
   .loading-spinner {
     text-align: center;
     padding: 60px 0;
-    color: #666;
+    color: var(--color-text-secondary);
     font-size: 16px;
     position: relative;
   }
@@ -300,7 +302,7 @@
   
   .subscribe-prompt p {
     margin-bottom: 25px;
-    color: #555;
+    color: var(--color-text-secondary);
     font-size: 16px;
     line-height: 1.6;
   }
