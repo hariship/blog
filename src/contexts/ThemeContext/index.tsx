@@ -16,18 +16,17 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [theme, setThemeState] = useState<Theme>(() => {
-    // Check localStorage first, then system preference
-    const savedTheme = localStorage.getItem('theme') as Theme;
-    if (savedTheme) {
-      // Apply immediately
-      document.documentElement.setAttribute('data-theme', savedTheme);
-      return savedTheme;
-    }
-    
-    // Check system preference
+    // Check system preference first, then localStorage (matches HTML script)
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
       document.documentElement.setAttribute('data-theme', 'dark');
       return 'dark';
+    }
+    
+    // Only check localStorage if system is not dark
+    const savedTheme = localStorage.getItem('theme') as Theme;
+    if (savedTheme) {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      return savedTheme;
     }
     
     document.documentElement.setAttribute('data-theme', 'light');

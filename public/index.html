@@ -16,6 +16,29 @@
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <link rel="stylesheet" href="https://www.blogextras.com/widget.css" />
     <script async defer src="https://www.blogextras.com/widget.js"></script>
+    
+    <!-- Prevent theme flash on load -->
+    <script>
+      (function() {
+        try {
+          // Check system preference first, then localStorage
+          let theme;
+          
+          if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            theme = 'dark';
+          } else {
+            const savedTheme = localStorage.getItem('theme');
+            theme = savedTheme || 'light';
+          }
+          
+          // Apply theme immediately to prevent flash
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (error) {
+          // Fallback to dark theme if anything fails
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
