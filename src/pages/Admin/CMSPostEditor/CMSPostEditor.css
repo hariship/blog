@@ -2,19 +2,25 @@
 .cms-editor-container {
     max-width: 800px;
     margin: var(--spacing-2xl) auto;
-    font-family: Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Variable", "Segoe UI", system-ui, ui-sans-serif, Helvetica, Arial, sans-serif;
     background-color: var(--color-bg-card);
     padding: var(--spacing-lg);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-medium);
   }
   
-  /* Header with Logout Button */
+  /* Header with Controls */
   .cms-editor-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--spacing-lg);
+  }
+
+  .cms-header-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
   }
   
   .cms-logout-button {
@@ -29,7 +35,7 @@
   }
   
   .cms-logout-button:hover {
-    background-color: #bc4b4b;
+    background-color: #d32f2f;
     transform: translateY(-1px);
   }
   
@@ -69,7 +75,7 @@
   .ql-editor hr {
     border: none;
     border-top: 2px solid var(--color-border-medium);
-    margin: var(--spacing-lg) 0;
+    margin: var(--spacing-sm) 0;
     height: 1px;
   }
   
@@ -101,7 +107,7 @@
   }
   
   .cms-editor-button {
-    background-color: var(--color-success);
+    background-color: var(--color-button-primary);
     color: var(--color-text-inverse);
     font-size: 16px;
     padding: 12px 24px;
@@ -112,7 +118,7 @@
   }
   
   .cms-editor-button:hover {
-    background-color: #45a049;
+    background-color: var(--color-button-primary-hover);
     transform: translateY(-1px);
   }
   
@@ -177,4 +183,61 @@
 .cms-hr-button:disabled {
   cursor: not-allowed;
   opacity: 0.6;
+}
+
+/* Quill Toolbar Dark Theme Fixes */
+[data-theme="dark"] .ql-toolbar {
+  background-color: var(--color-bg-secondary) !important;
+  border-color: var(--color-border-medium) !important;
+}
+
+[data-theme="dark"] .ql-toolbar .ql-stroke {
+  stroke: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] .ql-toolbar .ql-fill {
+  fill: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] .ql-toolbar .ql-picker-label {
+  color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] .ql-toolbar .ql-picker-options {
+  background-color: var(--color-bg-card) !important;
+  border-color: var(--color-border-medium) !important;
+}
+
+[data-theme="dark"] .ql-toolbar .ql-picker-item:hover {
+  background-color: var(--color-bg-tertiary) !important;
+  color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] .ql-toolbar button:hover {
+  background-color: var(--color-bg-tertiary) !important;
+}
+
+[data-theme="dark"] .ql-toolbar button.ql-active {
+  background-color: var(--color-button-primary) !important;
+}
+
+[data-theme="dark"] .ql-container {
+  background-color: var(--color-bg-card) !important;
+  border-color: var(--color-border-medium) !important;
+}
+
+[data-theme="dark"] .ql-editor {
+  color: var(--color-text-primary) !important;
+}
+
+/* Quill Editor Font Size */
+.ql-editor {
+  font-size: 16px !important;
+  line-height: 1.6 !important;
+}
+
+/* Quill Editor Placeholder Styling */
+.ql-editor.ql-blank::before {
+  font-style: italic !important;
+  color: var(--color-text-muted) !important;
 }

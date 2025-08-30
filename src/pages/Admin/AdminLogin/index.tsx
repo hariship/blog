@@ -3,6 +3,7 @@ import CryptoJS from 'crypto-js';
 import axios from 'axios';
 import './AdminLogin.css';
 import { AdminLoginProps, ApiResponse } from '../../../types';
+import ThemeToggle from '../../../components/common/ThemeToggle';
 
 const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
   const [password, setPassword] = useState<string>('');
@@ -78,6 +79,9 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
 
   return (
     <div className="admin-login-container">
+      <div className="admin-theme-toggle-container">
+        <ThemeToggle />
+      </div>
       <div className="admin-login-card">
         <div className="admin-login-header">
           <h2>🔐 Admin Access</h2>

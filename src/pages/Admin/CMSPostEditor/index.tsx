@@ -4,6 +4,7 @@ import 'react-quill/dist/quill.snow.css';
 import './CMSPostEditor.css';
 import axios from 'axios';
 import { PostFormData, SubmitStatus } from '../../../types';
+import ThemeToggle from '../../../components/common/ThemeToggle';
 
 // Custom HR Blot
 const BlockEmbed = Quill.import('blots/block/embed');
@@ -183,9 +184,12 @@ export default function CMSPostEditor(): React.ReactElement {
     <div className="cms-editor-container">
   <div className="cms-editor-header">
     <h2>Create Blog Post</h2>
-    <button onClick={handleLogout} className="cms-logout-button">
-      Logout
-    </button>
+    <div className="cms-header-controls">
+      <ThemeToggle />
+      <button onClick={handleLogout} className="cms-logout-button">
+        Logout
+      </button>
+    </div>
   </div>
 
   <form onSubmit={handleSubmit}>
