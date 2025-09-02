@@ -143,6 +143,7 @@ const RSSFeed: React.FC = () => {
     <div className="blog-header">
       <div className="nav-home-container">
         <a href="/" className="nav-home">
+          {/* @ts-ignore */}
           <MdHome className="home-icon" size="3em" />
         </a>
       </div>

@@ -215,6 +215,7 @@ const Post: React.FC = () => {
           <>
           <div className="post-header">
             <div className="back-button" onClick={handleGoBack}>
+              {/* @ts-ignore */}
               <IoIosArrowBack className="back-icon" />
             </div>
             <div className="post-theme-toggle">
