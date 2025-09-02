@@ -1,5 +1,15 @@
 node_modules/
+build/
+dist/
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 *.sql
 *.csv
 *.txt
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
