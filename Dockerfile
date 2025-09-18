@@ -1,26 +1,25 @@
 # Multi-stage build for optimized production
-FROM node:18-alpine AS build
+FROM node:18-alpine AS builder
 
-# Set working directory
 WORKDIR /app
-
-# Copy package files
 COPY package*.json ./
-
-# Install dependencies with legacy peer deps to resolve React version conflicts
 RUN npm install --legacy-peer-deps
-
-# Copy source code
 COPY . .
-
-# Build the app
 RUN npm run build
 
 # Production stage
 FROM nginx:alpine
+COPY --from=builder /app/build /usr/share/nginx/html
 
-# Copy built app from build stage
-COPY --from=build /app/build /usr/share/nginx/html
+# Configure nginx for SPA
+RUN echo 'server { \
+    listen 80; \
+    root /usr/share/nginx/html; \
+    index index.html; \
+    location / { try_files $uri $uri/ /index.html; } \
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ { \
+        expires 1y; add_header Cache-Control "public, immutable"; } \
+}' > /etc/nginx/conf.d/default.conf
 
 # Create nginx config inline for SPA routing
 RUN echo 'server { \
@@ -43,6 +42,4 @@ RUN echo 'server { \
 
 # Expose port 80
 EXPOSE 80
-
-# Start nginx
 CMD ["nginx", "-g", "daemon off;"]
