@@ -1,0 +1,126 @@
+.view-switcher {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--color-bg-secondary);
+  border-radius: 8px;
+  border: 1px solid var(--color-border-light);
+  flex-shrink: 0;
+}
+
+.view-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 18px;
+}
+
+.view-btn:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+.view-btn.active {
+  background: var(--color-primary);
+  color: white;
+}
+
+.view-btn.active:hover {
+  background: var(--color-primary-light);
+}
+
+/* Dark mode support */
+[data-theme="dark"] .view-switcher {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .view-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .view-btn.active {
+  background: var(--color-primary);
+}
+
+
+.view-btn {
+    position: relative;
+  }
+
+  .view-btn[title]::after {
+    content: attr(title);
+    position: absolute;
+    bottom: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+  }
+
+  .view-btn[title]:not(.active):hover::after {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .view-btn.active[title]::after {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+/* Dark theme tooltip styling */
+[data-theme="dark"] .view-btn[title]::after {
+  background: rgba(20, 20, 20, 0.95);
+  color: #c9a876;
+  border: 1px solid #6b7c93;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 11px;
+}
+
+/* Mobile tooltip adjustments - Use active/focus states since hover doesn't work well on mobile */
+@media (max-width: 768px) {
+  .view-btn[title]::after {
+    bottom: -30px;
+    font-size: 11px;
+    padding: 3px 6px;
+    z-index: 9999;
+  }
+
+  .view-btn[title]:not(.active):hover::after,
+  .view-btn[title]:not(.active):active::after,
+  .view-btn[title]:not(.active):focus::after {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Touch-friendly tooltip - show on tap */
+  .view-btn[title]:not(.active):active::after {
+    opacity: 1;
+    visibility: visible;
+    animation: tooltipShow 2s ease-in-out forwards;
+  }
+}
+
+@keyframes tooltipShow {
+  0%, 80% { opacity: 1; visibility: visible; }
+  100% { opacity: 0; visibility: hidden; }
+}

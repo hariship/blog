@@ -1,14 +1,16 @@
 import React, { useEffect } from "react";
 import { CommentsWidgetProps } from '../../../types';
 import { useTheme } from '../../../contexts/ThemeContext';
+import { useSounds } from '../../../contexts/SoundContext';
 
 const CommentsWidget: React.FC<CommentsWidgetProps> = ({ pageSlug }) => {
   const { theme } = useTheme();
+  const { playKeypadBeep, playButtonSound } = useSounds();
   
   useEffect(() => {
     // Ensure the script is executed when component mounts
     const script: HTMLScriptElement = document.createElement("script");
-    script.src = `${process.env.REACT_APP_BLOG_EXTRAS_URL}/widget.js`;
+    script.src = `${import.meta.env.VITE_BLOG_EXTRAS_URL}/widget.js`;
     script.async = true;
     script.defer = true;
     document.body.appendChild(script);
@@ -52,6 +54,13 @@ const CommentsWidget: React.FC<CommentsWidgetProps> = ({ pageSlug }) => {
             input.style.setProperty('color', 'var(--color-text-primary)', 'important');
             input.style.setProperty('border', '1px solid var(--color-border-medium)', 'important');
             input.style.setProperty('border-radius', 'var(--radius-sm)', 'important');
+
+            // Add keyboard sound events
+            input.addEventListener('keydown', (e: KeyboardEvent) => {
+              if (e.key.length === 1 || e.key === 'Backspace') {
+                playKeypadBeep();
+              }
+            });
           }
         });
 
@@ -59,6 +68,10 @@ const CommentsWidget: React.FC<CommentsWidgetProps> = ({ pageSlug }) => {
         const submitButtons = commentsContainer.querySelectorAll('button, input[type="submit"], .submit-button, .btn, [class*="submit"], [class*="post"], [class*="send"], [class*="button"]');
         submitButtons.forEach((button) => {
           if (button instanceof HTMLElement) {
+            // Add click sound events
+            button.addEventListener('click', () => {
+              playButtonSound();
+            });
             // Use earthy/muted colors for dark theme
             const bgColor = theme === 'dark' ? '#6b7280' : '#374151'; // slate colors
             const hoverColor = theme === 'dark' ? '#9ca3af' : '#4b5563';
@@ -107,7 +120,7 @@ const CommentsWidget: React.FC<CommentsWidgetProps> = ({ pageSlug }) => {
       id="blogextras-comments"
       data-website-id="eb663e71-296b-4665-a1c4-83fba4579887"
       data-page-slug={pageSlug || window.location.pathname}
-      data-api-url={process.env.REACT_APP_BLOG_EXTRAS_URL}
+      data-api-url={import.meta.env.VITE_BLOG_EXTRAS_URL}
       data-theme={theme}
       style={{
         transition: 'background-color 0.3s ease, color 0.3s ease',

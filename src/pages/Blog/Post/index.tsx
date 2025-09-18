@@ -3,10 +3,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import parse, { domToReact } from 'html-react-parser';
 import './Post.css';
 import { useLikes } from '../../../contexts/LikesContext';
+import { useSounds } from '../../../contexts/SoundContext';
 import { IoIosArrowBack } from 'react-icons/io';
 import { Helmet } from 'react-helmet';
 import CommentsWidget from "../../../components/widgets/CommentsWidget";
 import ThemeToggle from '../../../components/common/ThemeToggle';
+import SoundToggle from '../../../components/common/SoundToggle';
 
 // Import our local content
 import htmlContents from '../../../data/html-content';
@@ -60,6 +62,7 @@ const Post: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [showComments, setShowComments] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { playButtonSound } = useSounds();
   const { title } = useParams<{ title: string }>(); // Get title from URL params
   const normalized = normalizeTitle(title || ''); // Normalize title
   const isJournal = normalized === 'life-lately-20-2025';
@@ -68,7 +71,7 @@ const Post: React.FC = () => {
   const fetchPostContent = async (postTitleFromURL: string) => {
     const normalizedTitle = normalizeTitle(postTitleFromURL); // Normalize title
 
-    const targetUrl = `${process.env.REACT_APP_API_BASE_URL}/post/${normalizedTitle}`;
+    const targetUrl = `${import.meta.env.VITE_API_BASE_URL}/post/${normalizedTitle}`;
     try {
       const response = await fetch(targetUrl);
       if (!response.ok) {
@@ -164,6 +167,7 @@ const Post: React.FC = () => {
   }, [title, likesData]);
 
   const handleGoBack = () => {
+    playButtonSound();
     navigate('/');
   };
 
@@ -176,7 +180,7 @@ const Post: React.FC = () => {
     setLikesCount(updatedLikesCount);
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/update-likes`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/update-likes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -207,13 +211,21 @@ const Post: React.FC = () => {
         <title>{postTitle}</title>
         <meta property="og:title" content={postTitle} />
         <meta property="og:description" content={description} />
-        {postImage && <meta property="og:image" content={postImage.startsWith('http') ? postImage : `https://blog.haripriya.org${postImage.startsWith('/') ? '' : '/'}${postImage}`} />}
+        <meta property="og:image" content={
+          postImage
+            ? (postImage.startsWith('http') ? postImage : `https://blog.haripriya.org${postImage.startsWith('/') ? '' : '/'}${postImage}`)
+            : 'https://blog.haripriya.org/logo192.png'
+        } />
         <meta property="og:type" content="article" />
         <meta property="og:url" content={`https://blog.haripriya.org/post/${normalized}`} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={postTitle} />
         <meta name="twitter:description" content={description} />
-        {postImage && <meta name="twitter:image" content={postImage.startsWith('http') ? postImage : `https://blog.haripriya.org${postImage.startsWith('/') ? '' : '/'}${postImage}`} />}
+        <meta name="twitter:image" content={
+          postImage
+            ? (postImage.startsWith('http') ? postImage : `https://blog.haripriya.org${postImage.startsWith('/') ? '' : '/'}${postImage}`)
+            : 'https://blog.haripriya.org/logo192.png'
+        } />
       </Helmet>
       {loading ? (
         <div className="loader"></div>
@@ -225,6 +237,7 @@ const Post: React.FC = () => {
               <IoIosArrowBack className="back-icon" />
             </div>
             <div className="post-theme-toggle">
+              <SoundToggle />
               <ThemeToggle />
             </div>
           </div>
@@ -249,7 +262,10 @@ const Post: React.FC = () => {
                 }
         </div>
 
-          <span className="like-button" onClick={handleLikeToggle}>
+          <span className="like-button" onClick={() => {
+            playButtonSound();
+            handleLikeToggle();
+          }}>
             {likesCount !== null && ( // Only show the heart after likes update
               <svg
                 className={`heart-icon ${isLiked ? 'liked' : 'not-liked'}`}
@@ -269,9 +285,12 @@ const Post: React.FC = () => {
           <br/>
           <hr/>
           <div className="comments-section">
-            <button 
-              className="comments-toggle" 
-              onClick={() => setShowComments(!showComments)}
+            <button
+              className="comments-toggle"
+              onClick={() => {
+                playButtonSound();
+                setShowComments(!showComments);
+              }}
             >
               <div className="comments-toggle-icon">
                 {showComments ? '▼' : '▶'}

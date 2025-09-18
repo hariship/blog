@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSounds } from '../../../contexts/SoundContext';
 import './Subscribe.css';
 
 const Subscribe: React.FC = () => {
@@ -11,6 +12,7 @@ const Subscribe: React.FC = () => {
   const [messageType, setMessageType] = useState<string>('');
   const [availableCategories, setAvailableCategories] = useState<string[]>([]);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 768);
+  const { playButtonSound, playKeypadBeep } = useSounds();
  
   // Fetch available categories when component mounts
   React.useEffect(() => {
@@ -23,12 +25,18 @@ const Subscribe: React.FC = () => {
   
     const fetchCategories = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/rss-feed`);
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/rss-feed`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
         const categories = [...new Set(data.map((item: any) => item.category))] as string[];
         setAvailableCategories(categories);
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.warn('Could not fetch categories, using default:', error);
+        setAvailableCategories(['all']);
       }
     };
   
@@ -41,6 +49,7 @@ const Subscribe: React.FC = () => {
   
 
   const openModal = () => {
+    playButtonSound();
     setIsModalOpen(true);
   };
 
@@ -85,7 +94,7 @@ const Subscribe: React.FC = () => {
     setMessage('');
     
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/subscribe`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/subscribe`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -128,23 +137,20 @@ const Subscribe: React.FC = () => {
   return (
     <div className="subscribe-container">
       <button className={`subscribe-button ${isMobile ? 'mobile-button' : ''}`} onClick={openModal}>
-      {!isMobile && <span className="subscribe-text">Subscribe</span>}
-          {isMobile && (
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              width="20" 
-              height="20" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="white" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-            >
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-          )}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
         </button>
 
       {isModalOpen && (
@@ -166,6 +172,11 @@ const Subscribe: React.FC = () => {
                     id="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key.length === 1 || e.key === 'Backspace') {
+                        playKeypadBeep();
+                      }
+                    }}
                     placeholder="Enter your name"
                     required
                   />
@@ -178,6 +189,11 @@ const Subscribe: React.FC = () => {
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key.length === 1 || e.key === 'Backspace') {
+                        playKeypadBeep();
+                      }
+                    }}
                     placeholder="Enter your email"
                     required
                   />
@@ -217,10 +233,11 @@ const Subscribe: React.FC = () => {
                 )}
                 
                 <div className="form-actions">
-                  <button 
-                    type="submit" 
-                    className="submit-button" 
+                  <button
+                    type="submit"
+                    className="submit-button"
                     disabled={isSubmitting}
+                    onClick={() => playButtonSound()}
                   >
                     {isSubmitting ? 'Subscribing...' : 'Subscribe'}
                   </button>

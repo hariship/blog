@@ -44,7 +44,7 @@
   color: var(--color-text-primary);
   position: absolute;
   left: 15px;
-  top: 50%;
+  top: 60%;
   transform: translateY(-50%);
   transition: color var(--transition-fast);
 }
@@ -138,7 +138,8 @@
 /* Mobile-Specific Fixes */
 @media screen and (max-width: 768px) {
   .navbar {
-    padding: 25px 25px; /* Increased padding for better spacing */
+    padding: 18px 20px !important; /* Better spacing for mobile - force override */
+    margin-top: 0 !important;
   }
 
   .menu-icon {
