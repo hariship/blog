@@ -6,13 +6,12 @@ ARG REACT_APP_API_BASE_URL=https://api.haripriya.org
 
 WORKDIR /app
 
-# Copy package files and npm config
+# Copy package files
 COPY package*.json ./
-COPY .npmrc ./
 
 # Clean install dependencies
 RUN npm cache clean --force && \
-    npm install --legacy-peer-deps
+    npm install
 
 # Copy source code
 COPY . .
