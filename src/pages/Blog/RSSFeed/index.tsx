@@ -37,7 +37,6 @@ const RSSFeed: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'mostLiked' | 'alphabetical'>('newest');
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     // Load saved view mode from localStorage
@@ -103,14 +102,6 @@ const RSSFeed: React.FC = () => {
   useEffect(() => {
     let items = [...feedItems];
 
-    // Apply search filter
-    if (searchQuery) {
-      items = items.filter(item =>
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
     // Apply sorting
     switch (sortBy) {
       case 'newest':
@@ -132,7 +123,7 @@ const RSSFeed: React.FC = () => {
     }
 
     setFilteredItems(items);
-  }, [feedItems, searchQuery, sortBy, likesData]);
+  }, [feedItems, sortBy, likesData]);
 
   const getLikesForPost = (title: string) => {
     const postLikesData = likesData.find(like => like.title === title);
@@ -382,15 +373,6 @@ const RSSFeed: React.FC = () => {
             </select>
           </div>
 
-          <div className="search-section">
-            <input
-              type="text"
-              placeholder="Search posts..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="search-input"
-            />
-          </div>
         </div>
         
         {/* Pagination Controls */}
