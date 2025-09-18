@@ -20,7 +20,7 @@
   --color-accent: var(--lcars-teal);
 
   /* Text Colors - Softer for eyes */
-  --color-text-primary: #d4d4d4;
+  --color-text-primary: #c8c8c8;
   --color-text-secondary: #b8b8b8;
   --color-text-muted: #888888;
 
@@ -51,7 +51,8 @@
 [data-theme="dark"] body {
   background-color: var(--color-bg-primary);
   color: var(--color-text-primary);
-  font-family: 'Helvetica', 'Arial', sans-serif;
+  font-family: 'Helvetica Neue', 'Arial', 'Liberation Sans', sans-serif;
+  letter-spacing: 0.3px;
 }
 
 /* LCARS-style container - Dark theme only */
@@ -63,13 +64,14 @@
 
 /* LCARS-style category buttons - Dark theme only */
 [data-theme="dark"] .list-item-category,
-[data-theme="dark"] .compact-category {
-  background: var(--lcars-warm-amber) !important;
-  color: #2a2a2a !important;
-  font-weight: bold;
+[data-theme="dark"] .compact-category,
+[data-theme="dark"] .magazine-featured-category {
+  background: var(--color-primary) !important;
+  color: #1e3a5f !important;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
-  border-radius: 20px;
+  border-radius: 12px;
 }
 
 /* LCARS-style view switcher - Dark theme only */
@@ -114,6 +116,244 @@
   border-color: var(--color-border-light) !important;
   color: var(--color-text-muted) !important;
 }
+
+/* Star Trek Typography & Subtle Styling - Dark theme only */
+[data-theme="dark"] .rss-feed-title {
+  font-family: 'Helvetica Neue', 'Arial', sans-serif !important;
+  font-weight: 300 !important;
+  letter-spacing: 1.5px !important;
+  text-transform: uppercase !important;
+  font-size: 24px !important;
+}
+
+[data-theme="dark"] .list-item-title,
+[data-theme="dark"] .grid-card-title,
+[data-theme="dark"] .compact-title {
+  font-family: 'Helvetica Neue', 'Arial', sans-serif !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.5px !important;
+}
+
+[data-theme="dark"] .list-item-category,
+[data-theme="dark"] .compact-category {
+  font-family: 'Helvetica Neue', 'Arial', sans-serif !important;
+  font-weight: 600 !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase !important;
+  font-size: 0.75rem !important;
+}
+
+[data-theme="dark"] .list-item-category {
+  border-radius: 3px !important;
+}
+
+[data-theme="dark"] .pagination-info {
+  font-family: 'Helvetica Neue', 'Arial', sans-serif !important;
+  font-weight: 300 !important;
+  letter-spacing: 0.8px !important;
+  text-transform: uppercase !important;
+  font-size: 0.85rem !important;
+}
+
+[data-theme="dark"] .category-select {
+  font-family: 'Helvetica Neue', 'Arial', sans-serif !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.5px !important;
+}
+
+[data-theme="dark"] .search-input {
+  font-family: 'Helvetica Neue', 'Arial', sans-serif !important;
+  letter-spacing: 0.3px !important;
+}
+
+/* Individual ViewSwitcher-style buttons */
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.controls-group {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--color-bg-secondary);
+  border-radius: 8px;
+  border: 1px solid var(--color-border-light);
+  flex-shrink: 0;
+}
+
+/* Individual button styling to match ViewSwitcher */
+.theme-toggle,
+.subscribe-button,
+.rss-feed-icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  font-size: 18px;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
+}
+
+.theme-toggle:hover,
+.subscribe-button:hover,
+.rss-feed-icon-button:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+  transform: none;
+  box-shadow: none;
+}
+
+/* Force theme toggle icon visibility with maximum specificity - Light theme */
+.controls-group .theme-toggle svg,
+.theme-toggle svg,
+.theme-toggle .lucide,
+.theme-toggle .lucide-sun,
+.theme-toggle .lucide-moon,
+button.theme-toggle svg {
+  width: 18px !important;
+  height: 18px !important;
+  stroke: #333 !important;
+  color: #333 !important;
+  fill: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  position: relative !important;
+  z-index: 999 !important;
+}
+
+.controls-group .theme-toggle:hover svg,
+.theme-toggle:hover svg,
+.theme-toggle:hover .lucide,
+button.theme-toggle:hover svg {
+  stroke: #000 !important;
+  color: #000 !important;
+}
+
+.rss-feed-icon {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  transition: fill 0.2s ease;
+}
+
+/* Dark mode support for controls group and buttons */
+[data-theme="dark"] .controls-group {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .theme-toggle,
+[data-theme="dark"] .subscribe-button,
+[data-theme="dark"] .rss-feed-icon-button {
+  background: transparent;
+  color: var(--lcars-slate);
+}
+
+[data-theme="dark"] .theme-toggle:hover,
+[data-theme="dark"] .subscribe-button:hover,
+[data-theme="dark"] .rss-feed-icon-button:hover {
+  background: var(--lcars-slate);
+  color: #000;
+}
+
+/* Force dark theme icon visibility with maximum specificity */
+[data-theme="dark"] .controls-group .theme-toggle svg,
+[data-theme="dark"] .theme-toggle svg,
+[data-theme="dark"] .theme-toggle .lucide,
+[data-theme="dark"] .theme-toggle .lucide-sun,
+[data-theme="dark"] .theme-toggle .lucide-moon,
+[data-theme="dark"] button.theme-toggle svg {
+  width: 18px !important;
+  height: 18px !important;
+  stroke: var(--lcars-slate) !important;
+  color: var(--lcars-slate) !important;
+  fill: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  position: relative !important;
+  z-index: 999 !important;
+}
+
+[data-theme="dark"] .controls-group .theme-toggle:hover svg,
+[data-theme="dark"] .theme-toggle:hover svg,
+[data-theme="dark"] .theme-toggle:hover .lucide,
+[data-theme="dark"] button.theme-toggle:hover svg {
+  stroke: #000 !important;
+  color: #000 !important;
+}
+
+/* Desktop-specific fix using mobile approach */
+@media (min-width: 769px) {
+  /* Force desktop theme toggle to use mobile-style simple approach */
+  .theme-toggle {
+    padding: 0 !important;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 6px !important;
+    justify-content: center !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    gap: 0 !important;
+    color: var(--color-text-primary) !important;
+  }
+
+  .theme-toggle svg {
+    width: 18px !important;
+    height: 18px !important;
+    stroke: currentColor !important;
+    color: inherit !important;
+  }
+
+  /* Dark theme desktop override */
+  [data-theme="dark"] .theme-toggle {
+    color: var(--lcars-slate) !important;
+  }
+
+  [data-theme="dark"] .theme-toggle:hover {
+    background: var(--lcars-slate) !important;
+    color: #000 !important;
+  }
+}
+
+/* Earthy blue tones for dark theme controls */
+[data-theme="dark"] .view-btn.active {
+  background: var(--lcars-blue);
+  color: #ffffff;
+}
+
+[data-theme="dark"] .pagination-button {
+  background: var(--color-bg-secondary) !important;
+  border: 2px solid var(--lcars-slate) !important;
+  color: var(--lcars-slate) !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease !important;
+}
+
+[data-theme="dark"] .pagination-button:hover:not(:disabled) {
+  background: var(--lcars-slate) !important;
+  color: #000 !important;
+}
+
+[data-theme="dark"] .pagination-button:disabled {
+  border-color: var(--color-border-light) !important;
+  color: var(--color-text-muted) !important;
+}
+
 
 /* --- Global Styles --- */
 
@@ -207,7 +447,7 @@
 .list-item-category {
   padding: 4px 12px;
   background: var(--color-primary);
-  color: white;
+  color: #faf0e6;
   border-radius: 12px;
   font-size: 12px;
   font-weight: 500;
@@ -338,11 +578,11 @@
 }
 
 .compact-category {
-  padding: 2px 8px;
-  background: var(--color-bg-secondary);
-  color: var(--color-text-secondary);
-  border-radius: 8px;
-  font-size: 11px;
+  padding: 4px 12px;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  border-radius: 12px;
+  font-size: 12px;
   font-weight: 500;
 }
 
@@ -417,7 +657,7 @@
 
 .magazine-featured-category {
   padding: 4px 12px;
-  background: var(--color-primary);
+  background: rgba(0, 0, 0, 0.9);
   color: white;
   border-radius: 12px;
   font-size: 12px;
@@ -550,7 +790,7 @@
   margin-top: 5px;
   margin-left: auto;
   margin-right: auto;
-  padding: var(--spacing-lg) var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-md);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-medium);
 }
@@ -575,7 +815,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-sm);
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
   background: var(--color-bg-card);
   border-bottom: 1px solid var(--color-border-light);
   flex-wrap: wrap;
@@ -623,7 +863,7 @@
 
 .category-dropdown label {
   font-weight: 500;
-  font-size: 16px;
+  font-size: 20px;
   color: var(--color-text-primary);
   margin: 0 !important;
   line-height: 1;
@@ -635,7 +875,7 @@
   padding: 4px 12px;
   border: 1px solid var(--color-border-medium);
   border-radius: var(--radius-md);
-  font-size: 15px;
+  font-size: 16px;
   background-color: var(--color-bg-card);
   color: var(--color-text-primary);
   line-height: 1.2;
@@ -890,16 +1130,24 @@
   }
   
   .controls-group {
-    gap: var(--spacing-sm);
+    gap: 4px;
   }
-  
+
   .blog-header {
     grid-template-columns: auto 1fr auto;
     padding: 16px var(--spacing-md) !important;
   }
-  
+
   .rss-feed-title {
     font-size: 24px;
+  }
+
+  /* Ensure mobile buttons maintain ViewSwitcher styling */
+  .theme-toggle,
+  .subscribe-button,
+  .rss-feed-icon-button {
+    width: 36px;
+    height: 36px;
   }
 }
 
@@ -1014,7 +1262,7 @@
 
   /* Increase font sizes for better mobile readability */
   .filter-section select {
-    font-size: 22px !important;
+    font-size: 17px !important;
     padding: 12px 16px !important;
     text-align: center;
     text-align-last: center;

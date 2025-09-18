@@ -214,7 +214,7 @@ const RSSFeed: React.FC = () => {
                 {item.category && <span className="list-item-category">{item.category}</span>}
               </div>
               <p className="list-item-description">
-                {item.description.length > 20 ? `${item.description.substring(0, 20)}...` : item.description}
+                {item.description && item.description.length > 20 ? `${item.description.substring(0, 20)}...` : item.description || ''}
               </p>
               <div className="list-item-meta">
                 <span className="list-item-date">{new Date(item.pub_date).toLocaleDateString()}</span>
@@ -253,7 +253,7 @@ const RSSFeed: React.FC = () => {
           )}
           <div className="grid-card-content">
             <h3 className="grid-card-title">{item.title}</h3>
-            <p className="grid-card-description">{item.description}</p>
+            <p className="grid-card-description">{item.description || ''}</p>
             <div className="grid-card-meta">
               <span className="grid-card-date">{new Date(item.pub_date).toLocaleDateString()}</span>
               {likesData.length > 0 && (
@@ -309,7 +309,7 @@ const RSSFeed: React.FC = () => {
             )}
             <div className="magazine-featured-content">
               <h2 className="magazine-featured-title">{featured.title}</h2>
-              <p className="magazine-featured-description">{featured.description}</p>
+              <p className="magazine-featured-description">{featured.description || ''}</p>
               <div className="magazine-featured-meta">
                 <span>{new Date(featured.pub_date).toLocaleDateString()}</span>
                 {featured.category && <span className="magazine-featured-category">{featured.category}</span>}
@@ -361,7 +361,7 @@ const RSSFeed: React.FC = () => {
         </div>
       </div>
 
-      <h1 className="rss-feed-title">Posts</h1>
+      {/* <h1 className="rss-feed-title">Posts</h1> */}
 
       <div className="header-controls">
         <div className="controls-group">

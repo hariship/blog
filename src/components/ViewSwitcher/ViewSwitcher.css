@@ -75,12 +75,52 @@
     transition: opacity 0.2s ease, visibility 0.2s ease;
   }
 
-  .view-btn[title]:hover::after {
+  .view-btn[title]:not(.active):hover::after {
     opacity: 1;
     visibility: visible;
   }
 
   .view-btn.active[title]::after {
-    opacity: 0 !important;
-    visibility: hidden !important;
+    opacity: 0;
+    visibility: hidden;
   }
+
+/* Dark theme tooltip styling */
+[data-theme="dark"] .view-btn[title]::after {
+  background: rgba(20, 20, 20, 0.95);
+  color: #c9a876;
+  border: 1px solid #6b7c93;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 11px;
+}
+
+/* Mobile tooltip adjustments - Use active/focus states since hover doesn't work well on mobile */
+@media (max-width: 768px) {
+  .view-btn[title]::after {
+    bottom: -30px;
+    font-size: 11px;
+    padding: 3px 6px;
+    z-index: 9999;
+  }
+
+  .view-btn[title]:not(.active):hover::after,
+  .view-btn[title]:not(.active):active::after,
+  .view-btn[title]:not(.active):focus::after {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Touch-friendly tooltip - show on tap */
+  .view-btn[title]:not(.active):active::after {
+    opacity: 1;
+    visibility: visible;
+    animation: tooltipShow 2s ease-in-out forwards;
+  }
+}
+
+@keyframes tooltipShow {
+  0%, 80% { opacity: 1; visibility: visible; }
+  100% { opacity: 0; visibility: hidden; }
+}
