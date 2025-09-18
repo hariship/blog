@@ -56,7 +56,7 @@
     position: relative;
   }
 
-  .view-btn[title]:hover::after {
+  .view-btn[title]::after {
     content: attr(title);
     position: absolute;
     bottom: -35px;
@@ -70,4 +70,17 @@
     white-space: nowrap;
     z-index: 1000;
     pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+  }
+
+  .view-btn[title]:hover::after {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .view-btn.active[title]::after {
+    opacity: 0 !important;
+    visibility: hidden !important;
   }

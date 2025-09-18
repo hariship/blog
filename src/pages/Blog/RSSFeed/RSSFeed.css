@@ -1,17 +1,17 @@
-/* --- Star Trek LCARS Theme --- */
-:root {
-  /* Star Trek LCARS Color Palette */
-  --lcars-blue: #5599ff;
-  --lcars-orange: #ff9955;
-  --lcars-red: #cc6666;
-  --lcars-yellow: #ffcc99;
-  --lcars-purple: #cc99cc;
-  --lcars-teal: #99cccc;
+/* --- Star Trek LCARS Dark Theme Only --- */
+[data-theme="dark"] {
+  /* Star Trek LCARS Color Palette - Subtle & Eye-friendly */
+  --lcars-blue: #6b8caf;
+  --lcars-warm-amber: #c9a876;
+  --lcars-sage: #7a9b7c;
+  --lcars-rust: #a67c52;
+  --lcars-slate: #6b7c93;
+  --lcars-teal: #6ba3a0;
 
   /* Dark Space Theme */
-  --color-bg-primary: #000000;
-  --color-bg-secondary: #111111;
-  --color-bg-card: #1a1a1a;
+  --color-bg-primary: #0a0a0a;
+  --color-bg-secondary: #1a1a1a;
+  --color-bg-card: #222222;
   --color-bg-hover: #2a2a2a;
 
   /* LCARS Interface Colors */
@@ -19,10 +19,10 @@
   --color-primary-light: #66aaff;
   --color-accent: var(--lcars-teal);
 
-  /* Text Colors */
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #cccccc;
-  --color-text-muted: #999999;
+  /* Text Colors - Softer for eyes */
+  --color-text-primary: #d4d4d4;
+  --color-text-secondary: #b8b8b8;
+  --color-text-muted: #888888;
 
   /* Border Colors */
   --color-border-light: #333333;
@@ -48,9 +48,71 @@
 }
 
 /* Dark theme body styling */
-body {
+[data-theme="dark"] body {
   background-color: var(--color-bg-primary);
   color: var(--color-text-primary);
+  font-family: 'Helvetica', 'Arial', sans-serif;
+}
+
+/* LCARS-style container - Dark theme only */
+[data-theme="dark"] .rss-feed {
+  background: var(--color-bg-primary);
+  /* border-left: 2px solid var(--lcars-slate); */
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+}
+
+/* LCARS-style category buttons - Dark theme only */
+[data-theme="dark"] .list-item-category,
+[data-theme="dark"] .compact-category {
+  background: var(--lcars-warm-amber) !important;
+  color: #2a2a2a !important;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 20px;
+}
+
+/* LCARS-style view switcher - Dark theme only */
+[data-theme="dark"] .view-switcher {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--lcars-slate);
+  border-radius: 8px;
+}
+
+[data-theme="dark"] .view-btn {
+  background: transparent;
+  border: none;
+  color: var(--lcars-slate);
+  transition: all 0.3s ease;
+}
+
+[data-theme="dark"] .view-btn:hover {
+  background: var(--lcars-slate);
+  color: #000;
+}
+
+[data-theme="dark"] .view-btn.active {
+  background: var(--lcars-warm-amber);
+  color: #2a2a2a;
+}
+
+/* LCARS-style pagination - Dark theme only */
+[data-theme="dark"] .pagination-button {
+  background: var(--color-bg-secondary) !important;
+  border: 2px solid var(--lcars-blue) !important;
+  color: var(--lcars-blue) !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+}
+
+[data-theme="dark"] .pagination-button:hover:not(:disabled) {
+  background: var(--lcars-blue) !important;
+  color: #000 !important;
+}
+
+[data-theme="dark"] .pagination-button:disabled {
+  border-color: var(--color-border-light) !important;
+  color: var(--color-text-muted) !important;
 }
 
 /* --- Global Styles --- */
@@ -61,6 +123,7 @@ body {
   width: 100%;
   height: auto;
   overflow: visible;
+  margin-top: var(--spacing-sm);
 }
 
 @keyframes fadeIn {
@@ -78,7 +141,7 @@ body {
 .view-list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-sm);
 }
 
 .list-item {
@@ -483,7 +546,7 @@ body {
 .rss-feed {
   background-color: var(--color-bg-card);
   max-width: 800px;
-  margin-bottom: var(--spacing-2xl);
+  margin-bottom: var(--spacing-lg);
   margin-top: 5px;
   margin-left: auto;
   margin-right: auto;
@@ -793,7 +856,8 @@ body {
 /* --- Responsive Styles --- */
 @media (max-width: 600px) {
   .rss-feed {
-    padding: 20px 12px;
+    padding: 5px 5px !important;
+    margin: 0 auto !important;
   }
 
   .rss-feed-title {
@@ -831,7 +895,7 @@ body {
   
   .blog-header {
     grid-template-columns: auto 1fr auto;
-    padding: var(--spacing-sm) var(--spacing-md);
+    padding: 16px var(--spacing-md) !important;
   }
   
   .rss-feed-title {
@@ -1122,7 +1186,6 @@ body {
     font-size: 14px;
     line-height: 1.4;
   }
-}
 
 /* RSS Feed Button Container */
 .rss-feed-button-container {
