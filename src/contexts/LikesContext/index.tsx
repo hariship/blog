@@ -25,7 +25,7 @@ export const LikesProvider: React.FC<LikesProviderProps> = ({ children }) => {
 
   const fetchRSSFeed = async (): Promise<PostData[]> => {
     try {
-      const response: Response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/rss-feed`);
+      const response: Response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/rss-feed`);
       const rssData: PostData[] = await response.json();
       return rssData;
     } catch (error) {

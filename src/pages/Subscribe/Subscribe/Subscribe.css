@@ -232,21 +232,10 @@
   border: 1px solid #ffcdd2;
 }
 
-/* Blog Header Styles - For proper alignment */
-.blog-header {
-  display: flex;
-  align-items: center;       /* ✅ align vertically */
-  justify-content: space-between;
-  background: var(--color-bg-card);
-  padding: 10px 24px;
-  width: 100%;
-  box-sizing: border-box;
-  border-bottom: 1px solid var(--color-border-light);
-  height: auto;              /* ✅ let it wrap naturally */
-  transition: background-color var(--transition-normal), border-color var(--transition-normal);
-}
+/* Removed conflicting blog-header styles */
 
-.nav-home-container,
+/* Removed conflicting nav-home-container styles */
+
 .subscribe-container-wrapper {
   flex-shrink: 0;
   width: 48px;
@@ -270,25 +259,7 @@
 
 
 
-.rss-feed-title {
-  flex-grow: 1;
-  text-align: center;
-  font-size: 28px;
-  color: var(--color-text-primary);
-  margin: 0;
-  white-space: nowrap;
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  transition: color var(--transition-fast);
-}
-
-/* Desktop only - move title to the right */
-@media (min-width: 769px) {
-  .rss-feed-title {
-    text-align: left;
-    margin-left: 250px;
-  }
-}
+/* Removed conflicting rss-feed-title styles */
 
 /* Responsive Styles
 @media (max-width: 667px) {

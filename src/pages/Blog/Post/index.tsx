@@ -68,7 +68,7 @@ const Post: React.FC = () => {
   const fetchPostContent = async (postTitleFromURL: string) => {
     const normalizedTitle = normalizeTitle(postTitleFromURL); // Normalize title
 
-    const targetUrl = `${process.env.REACT_APP_API_BASE_URL}/post/${normalizedTitle}`;
+    const targetUrl = `${import.meta.env.VITE_API_BASE_URL}/post/${normalizedTitle}`;
     try {
       const response = await fetch(targetUrl);
       if (!response.ok) {
@@ -176,7 +176,7 @@ const Post: React.FC = () => {
     setLikesCount(updatedLikesCount);
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/update-likes`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/update-likes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

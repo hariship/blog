@@ -6,11 +6,18 @@ export type ViewMode = 'list' | 'grid' | 'compact' | 'magazine';
 interface ViewSwitcherProps {
   currentView: ViewMode;
   onViewChange: (view: ViewMode) => void;
+  hideMagazine?: boolean;
 }
 
-const ViewSwitcher: React.FC<ViewSwitcherProps> = ({ currentView, onViewChange }) => {
+const ViewSwitcher: React.FC<ViewSwitcherProps> = ({ currentView, onViewChange, hideMagazine = false }) => {
   const getIcon = (mode: ViewMode): React.ReactElement => {
     switch (mode) {
+      case 'compact':
+        return (
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V2zm5 0v2h6V2H5zm9 0v2h1V2h-1zm0 4a1 1 0 0 1 1-1h0a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h0a1 1 0 0 1-1-1V6zm-9 0v2h6V6H5zm-4 0v2h3V6H1zm0 4a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1v-2zm5 0v2h6v-2H5zm9 0v2h1v-2h-1z"/>
+            </svg>
+        );
       case 'list':
         return (
           <svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
@@ -21,12 +28,6 @@ const ViewSwitcher: React.FC<ViewSwitcherProps> = ({ currentView, onViewChange }
         return (
           <svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
             <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z"/>
-          </svg>
-        );
-      case 'compact':
-        return (
-          <svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V2zm5 0v2h6V2H5zm9 0v2h1V2h-1zm0 4a1 1 0 0 1 1-1h0a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h0a1 1 0 0 1-1-1V6zm-9 0v2h6V6H5zm-4 0v2h3V6H1zm0 4a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1v-2zm5 0v2h6v-2H5zm9 0v2h1v-2h-1z"/>
           </svg>
         );
       case 'magazine':
@@ -41,12 +42,16 @@ const ViewSwitcher: React.FC<ViewSwitcherProps> = ({ currentView, onViewChange }
     }
   };
 
-  const views = [
+  const allViews = [
     { mode: 'list' as ViewMode, label: 'List' },
-    { mode: 'grid' as ViewMode, label: 'Grid' },
     { mode: 'compact' as ViewMode, label: 'Compact' },
-    { mode: 'magazine' as ViewMode, label: 'Magazine' }
+    { mode: 'magazine' as ViewMode, label: 'Magazine' },
+    { mode: 'grid' as ViewMode, label: 'Grid' }
   ];
+
+  const views = hideMagazine
+    ? allViews.filter(view => view.mode !== 'magazine')
+    : allViews;
 
   return (
     <div className="view-switcher">
@@ -54,7 +59,10 @@ const ViewSwitcher: React.FC<ViewSwitcherProps> = ({ currentView, onViewChange }
         <button
           key={mode}
           className={`view-btn ${currentView === mode ? 'active' : ''}`}
-          onClick={() => onViewChange(mode)}
+          onClick={(e) => {
+            onViewChange(mode);
+            e.currentTarget.blur();
+          }}
           title={label}
           aria-label={`Switch to ${label} view`}
         >

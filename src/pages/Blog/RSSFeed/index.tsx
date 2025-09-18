@@ -9,7 +9,7 @@ import RSSFeedButton from '../../../components/widgets/RSSFeedButton';
 import ThemeToggle from '../../../components/common/ThemeToggle';
 import ViewSwitcher, { ViewMode } from '../../../components/ViewSwitcher/ViewSwitcher';
 
-const targetUrl = `${process.env.REACT_APP_API_BASE_URL}/posts`;
+const targetUrl = `${import.meta.env.VITE_API_BASE_URL}/posts`;
 
 interface FeedItem {
   title: string;
@@ -43,12 +43,13 @@ const RSSFeed: React.FC = () => {
     const saved = localStorage.getItem('blogViewMode');
     return (saved as ViewMode) || 'list';
   });
+  const [isMobile, setIsMobile] = useState<boolean>(false);
   const navigate = useNavigate();
   const { likesData, updateLikesData } = useLikes();
 
   // Pagination states - now using backend pagination
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [itemsPerPage] = useState<number>(5);
+  const [itemsPerPage] = useState<number>(10);
   const [paginationInfo, setPaginationInfo] = useState<PaginationInfo | null>(null);
 
   useEffect(() => {
@@ -76,7 +77,7 @@ const RSSFeed: React.FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/categories`);
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/categories`);
         const categoriesData = await response.json();
         setCategories(categoriesData);
       } catch (error) {
@@ -97,6 +98,18 @@ const RSSFeed: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('blogViewMode', viewMode);
   }, [viewMode]);
+
+  // Check for mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Filter and sort items
   useEffect(() => {
@@ -147,7 +160,7 @@ const RSSFeed: React.FC = () => {
 
     try {
       // Make server request to update likes
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/update-likes`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/update-likes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -182,32 +195,47 @@ const RSSFeed: React.FC = () => {
   const renderListView = () => (
     <div className="view-list">
       {filteredItems.map((item, index) => (
-        <div key={index} className="list-item">
-          <div className="list-item-header">
-            <h2 className="list-item-title" onClick={() => navigate(`/post/${item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: item })}>
-              {item.title}
-            </h2>
-            {item.category && <span className="list-item-category">{item.category}</span>}
-          </div>
-          <p className="list-item-description">{item.description}</p>
-          <div className="list-item-meta">
-            <span className="list-item-date">{new Date(item.pub_date).toLocaleDateString()}</span>
-            {likesData.length > 0 && (
-              <span onClick={() => handleLikeToggle(item.title)} className="favorite-icon">
-                <svg
-                  className={isPostLiked(item.title) ? 'liked' : 'not-liked'}
-                  stroke="currentColor"
-                  fill="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                  height="1em"
-                  width="1em"
-                >
-                  <path d="m12 21.35-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
-                </svg>
-                <span>{getLikesForPost(item.title)}</span>
-              </span>
+        <div
+          key={index}
+          className="list-item"
+          onClick={() => navigate(`/post/${item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: item })}
+        >
+          <div className="list-item-content">
+            {item.enclosure && (
+              <div className="list-item-image">
+                <img src={item.enclosure} alt={item.title} />
+              </div>
             )}
+            <div className="list-item-text">
+              <div className="list-item-header">
+                <h2 className="list-item-title">
+                  {item.title}
+                </h2>
+                {item.category && <span className="list-item-category">{item.category}</span>}
+              </div>
+              <p className="list-item-description">
+                {item.description.length > 20 ? `${item.description.substring(0, 20)}...` : item.description}
+              </p>
+              <div className="list-item-meta">
+                <span className="list-item-date">{new Date(item.pub_date).toLocaleDateString()}</span>
+                {likesData.length > 0 && (
+                  <span onClick={(e) => { e.stopPropagation(); handleLikeToggle(item.title); }} className="favorite-icon">
+                    <svg
+                      className={isPostLiked(item.title) ? 'liked' : 'not-liked'}
+                      stroke="currentColor"
+                      fill="currentColor"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                      height="1em"
+                      width="1em"
+                    >
+                      <path d="m12 21.35-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+                    </svg>
+                    <span>{getLikesForPost(item.title)}</span>
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       ))}
@@ -255,14 +283,14 @@ const RSSFeed: React.FC = () => {
     <div className="view-compact">
       {filteredItems.map((item, index) => (
         <div key={index} className="compact-item" onClick={() => navigate(`/post/${item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: item })}>
-          <span className="compact-date">{new Date(item.pub_date).toLocaleDateString()}</span>
+          <span className="compact-date">
+            {new Date(item.pub_date).toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric'
+            })}
+          </span>
           <span className="compact-title">{item.title}</span>
-          {item.category && <span className="compact-category">{item.category}</span>}
-          {likesData.length > 0 && (
-            <span onClick={(e) => { e.stopPropagation(); handleLikeToggle(item.title); }} className="compact-likes">
-              {isPostLiked(item.title) ? '❤️' : '🤍'} {getLikesForPost(item.title) || 0}
-            </span>
-          )}
+          {!isMobile && item.category && <span className="compact-category">{item.category}</span>}
         </div>
       ))}
     </div>
@@ -325,17 +353,18 @@ const RSSFeed: React.FC = () => {
     <div className="rss-feed">
     <div className="blog-header">
       <div className="nav-home-container">
-        <a href="/" className="nav-home">
-          {/* @ts-ignore */}
-          <MdHome className="home-icon" size="3em" />
-        </a>
+        <div className="desktop-view-switcher">
+          <ViewSwitcher currentView={viewMode} onViewChange={setViewMode} />
+        </div>
+        <div className="mobile-view-switcher-inline">
+          <ViewSwitcher currentView={viewMode} onViewChange={setViewMode} hideMagazine={true} />
+        </div>
       </div>
-      
+
       <h1 className="rss-feed-title">Posts</h1>
-      
+
       <div className="header-controls">
         <div className="controls-group">
-          <ViewSwitcher currentView={viewMode} onViewChange={setViewMode} />
           <ThemeToggle />
           <Subscribe />
           <div className="rss-button-wrapper">
@@ -344,6 +373,7 @@ const RSSFeed: React.FC = () => {
         </div>
       </div>
     </div>
+
       
       <div className="category-dropdown">
         <div className="filter-controls">
@@ -359,19 +389,6 @@ const RSSFeed: React.FC = () => {
             </select>
           </div>
 
-          <div className="filter-section">
-            <label htmlFor="sort">Sort</label>
-            <select
-              id="sort"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-            >
-              <option value="newest">Newest</option>
-              <option value="oldest">Oldest</option>
-              <option value="mostLiked">Most Liked</option>
-              <option value="alphabetical">Alphabetical</option>
-            </select>
-          </div>
 
         </div>
         
@@ -387,7 +404,7 @@ const RSSFeed: React.FC = () => {
             </button>
             
             <span className="pagination-info">
-              Page {paginationInfo.page} of {paginationInfo.totalPages}
+              {isMobile ? `${paginationInfo.page}/${paginationInfo.totalPages}` : `Page ${paginationInfo.page} of ${paginationInfo.totalPages}`}
             </span>
             
             <button 

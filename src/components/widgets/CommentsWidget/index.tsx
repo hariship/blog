@@ -8,7 +8,7 @@ const CommentsWidget: React.FC<CommentsWidgetProps> = ({ pageSlug }) => {
   useEffect(() => {
     // Ensure the script is executed when component mounts
     const script: HTMLScriptElement = document.createElement("script");
-    script.src = `${process.env.REACT_APP_BLOG_EXTRAS_URL}/widget.js`;
+    script.src = `${import.meta.env.VITE_BLOG_EXTRAS_URL}/widget.js`;
     script.async = true;
     script.defer = true;
     document.body.appendChild(script);
@@ -107,7 +107,7 @@ const CommentsWidget: React.FC<CommentsWidgetProps> = ({ pageSlug }) => {
       id="blogextras-comments"
       data-website-id="eb663e71-296b-4665-a1c4-83fba4579887"
       data-page-slug={pageSlug || window.location.pathname}
-      data-api-url={process.env.REACT_APP_BLOG_EXTRAS_URL}
+      data-api-url={import.meta.env.VITE_BLOG_EXTRAS_URL}
       data-theme={theme}
       style={{
         transition: 'background-color 0.3s ease, color 0.3s ease',

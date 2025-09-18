@@ -2,7 +2,7 @@ import React from 'react';
 import './RSSFeedButton.css';
 
 const RSSFeedButton: React.FC = () => {
-  const rssFeedUrl: string = `${process.env.REACT_APP_API_BASE_URL}/blog-feed.xml`;
+  const rssFeedUrl: string = `${import.meta.env.VITE_API_BASE_URL}/blog-feed.xml`;
 
   return (
     <a
