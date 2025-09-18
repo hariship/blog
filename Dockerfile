@@ -1,27 +1,33 @@
 # Multi-stage build for optimized production
 FROM node:18-alpine AS builder
 
+# Accept build arguments
+ARG REACT_APP_API_BASE_URL=https://api.haripriya.org
+
 WORKDIR /app
+
+# Copy package files
 COPY package*.json ./
-RUN npm install --legacy-peer-deps
+
+# Install dependencies with legacy peer deps to avoid conflicts
+RUN npm ci --legacy-peer-deps
+
+# Copy source code
 COPY . .
+
+# Set environment variable for build
+ENV REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL
+
+# Build the app
 RUN npm run build
 
 # Production stage
 FROM nginx:alpine
+
+# Copy built app from builder stage
 COPY --from=builder /app/build /usr/share/nginx/html
 
-# Configure nginx for SPA
-RUN echo 'server { \
-    listen 80; \
-    root /usr/share/nginx/html; \
-    index index.html; \
-    location / { try_files $uri $uri/ /index.html; } \
-    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ { \
-        expires 1y; add_header Cache-Control "public, immutable"; } \
-}' > /etc/nginx/conf.d/default.conf
-
-# Create nginx config inline for SPA routing
+# Create nginx config for SPA routing
 RUN echo 'server { \
     listen 80; \
     server_name localhost; \
@@ -30,14 +36,14 @@ RUN echo 'server { \
     location / { \
         try_files $uri $uri/ /index.html; \
     } \
-    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ { \
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ { \
         expires 1y; \
         add_header Cache-Control "public, immutable"; \
     } \
     gzip on; \
     gzip_vary on; \
     gzip_min_length 1000; \
-    gzip_types application/javascript application/json text/css text/javascript text/plain text/xml; \
+    gzip_types text/plain text/css text/javascript application/javascript application/json text/xml application/xml; \
 }' > /etc/nginx/conf.d/default.conf
 
 # Expose port 80

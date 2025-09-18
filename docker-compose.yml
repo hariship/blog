@@ -2,12 +2,14 @@ version: '3.8'
 
 services:
   app:
-    image: my-node-app
+    image: blog-haripriya
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - REACT_APP_API_BASE_URL=https://api.haripriya.org
     ports:
       - "3000:80"
     environment:
-      - BASE_URL=https://api.haripriya.org
+      - NODE_ENV=production
 
