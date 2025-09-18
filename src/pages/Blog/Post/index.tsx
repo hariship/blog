@@ -208,6 +208,12 @@ const Post: React.FC = () => {
         <meta property="og:title" content={postTitle} />
         <meta property="og:description" content={description} />
         <meta property="og:image" content={postImage} />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={`https://blog.haripriya.org/posts/${normalized}`} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={postTitle} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={postImage} />
       </Helmet>
       {loading ? (
         <div className="loader"></div>
