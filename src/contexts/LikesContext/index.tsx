@@ -26,10 +26,15 @@ export const LikesProvider: React.FC<LikesProviderProps> = ({ children }) => {
   const fetchRSSFeed = async (): Promise<PostData[]> => {
     try {
       const response: Response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/rss-feed`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const rssData: PostData[] = await response.json();
       return rssData;
     } catch (error) {
-      console.error('Error fetching RSS feed:', error);
+      console.warn('Could not fetch RSS feed for likes:', error);
       return [];
     }
   };
@@ -47,7 +52,7 @@ export const LikesProvider: React.FC<LikesProviderProps> = ({ children }) => {
 
   useEffect(() => {
     loadLikesData();
-  }, [likesData]);
+  }, []);
 
   const updateLikesData = (postTitle: string, newLikesCount: number, isLiked: boolean): void => {
     setLikesData((prevLikesData: PostData[]) =>

@@ -3,10 +3,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import parse, { domToReact } from 'html-react-parser';
 import './Post.css';
 import { useLikes } from '../../../contexts/LikesContext';
+import { useSounds } from '../../../contexts/SoundContext';
 import { IoIosArrowBack } from 'react-icons/io';
 import { Helmet } from 'react-helmet';
 import CommentsWidget from "../../../components/widgets/CommentsWidget";
 import ThemeToggle from '../../../components/common/ThemeToggle';
+import SoundToggle from '../../../components/common/SoundToggle';
 
 // Import our local content
 import htmlContents from '../../../data/html-content';
@@ -60,6 +62,7 @@ const Post: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [showComments, setShowComments] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { playButtonSound } = useSounds();
   const { title } = useParams<{ title: string }>(); // Get title from URL params
   const normalized = normalizeTitle(title || ''); // Normalize title
   const isJournal = normalized === 'life-lately-20-2025';
@@ -164,6 +167,7 @@ const Post: React.FC = () => {
   }, [title, likesData]);
 
   const handleGoBack = () => {
+    playButtonSound();
     navigate('/');
   };
 
@@ -233,6 +237,7 @@ const Post: React.FC = () => {
               <IoIosArrowBack className="back-icon" />
             </div>
             <div className="post-theme-toggle">
+              <SoundToggle />
               <ThemeToggle />
             </div>
           </div>
@@ -257,7 +262,10 @@ const Post: React.FC = () => {
                 }
         </div>
 
-          <span className="like-button" onClick={handleLikeToggle}>
+          <span className="like-button" onClick={() => {
+            playButtonSound();
+            handleLikeToggle();
+          }}>
             {likesCount !== null && ( // Only show the heart after likes update
               <svg
                 className={`heart-icon ${isLiked ? 'liked' : 'not-liked'}`}
@@ -277,9 +285,12 @@ const Post: React.FC = () => {
           <br/>
           <hr/>
           <div className="comments-section">
-            <button 
-              className="comments-toggle" 
-              onClick={() => setShowComments(!showComments)}
+            <button
+              className="comments-toggle"
+              onClick={() => {
+                playButtonSound();
+                setShowComments(!showComments);
+              }}
             >
               <div className="comments-toggle-icon">
                 {showComments ? '▼' : '▶'}

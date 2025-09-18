@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { MdHome } from 'react-icons/md';
 import './RSSFeed.css';
 import { useLikes } from '../../../contexts/LikesContext';
+import { useSounds } from '../../../contexts/SoundContext';
 import Subscribe from '../../Subscribe/Subscribe'; // Import the new Subscribe component
 import 'react-quill/dist/quill.snow.css';
 import RSSFeedButton from '../../../components/widgets/RSSFeedButton';
 import ThemeToggle from '../../../components/common/ThemeToggle';
+import SoundToggle from '../../../components/common/SoundToggle';
 import ViewSwitcher, { ViewMode } from '../../../components/ViewSwitcher/ViewSwitcher';
 
 const targetUrl = `${import.meta.env.VITE_API_BASE_URL}/posts`;
@@ -37,6 +39,7 @@ const RSSFeed: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'mostLiked' | 'alphabetical'>('newest');
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     // Load saved view mode from localStorage
@@ -46,6 +49,7 @@ const RSSFeed: React.FC = () => {
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const navigate = useNavigate();
   const { likesData, updateLikesData } = useLikes();
+  const { playButtonSound, playHoverSound, playToggleSound, playNavigationSound } = useSounds();
 
   // Pagination states - now using backend pagination
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -78,10 +82,16 @@ const RSSFeed: React.FC = () => {
     const fetchCategories = async () => {
       try {
         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/categories`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const categoriesData = await response.json();
         setCategories(categoriesData);
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.warn('Could not fetch categories, using empty list:', error);
+        setCategories([]);
       }
     };
     fetchCategories();
@@ -198,7 +208,10 @@ const RSSFeed: React.FC = () => {
         <div
           key={index}
           className="list-item"
-          onClick={() => navigate(`/post/${item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: item })}
+          onClick={() => {
+            playButtonSound();
+            navigate(`/post/${item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: item });
+          }}
         >
           <div className="list-item-content">
             {item.enclosure && (
@@ -219,7 +232,7 @@ const RSSFeed: React.FC = () => {
               <div className="list-item-meta">
                 <span className="list-item-date">{new Date(item.pub_date).toLocaleDateString()}</span>
                 {likesData.length > 0 && (
-                  <span onClick={(e) => { e.stopPropagation(); handleLikeToggle(item.title); }} className="favorite-icon">
+                  <span onClick={(e) => { e.stopPropagation(); playButtonSound(); handleLikeToggle(item.title); }} className="favorite-icon">
                     <svg
                       className={isPostLiked(item.title) ? 'liked' : 'not-liked'}
                       stroke="currentColor"
@@ -245,7 +258,10 @@ const RSSFeed: React.FC = () => {
   const renderGridView = () => (
     <div className="view-grid">
       {filteredItems.map((item, index) => (
-        <div key={index} className="grid-card" onClick={() => navigate(`/post/${item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: item })}>
+        <div key={index} className="grid-card" onClick={() => {
+          playButtonSound();
+          navigate(`/post/${item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: item });
+        }}>
           {item.enclosure && (
             <div className="grid-card-image">
               <img src={item.enclosure} alt={item.title} />
@@ -257,7 +273,7 @@ const RSSFeed: React.FC = () => {
             <div className="grid-card-meta">
               <span className="grid-card-date">{new Date(item.pub_date).toLocaleDateString()}</span>
               {likesData.length > 0 && (
-                <span onClick={(e) => { e.stopPropagation(); handleLikeToggle(item.title); }} className="favorite-icon">
+                <span onClick={(e) => { e.stopPropagation(); playButtonSound(); handleLikeToggle(item.title); }} className="favorite-icon">
                   <svg
                     className={isPostLiked(item.title) ? 'liked' : 'not-liked'}
                     stroke="currentColor"
@@ -282,7 +298,10 @@ const RSSFeed: React.FC = () => {
   const renderCompactView = () => (
     <div className="view-compact">
       {filteredItems.map((item, index) => (
-        <div key={index} className="compact-item" onClick={() => navigate(`/post/${item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: item })}>
+        <div key={index} className="compact-item" onClick={() => {
+          playButtonSound();
+          navigate(`/post/${item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: item });
+        }}>
           <span className="compact-date">
             {new Date(item.pub_date).toLocaleDateString('en-US', {
               month: 'short',
@@ -301,7 +320,10 @@ const RSSFeed: React.FC = () => {
     return (
       <div className="view-magazine">
         {featured && (
-          <div className="magazine-featured" onClick={() => navigate(`/post/${featured.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: featured })}>
+          <div className="magazine-featured" onClick={() => {
+            playButtonSound();
+            navigate(`/post/${featured.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: featured });
+          }}>
             {featured.enclosure && (
               <div className="magazine-featured-image">
                 <img src={featured.enclosure} alt={featured.title} />
@@ -319,7 +341,10 @@ const RSSFeed: React.FC = () => {
         )}
         <div className="magazine-secondary">
           {rest.map((item, index) => (
-            <div key={index} className="magazine-item" onClick={() => navigate(`/post/${item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: item })}>
+            <div key={index} className="magazine-item" onClick={() => {
+              playButtonSound();
+              navigate(`/post/${item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: item });
+            }}>
               {item.enclosure && (
                 <img src={item.enclosure} alt={item.title} className="magazine-item-image" />
               )}
@@ -365,6 +390,7 @@ const RSSFeed: React.FC = () => {
 
       <div className="header-controls">
         <div className="controls-group">
+          <SoundToggle />
           <ThemeToggle />
           <Subscribe />
           <div className="rss-button-wrapper">
@@ -379,7 +405,10 @@ const RSSFeed: React.FC = () => {
         <div className="filter-controls">
           <div className="filter-section">
             <label htmlFor="category">Category</label>
-            <select id="category" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+            <select id="category" value={selectedCategory} onChange={(e) => {
+              playToggleSound();
+              setSelectedCategory(e.target.value);
+            }}>
               <option value="">All</option>
               {categories.map((category, index) => (
                 <option key={index} value={category}>
@@ -395,8 +424,11 @@ const RSSFeed: React.FC = () => {
         {/* Pagination Controls */}
         {paginationInfo && paginationInfo.totalPosts > 0 && (
           <div className="pagination-controls-inline">
-            <button 
-              onClick={goToPreviousPage} 
+            <button
+              onClick={() => {
+                playButtonSound();
+                goToPreviousPage();
+              }}
               disabled={!paginationInfo.hasPrev}
               className="pagination-button"
             >
@@ -407,8 +439,11 @@ const RSSFeed: React.FC = () => {
               {isMobile ? `${paginationInfo.page}/${paginationInfo.totalPages}` : `Page ${paginationInfo.page} of ${paginationInfo.totalPages}`}
             </span>
             
-            <button 
-              onClick={goToNextPage} 
+            <button
+              onClick={() => {
+                playButtonSound();
+                goToNextPage();
+              }}
               disabled={!paginationInfo.hasNext}
               className="pagination-button"
             >

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSounds } from '../../contexts/SoundContext';
 import './ViewSwitcher.css';
 
 export type ViewMode = 'list' | 'grid' | 'compact' | 'magazine';
@@ -10,6 +11,7 @@ interface ViewSwitcherProps {
 }
 
 const ViewSwitcher: React.FC<ViewSwitcherProps> = ({ currentView, onViewChange, hideMagazine = false }) => {
+  const { playToggleSound } = useSounds();
   const getIcon = (mode: ViewMode): React.ReactElement => {
     switch (mode) {
       case 'compact':
@@ -60,6 +62,7 @@ const ViewSwitcher: React.FC<ViewSwitcherProps> = ({ currentView, onViewChange, 
           key={mode}
           className={`view-btn ${currentView === mode ? 'active' : ''}`}
           onClick={(e) => {
+            playToggleSound();
             onViewChange(mode);
             e.currentTarget.blur();
           }}

@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { LikesProvider } from './contexts/LikesContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { SoundProvider } from './contexts/SoundContext';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Failed to find the root element');
@@ -12,9 +13,11 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <ThemeProvider>
-      <LikesProvider>
-        <App />
-      </LikesProvider>
+      <SoundProvider>
+        <LikesProvider>
+          <App />
+        </LikesProvider>
+      </SoundProvider>
     </ThemeProvider>
   </React.StrictMode>
 );
