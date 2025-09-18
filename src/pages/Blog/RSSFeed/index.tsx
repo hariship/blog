@@ -210,6 +210,7 @@ const RSSFeed: React.FC = () => {
           className="list-item"
           onClick={() => {
             playButtonSound();
+            window.scrollTo(0, 0);
             navigate(`/post/${item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: item });
           }}
         >
@@ -260,6 +261,7 @@ const RSSFeed: React.FC = () => {
       {filteredItems.map((item, index) => (
         <div key={index} className="grid-card" onClick={() => {
           playButtonSound();
+          window.scrollTo(0, 0);
           navigate(`/post/${item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: item });
         }}>
           {item.enclosure && (
@@ -300,6 +302,7 @@ const RSSFeed: React.FC = () => {
       {filteredItems.map((item, index) => (
         <div key={index} className="compact-item" onClick={() => {
           playButtonSound();
+          window.scrollTo(0, 0);
           navigate(`/post/${item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: item });
         }}>
           <span className="compact-date">
@@ -322,6 +325,7 @@ const RSSFeed: React.FC = () => {
         {featured && (
           <div className="magazine-featured" onClick={() => {
             playButtonSound();
+            window.scrollTo(0, 0);
             navigate(`/post/${featured.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: featured });
           }}>
             {featured.enclosure && (
@@ -343,6 +347,7 @@ const RSSFeed: React.FC = () => {
           {rest.map((item, index) => (
             <div key={index} className="magazine-item" onClick={() => {
               playButtonSound();
+              window.scrollTo(0, 0);
               navigate(`/post/${item.title.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-')}`, { state: item });
             }}>
               {item.enclosure && (
