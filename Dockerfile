@@ -6,11 +6,13 @@ ARG REACT_APP_API_BASE_URL=https://api.haripriya.org
 
 WORKDIR /app
 
-# Copy package files
+# Copy package files and npm config
 COPY package*.json ./
+COPY .npmrc ./
 
-# Install dependencies with legacy peer deps to avoid conflicts
-RUN npm ci --legacy-peer-deps
+# Clean install dependencies
+RUN npm cache clean --force && \
+    npm install --legacy-peer-deps
 
 # Copy source code
 COPY . .
@@ -18,7 +20,8 @@ COPY . .
 # Set environment variable for build
 ENV REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL
 
-# Build the app
+# Build the app with CI=false to treat warnings as non-fatal
+ENV CI=false
 RUN npm run build
 
 # Production stage
