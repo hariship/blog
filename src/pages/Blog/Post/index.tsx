@@ -207,13 +207,21 @@ const Post: React.FC = () => {
         <title>{postTitle}</title>
         <meta property="og:title" content={postTitle} />
         <meta property="og:description" content={description} />
-        {postImage && <meta property="og:image" content={postImage.startsWith('http') ? postImage : `https://blog.haripriya.org${postImage.startsWith('/') ? '' : '/'}${postImage}`} />}
+        <meta property="og:image" content={
+          postImage
+            ? (postImage.startsWith('http') ? postImage : `https://blog.haripriya.org${postImage.startsWith('/') ? '' : '/'}${postImage}`)
+            : 'https://blog.haripriya.org/logo192.png'
+        } />
         <meta property="og:type" content="article" />
         <meta property="og:url" content={`https://blog.haripriya.org/post/${normalized}`} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={postTitle} />
         <meta name="twitter:description" content={description} />
-        {postImage && <meta name="twitter:image" content={postImage.startsWith('http') ? postImage : `https://blog.haripriya.org${postImage.startsWith('/') ? '' : '/'}${postImage}`} />}
+        <meta name="twitter:image" content={
+          postImage
+            ? (postImage.startsWith('http') ? postImage : `https://blog.haripriya.org${postImage.startsWith('/') ? '' : '/'}${postImage}`)
+            : 'https://blog.haripriya.org/logo192.png'
+        } />
       </Helmet>
       {loading ? (
         <div className="loader"></div>
