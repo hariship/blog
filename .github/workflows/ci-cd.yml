@@ -7,7 +7,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: main
+    environment: prod
 
     steps:
     - name: Checkout Code
@@ -16,7 +16,7 @@ jobs:
     - name: Set up SSH Key
       run: |
         mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/personal.pem
+        echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/personal.pem
         chmod 600 ~/.ssh/personal.pem
         ssh-keyscan ec2-16-171-52-187.eu-north-1.compute.amazonaws.com >> ~/.ssh/known_hosts
 
