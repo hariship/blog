@@ -42,6 +42,17 @@ export interface PostFormData {
   content: string;
   category: string;
   enclosure: string;
+  publishImmediately?: boolean;
+  enableComments?: boolean;
+  featured?: boolean;
+  sendNewsletter?: boolean;
+}
+
+export interface PostSettings {
+  publishImmediately: boolean;
+  enableComments: boolean;
+  featured: boolean;
+  sendNewsletter: boolean;
 }
 
 export interface Goal {

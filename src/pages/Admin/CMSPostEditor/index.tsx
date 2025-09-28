@@ -3,11 +3,13 @@ import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import './CMSPostEditor.css';
 import axios from 'axios';
-import { PostFormData, SubmitStatus } from '../../../types';
+import { PostFormData, SubmitStatus, PostSettings } from '../../../types';
 import ThemeToggle from '../../../components/common/ThemeToggle';
+import { Eye, EyeOff, Settings } from 'lucide-react';
 
 // Custom HR Blot
 const BlockEmbed = Quill.import('blots/block/embed');
+const Block = Quill.import('blots/block');
 
 class HrBlot extends BlockEmbed {
   static create() {
@@ -18,7 +20,42 @@ class HrBlot extends BlockEmbed {
 HrBlot.blotName = 'hr';
 HrBlot.tagName = 'hr';
 
+// Custom Toggle Blot using HTML details/summary
+class ToggleBlot extends BlockEmbed {
+  static create(value) {
+    const titleText = value || 'Toggle title';
+
+    // Create the details element directly
+    const details = document.createElement('details');
+    details.className = 'cms-toggle-details';
+
+    const summary = document.createElement('summary');
+    summary.className = 'cms-toggle-summary';
+    summary.textContent = titleText;
+
+    const content = document.createElement('div');
+    content.className = 'cms-toggle-content';
+    content.innerHTML = '<p>Add your content here...</p>';
+
+    details.appendChild(summary);
+    details.appendChild(content);
+
+    return details;
+  }
+
+  static value(node) {
+    const summaryElement = node.querySelector('.cms-toggle-summary');
+    return summaryElement ? summaryElement.textContent : 'Toggle title';
+  }
+}
+
+ToggleBlot.blotName = 'toggle';
+ToggleBlot.tagName = 'details';
+ToggleBlot.className = 'cms-toggle-details';
+
 Quill.register(HrBlot);
+Quill.register(ToggleBlot);
+
 
 export default function CMSPostEditor(): React.ReactElement {
   const [title, setTitle] = useState<string>('');
@@ -29,8 +66,18 @@ export default function CMSPostEditor(): React.ReactElement {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitStatus, setSubmitStatus] = useState<SubmitStatus | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState<boolean>(false);
+  const [showPreview, setShowPreview] = useState<boolean>(false);
+  const [showSettings, setShowSettings] = useState<boolean>(false);
+  const [postSettings, setPostSettings] = useState<PostSettings>({
+    publishImmediately: true,
+    enableComments: true,
+    featured: false,
+    sendNewsletter: false,
+  });
 
   const quillRef = useRef<ReactQuill>(null);
+
+  // No need for complex event listeners with details/summary!
   
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
@@ -108,6 +155,17 @@ export default function CMSPostEditor(): React.ReactElement {
     }
   };
 
+  const insertToggle = () => {
+    if (quillRef.current) {
+      const editor = quillRef.current.getEditor();
+      const range = editor.getSelection(true);
+      if (range) {
+        editor.insertEmbed(range.index, 'toggle', 'Toggle title', 'user');
+        editor.setSelection(range.index + 1, 0);
+      }
+    }
+  };
+
   const resetForm = () => {
     setTitle('');
     setDescription('');
@@ -178,7 +236,8 @@ export default function CMSPostEditor(): React.ReactElement {
       image_url: imageUrl.trim(),
       content: processedContent,
       category,
-      enclosure: imageUrl.trim()
+      enclosure: imageUrl.trim(),
+      ...postSettings
     };
 
     try {
@@ -239,20 +298,191 @@ export default function CMSPostEditor(): React.ReactElement {
   const formats = [
     'header', 'bold', 'italic', 'underline', 'strike',
     'list', 'bullet', 'link', 'image', 'blockquote',
-    'code-block', 'align', 'hr'
+    'code-block', 'align', 'hr', 'toggle'
   ];
+
+  const renderPreview = () => {
+    if (!showPreview) return null;
+
+    return (
+      <div className="cms-preview-overlay">
+        <div className="cms-preview-container">
+          <div className="cms-preview-header">
+            <h3>Preview</h3>
+            <button
+              onClick={() => setShowPreview(false)}
+              className="cms-preview-close"
+              type="button"
+            >
+              ✕
+            </button>
+          </div>
+          <div className="cms-preview-content">
+            <article className="cms-preview-article">
+              {imageUrl && (
+                <img
+                  src={imageUrl}
+                  alt={title}
+                  className="cms-preview-image"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+              )}
+              <div className="cms-preview-meta">
+                <span className="cms-preview-category">{category}</span>
+                <span className="cms-preview-date">
+                  {new Date().toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </span>
+                {postSettings.featured && (
+                  <span className="cms-preview-featured">Featured</span>
+                )}
+              </div>
+              <h1 className="cms-preview-title">{title || 'Untitled Post'}</h1>
+              {description && (
+                <p className="cms-preview-description">{description}</p>
+              )}
+              <div
+                className="cms-preview-body"
+                dangerouslySetInnerHTML={{ __html: content || '<p>No content yet...</p>' }}
+              />
+            </article>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderSettings = () => {
+    if (!showSettings) return null;
+
+    return (
+      <div className="cms-settings-panel">
+        <div className="cms-settings-header">
+          <h3>Post Settings</h3>
+          <button
+            onClick={() => setShowSettings(false)}
+            className="cms-settings-close"
+            type="button"
+          >
+            ✕
+          </button>
+        </div>
+        <div className="cms-settings-content">
+          <div className="cms-setting-item">
+            <label className="cms-toggle-label">
+              <input
+                type="checkbox"
+                checked={postSettings.publishImmediately}
+                onChange={(e) => setPostSettings(prev => ({
+                  ...prev,
+                  publishImmediately: e.target.checked
+                }))}
+                className="cms-toggle-input"
+              />
+              <span className="cms-toggle-slider"></span>
+              <span className="cms-toggle-text">Publish Immediately</span>
+            </label>
+            <p className="cms-setting-description">
+              Post will be published immediately after submission
+            </p>
+          </div>
+
+          <div className="cms-setting-item">
+            <label className="cms-toggle-label">
+              <input
+                type="checkbox"
+                checked={postSettings.enableComments}
+                onChange={(e) => setPostSettings(prev => ({
+                  ...prev,
+                  enableComments: e.target.checked
+                }))}
+                className="cms-toggle-input"
+              />
+              <span className="cms-toggle-slider"></span>
+              <span className="cms-toggle-text">Enable Comments</span>
+            </label>
+            <p className="cms-setting-description">
+              Allow readers to comment on this post
+            </p>
+          </div>
+
+          <div className="cms-setting-item">
+            <label className="cms-toggle-label">
+              <input
+                type="checkbox"
+                checked={postSettings.featured}
+                onChange={(e) => setPostSettings(prev => ({
+                  ...prev,
+                  featured: e.target.checked
+                }))}
+                className="cms-toggle-input"
+              />
+              <span className="cms-toggle-slider"></span>
+              <span className="cms-toggle-text">Featured Post</span>
+            </label>
+            <p className="cms-setting-description">
+              Display this post as a featured article
+            </p>
+          </div>
+
+          <div className="cms-setting-item">
+            <label className="cms-toggle-label">
+              <input
+                type="checkbox"
+                checked={postSettings.sendNewsletter}
+                onChange={(e) => setPostSettings(prev => ({
+                  ...prev,
+                  sendNewsletter: e.target.checked
+                }))}
+                className="cms-toggle-input"
+              />
+              <span className="cms-toggle-slider"></span>
+              <span className="cms-toggle-text">Send Newsletter</span>
+            </label>
+            <p className="cms-setting-description">
+              Send this post to newsletter subscribers
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="cms-editor-container">
   <div className="cms-editor-header">
     <h2>Create Blog Post</h2>
     <div className="cms-header-controls">
+      <button
+        onClick={() => setShowSettings(!showSettings)}
+        className="cms-settings-button"
+        type="button"
+        title="Post Settings"
+      >
+        <Settings size={18} />
+      </button>
+      <button
+        onClick={() => setShowPreview(!showPreview)}
+        className="cms-preview-button"
+        type="button"
+        disabled={!title && !content}
+        title="Preview Post"
+      >
+        {showPreview ? <EyeOff size={18} /> : <Eye size={18} />}
+      </button>
       <ThemeToggle />
       <button onClick={handleLogout} className="cms-logout-button">
         Logout
       </button>
     </div>
   </div>
+
+  {renderSettings()}
 
   <form onSubmit={handleSubmit}>
     <input
@@ -346,6 +576,15 @@ export default function CMSPostEditor(): React.ReactElement {
       >
         HR
       </button>
+      <button
+        type="button"
+        onClick={insertToggle}
+        disabled={isSubmitting}
+        className="cms-toggle-button"
+        title="Insert Toggle Block"
+      >
+        ▶
+      </button>
     </div>
 
     <ReactQuill
@@ -384,6 +623,8 @@ export default function CMSPostEditor(): React.ReactElement {
       </button>
     </div>
   </form>
+
+  {renderPreview()}
 </div>
 
   );
