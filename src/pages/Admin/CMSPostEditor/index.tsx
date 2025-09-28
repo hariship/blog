@@ -5,7 +5,7 @@ import './CMSPostEditor.css';
 import axios from 'axios';
 import { PostFormData, SubmitStatus, PostSettings } from '../../../types';
 import ThemeToggle from '../../../components/common/ThemeToggle';
-import { Eye, EyeOff, Settings } from 'lucide-react';
+import { Eye, EyeOff, Settings, Save } from 'lucide-react';
 
 // Custom HR Blot
 const BlockEmbed = Quill.import('blots/block/embed');
@@ -74,6 +74,7 @@ export default function CMSPostEditor(): React.ReactElement {
     featured: false,
     sendNewsletter: false,
   });
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
   const quillRef = useRef<ReactQuill>(null);
 
@@ -163,6 +164,67 @@ export default function CMSPostEditor(): React.ReactElement {
         editor.insertEmbed(range.index, 'toggle', 'Toggle title', 'user');
         editor.setSelection(range.index + 1, 0);
       }
+    }
+  };
+
+  const handleSave = async () => {
+    const validationErrors = validateForm();
+    if (validationErrors.length > 0) {
+      setSubmitStatus({
+        type: 'error',
+        message: validationErrors.join(', ')
+      });
+      return;
+    }
+
+    setIsSaving(true);
+    setSubmitStatus(null);
+
+    try {
+      // Process content for images
+      let processedContent = content.trim();
+      try {
+        const { uploadAndReplaceImagesInHtml } = await import('../../../utils/imageUploadReplace');
+        processedContent = await uploadAndReplaceImagesInHtml(processedContent, `${process.env.REACT_APP_API_BASE_URL}/upload-image`);
+      } catch (err) {
+        console.error('Failed to upload/replace images:', err);
+        setSubmitStatus({ type: 'error', message: 'Failed to upload images in content.' });
+        setIsSaving(false);
+        return;
+      }
+
+      const draftData = {
+        title: title.trim(),
+        description: description.trim(),
+        image_url: imageUrl.trim(),
+        content: processedContent,
+        category,
+        enclosure: imageUrl.trim(),
+        ...postSettings,
+        isDraft: true
+      };
+
+      // Save as draft to localStorage for now
+      localStorage.setItem('cms-draft', JSON.stringify(draftData));
+
+      setSubmitStatus({
+        type: 'success',
+        message: 'Draft saved successfully!'
+      });
+
+      // Clear success message after 2 seconds
+      setTimeout(() => {
+        setSubmitStatus(null);
+      }, 2000);
+
+    } catch (error: any) {
+      console.error('Error saving draft:', error);
+      setSubmitStatus({
+        type: 'error',
+        message: 'Failed to save draft. Please try again.'
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -459,12 +521,13 @@ export default function CMSPostEditor(): React.ReactElement {
     <h2>Create Blog Post</h2>
     <div className="cms-header-controls">
       <button
-        onClick={() => setShowSettings(!showSettings)}
-        className="cms-settings-button"
+        onClick={handleSave}
+        className="cms-save-button"
         type="button"
-        title="Post Settings"
+        disabled={isSaving || isSubmitting}
+        title="Save Draft"
       >
-        <Settings size={18} />
+        <Save size={18} />
       </button>
       <button
         onClick={() => setShowPreview(!showPreview)}

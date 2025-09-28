@@ -346,8 +346,8 @@
   color: var(--color-text-muted) !important;
 }
 
-/* Settings and Preview Buttons */
-.cms-settings-button,
+/* Save and Preview Buttons */
+.cms-save-button,
 .cms-preview-button {
   padding: var(--spacing-sm) var(--spacing-md);
   background-color: var(--color-bg-secondary);
@@ -360,9 +360,21 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
+  font-weight: 500;
 }
 
-.cms-settings-button:hover,
+.cms-save-button:hover {
+  background-color: var(--color-bg-tertiary);
+  transform: translateY(-1px);
+  border-color: var(--color-border-dark);
+}
+
+.cms-save-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .cms-preview-button:hover {
   background-color: var(--color-bg-tertiary);
   transform: translateY(-1px);
