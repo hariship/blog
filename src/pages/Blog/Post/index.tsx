@@ -205,27 +205,40 @@ const Post: React.FC = () => {
     }
   };
 
+  // Generate proper absolute URL for social media preview images (WhatsApp, Slack, Instagram)
+  const getAbsoluteImageUrl = (imageUrl: string): string => {
+    if (!imageUrl || imageUrl.trim() === '') {
+      return 'https://blog.haripriya.org/logo192.png';
+    }
+
+    // If already an absolute URL, return as is
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl;
+    }
+
+    // Handle relative URLs - ensure single slash
+    const cleanPath = imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`;
+    return `https://blog.haripriya.org${cleanPath}`;
+  };
+
+  const ogImageUrl = getAbsoluteImageUrl(postImage);
+
   return (
     <div className={`post-container ${isJournal ? 'journal-post' : ''}`}>
       <Helmet>
-        <title>{postTitle}</title>
-        <meta property="og:title" content={postTitle} />
-        <meta property="og:description" content={description} />
-        <meta property="og:image" content={
-          postImage
-            ? (postImage.startsWith('http') ? postImage : `https://blog.haripriya.org${postImage.startsWith('/') ? '' : '/'}${postImage}`)
-            : 'https://blog.haripriya.org/logo192.png'
-        } />
+        <title>{postTitle || 'Blog Post'}</title>
+        {/* Open Graph tags - used by WhatsApp, Slack, Instagram */}
+        <meta property="og:title" content={postTitle || 'Blog Post'} />
+        <meta property="og:description" content={description || 'Read this blog post by Hari'} />
+        <meta property="og:image" content={ogImageUrl} />
+        <meta property="og:image:secure_url" content={ogImageUrl} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={postTitle || 'Blog post preview'} />
         <meta property="og:type" content="article" />
         <meta property="og:url" content={`https://blog.haripriya.org/post/${normalized}`} />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={postTitle} />
-        <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content={
-          postImage
-            ? (postImage.startsWith('http') ? postImage : `https://blog.haripriya.org${postImage.startsWith('/') ? '' : '/'}${postImage}`)
-            : 'https://blog.haripriya.org/logo192.png'
-        } />
+        <meta property="og:site_name" content="Hari's Blog" />
+        <meta property="article:author" content="Hari" />
       </Helmet>
       {loading ? (
         <div className="loader"></div>
@@ -243,7 +256,7 @@ const Post: React.FC = () => {
           </div>
           <h1 className="post-title">{parse(postTitle)}</h1>
           <div className="post-meta">
-            <span className="author-name">Haripriya Sridharan</span> &bull;
+            <span className="author-name">Hari</span> &bull;
             <span className="post-date">
               &nbsp;{formatDate(postDate)} &bull;
             </span>
