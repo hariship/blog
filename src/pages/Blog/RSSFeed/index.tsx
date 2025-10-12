@@ -381,89 +381,193 @@ const RSSFeed: React.FC = () => {
 
   return (
     <div className="rss-feed">
-    <div className="blog-header">
-      <div className="nav-home-container">
-        <div className="desktop-view-switcher">
-          <ViewSwitcher currentView={viewMode} onViewChange={setViewMode} />
+      <div className="blog-header">
+        <div className="nav-home-container">
+          <div className="desktop-view-switcher">
+            <ViewSwitcher currentView={viewMode} onViewChange={setViewMode} />
+          </div>
+          <div className="mobile-view-switcher-inline">
+            <ViewSwitcher currentView={viewMode} onViewChange={setViewMode} hideMagazine={true} />
+          </div>
         </div>
-        <div className="mobile-view-switcher-inline">
-          <ViewSwitcher currentView={viewMode} onViewChange={setViewMode} hideMagazine={true} />
-        </div>
-      </div>
 
-      {/* <h1 className="rss-feed-title">Posts</h1> */}
-
-      <div className="header-controls">
-        <div className="controls-group">
-          <SoundToggle />
-          <ThemeToggle />
-          <Subscribe />
-          <div className="rss-button-wrapper">
-            <RSSFeedButton />
+        <div className="header-controls">
+          <div className="controls-group">
+            <SoundToggle />
+            <ThemeToggle />
+            <Subscribe />
+            <div className="rss-button-wrapper">
+              <RSSFeedButton />
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-      
-      <div className="category-dropdown">
-        <div className="filter-controls">
-          <div className="filter-section">
-            <label htmlFor="category">Category</label>
-            <select id="category" value={selectedCategory} onChange={(e) => {
-              playToggleSound();
-              setSelectedCategory(e.target.value);
-            }}>
-              <option value="">All</option>
+      <div className="rss-feed-layout">
+        {/* Main Feed */}
+        <div className="rss-feed-main">
+          <div className="category-dropdown">
+            <div className="filter-controls">
+              <div className="filter-section">
+                <label htmlFor="category">Category</label>
+                <select id="category" value={selectedCategory} onChange={(e) => {
+                  playToggleSound();
+                  setSelectedCategory(e.target.value);
+                }}>
+                  <option value="">All</option>
+                  {categories.map((category, index) => (
+                    <option key={index} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Pagination Controls */}
+            {paginationInfo && paginationInfo.totalPosts > 0 && (
+              <div className="pagination-controls-inline">
+                <button
+                  onClick={() => {
+                    playButtonSound();
+                    goToPreviousPage();
+                  }}
+                  disabled={!paginationInfo.hasPrev}
+                  className="pagination-button"
+                >
+                  &laquo;
+                </button>
+
+                <span className="pagination-info">
+                  {isMobile ? `${paginationInfo.page}/${paginationInfo.totalPages}` : `Page ${paginationInfo.page} of ${paginationInfo.totalPages}`}
+                </span>
+
+                <button
+                  onClick={() => {
+                    playButtonSound();
+                    goToNextPage();
+                  }}
+                  disabled={!paginationInfo.hasNext}
+                  className="pagination-button"
+                >
+                  &raquo;
+                </button>
+              </div>
+            )}
+          </div>
+
+          {loading ? (
+            <div className="loader"></div>
+          ) : (
+            <>
+              <div className={`feed-content view-mode-${viewMode}`}>
+                {renderContent()}
+              </div>
+
+              {/* Mobile About & Stats - Only visible on mobile, at bottom */}
+              <div className="mobile-widgets">
+                {/* About Widget - Mobile */}
+                <div className="mobile-widget mobile-about-widget">
+                  <h3 className="mobile-widget-title">About</h3>
+                  <p className="mobile-about-text">
+                    I'm Haripriya, but most call me Hari. I write about life, tech, and things that matter. Sometimes it's code, sometimes it's reflections, but always something I care about.
+                  </p>
+                  <div className="mobile-about-links">
+                    <a href="/personal-goals" onClick={(e) => { e.preventDefault(); playNavigationSound(); navigate('/personal-goals'); }}>
+                      Personal Goals
+                    </a>
+                    <span className="mobile-link-separator">•</span>
+                    <a href="https://apps.haripriya.org" target="_blank" rel="noopener noreferrer" onClick={playNavigationSound}>
+                      My Apps
+                    </a>
+                  </div>
+                </div>
+
+                {/* Stats Widget - Mobile */}
+                {paginationInfo && (
+                  <div className="mobile-widget mobile-stats-widget">
+                    <div className="mobile-stat-item">
+                      <span className="mobile-stat-value">{paginationInfo.totalPosts}</span>
+                      <span className="mobile-stat-label">Posts</span>
+                    </div>
+                    <div className="mobile-stat-separator"></div>
+                    <div className="mobile-stat-item">
+                      <span className="mobile-stat-value">{categories.length}</span>
+                      <span className="mobile-stat-label">Categories</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Sidebar */}
+        <div className="rss-feed-sidebar">
+          {/* Categories Widget */}
+          <div className="sidebar-widget">
+            <h3 className="sidebar-widget-title">Categories</h3>
+            <div className="sidebar-categories">
+              <button
+                className={`sidebar-category-btn ${selectedCategory === '' ? 'active' : ''}`}
+                onClick={() => {
+                  playButtonSound();
+                  setSelectedCategory('');
+                }}
+              >
+                All
+              </button>
               {categories.map((category, index) => (
-                <option key={index} value={category}>
+                <button
+                  key={index}
+                  className={`sidebar-category-btn ${selectedCategory === category ? 'active' : ''}`}
+                  onClick={() => {
+                    playButtonSound();
+                    setSelectedCategory(category);
+                  }}
+                >
                   {category}
-                </option>
+                </button>
               ))}
-            </select>
+            </div>
           </div>
 
+          {/* About/Bio Widget */}
+          <div className="sidebar-widget">
+            <h3 className="sidebar-widget-title">About</h3>
+            <div className="sidebar-about">
+              <p className="sidebar-about-text">
+                I'm Haripriya, but most call me Hari. I write about life, tech, and things that matter. Sometimes it's code, sometimes it's reflections, but always something I care about.
+              </p>
+              <div className="sidebar-about-links">
+                <a href="/personal-goals" onClick={(e) => { e.preventDefault(); playNavigationSound(); navigate('/personal-goals'); }}>
+                  Personal Goals
+                </a>
+                <a href="https://apps.haripriya.org" target="_blank" rel="noopener noreferrer" onClick={playNavigationSound}>
+                  My Apps
+                </a>
+              </div>
+            </div>
+          </div>
 
+          {/* Blog Stats Widget */}
+          {!loading && paginationInfo && (
+            <div className="sidebar-widget">
+              <h3 className="sidebar-widget-title">Stats</h3>
+              <div className="sidebar-stats">
+                <div className="sidebar-stat-item">
+                  <span className="sidebar-stat-value">{paginationInfo.totalPosts}</span>
+                  <span className="sidebar-stat-label">Posts</span>
+                </div>
+                <div className="sidebar-stat-item">
+                  <span className="sidebar-stat-value">{categories.length}</span>
+                  <span className="sidebar-stat-label">Categories</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-        
-        {/* Pagination Controls */}
-        {paginationInfo && paginationInfo.totalPosts > 0 && (
-          <div className="pagination-controls-inline">
-            <button
-              onClick={() => {
-                playButtonSound();
-                goToPreviousPage();
-              }}
-              disabled={!paginationInfo.hasPrev}
-              className="pagination-button"
-            >
-              &laquo;
-            </button>
-            
-            <span className="pagination-info">
-              {isMobile ? `${paginationInfo.page}/${paginationInfo.totalPages}` : `Page ${paginationInfo.page} of ${paginationInfo.totalPages}`}
-            </span>
-            
-            <button
-              onClick={() => {
-                playButtonSound();
-                goToNextPage();
-              }}
-              disabled={!paginationInfo.hasNext}
-              className="pagination-button"
-            >
-              &raquo;
-            </button>
-          </div>
-        )}
       </div>
-      {loading ? (
-        <div className="loader"></div>
-      ) : (
-        <div className={`feed-content view-mode-${viewMode}`}>
-          {renderContent()}
-        </div>
-      )}
     </div>
   );
 };
