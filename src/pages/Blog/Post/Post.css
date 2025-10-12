@@ -579,11 +579,11 @@ hr {
 }
 
 [data-theme="dark"] .post-toggle-details[open] {
-  border-color: var(--lcars-warm-amber);
+  border-color: var(--lcars-blue);
 }
 
 [data-theme="dark"] .post-toggle-summary:hover {
-  color: var(--lcars-warm-amber);
+  color: var(--lcars-blue);
 }
 
 /* Responsive toggle blocks */

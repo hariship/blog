@@ -934,7 +934,7 @@ button.theme-toggle:hover svg {
 
   /* Dark theme for mobile widgets */
   [data-theme="dark"] .mobile-stat-value {
-    color: var(--lcars-warm-amber);
+    color: var(--lcars-blue);
   }
 
   [data-theme="dark"] .mobile-about-links a {
@@ -1041,11 +1041,11 @@ button.theme-toggle:hover svg {
 
 /* Dark theme overrides for stats */
 [data-theme="dark"] .sidebar-stat-value {
-  color: var(--lcars-warm-amber);
+  color: var(--lcars-blue);
 }
 
 [data-theme="dark"] .sidebar-stat-item:hover {
-  border-color: var(--lcars-slate);
+  border-color: var(--lcars-blue);
   background: var(--color-bg-hover);
 }
 
@@ -1054,8 +1054,8 @@ button.theme-toggle:hover svg {
 }
 
 [data-theme="dark"] .sidebar-about-links a:hover {
-  color: var(--lcars-warm-amber);
-  border-left-color: var(--lcars-warm-amber);
+  color: var(--lcars-blue);
+  border-left-color: var(--lcars-blue);
 }
 
 /* Category buttons in sidebar */
