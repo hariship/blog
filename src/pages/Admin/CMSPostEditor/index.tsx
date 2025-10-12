@@ -9,7 +9,6 @@ import { Eye, EyeOff, Settings, Save } from 'lucide-react';
 
 // Custom HR Blot
 const BlockEmbed = Quill.import('blots/block/embed');
-const Block = Quill.import('blots/block');
 
 class HrBlot extends BlockEmbed {
   static create() {
@@ -20,38 +19,32 @@ class HrBlot extends BlockEmbed {
 HrBlot.blotName = 'hr';
 HrBlot.tagName = 'hr';
 
-// Custom Toggle Blot using HTML details/summary
+// Custom Toggle Blot
 class ToggleBlot extends BlockEmbed {
   static create(value) {
-    const titleText = value || 'Toggle title';
-
-    // Create the details element directly
-    const details = document.createElement('details');
-    details.className = 'cms-toggle-details';
-
-    const summary = document.createElement('summary');
-    summary.className = 'cms-toggle-summary';
-    summary.textContent = titleText;
-
-    const content = document.createElement('div');
-    content.className = 'cms-toggle-content';
-    content.innerHTML = '<p>Add your content here...</p>';
-
-    details.appendChild(summary);
-    details.appendChild(content);
-
-    return details;
+    const node = document.createElement('details');
+    node.setAttribute('class', 'cms-toggle-details');
+    node.innerHTML = `
+      <summary class="cms-toggle-summary">Toggle title</summary>
+      <div class="cms-toggle-content">
+        <p>Add your content here...</p>
+      </div>
+    `;
+    return node;
   }
 
   static value(node) {
-    const summaryElement = node.querySelector('.cms-toggle-summary');
-    return summaryElement ? summaryElement.textContent : 'Toggle title';
+    const summary = node.querySelector('.cms-toggle-summary');
+    const content = node.querySelector('.cms-toggle-content');
+    return {
+      title: summary ? summary.textContent : 'Toggle title',
+      content: content ? content.innerHTML : '<p>Add your content here...</p>'
+    };
   }
 }
 
 ToggleBlot.blotName = 'toggle';
 ToggleBlot.tagName = 'details';
-ToggleBlot.className = 'cms-toggle-details';
 
 Quill.register(HrBlot);
 Quill.register(ToggleBlot);
@@ -75,10 +68,86 @@ export default function CMSPostEditor(): React.ReactElement {
     sendNewsletter: false,
   });
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [isDraftLoaded, setIsDraftLoaded] = useState<boolean>(false);
+  const [showAutoSaveIndicator, setShowAutoSaveIndicator] = useState<boolean>(false);
+  const [lastAutoSaveTime, setLastAutoSaveTime] = useState<string>('');
 
   const quillRef = useRef<ReactQuill>(null);
 
-  // No need for complex event listeners with details/summary!
+  // Load draft from localStorage on mount
+  React.useEffect(() => {
+    const savedDraft = localStorage.getItem('cms-draft');
+    console.log('Checking for saved draft...', savedDraft ? 'Found!' : 'Not found');
+
+    if (savedDraft) {
+      try {
+        const draft = JSON.parse(savedDraft);
+        console.log('Loading draft:', draft);
+
+        setTitle(draft.title || '');
+        setDescription(draft.description || '');
+        setImageUrl(draft.image_url || '');
+        setContent(draft.content || '');
+        setCategory(draft.category || 'Life');
+
+        if (draft.publishImmediately !== undefined || draft.enableComments !== undefined) {
+          setPostSettings({
+            publishImmediately: draft.publishImmediately ?? true,
+            enableComments: draft.enableComments ?? true,
+            featured: draft.featured ?? false,
+            sendNewsletter: draft.sendNewsletter ?? false,
+          });
+        }
+
+        // Show saved time if available
+        if (draft.lastSaved) {
+          const savedDate = new Date(draft.lastSaved);
+          setLastAutoSaveTime(savedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+          setShowAutoSaveIndicator(true);
+        }
+
+        setSubmitStatus({
+          type: 'success',
+          message: 'Draft loaded from previous session'
+        });
+        setTimeout(() => setSubmitStatus(null), 3000);
+      } catch (error) {
+        console.error('Failed to load draft:', error);
+      }
+    }
+
+    setIsDraftLoaded(true);
+  }, []); // Run only once on mount
+
+  // Auto-save draft every 5 seconds
+  React.useEffect(() => {
+    const autoSaveInterval = setInterval(() => {
+      if (title || content) {
+        const now = new Date();
+        const draftData = {
+          title: title.trim(),
+          description: description.trim(),
+          image_url: imageUrl.trim(),
+          content: content,
+          category,
+          enclosure: imageUrl.trim(),
+          ...postSettings,
+          isDraft: true,
+          lastSaved: now.toISOString()
+        };
+        localStorage.setItem('cms-draft', JSON.stringify(draftData));
+
+        // Show auto-save indicator
+        setLastAutoSaveTime(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+        setShowAutoSaveIndicator(true);
+
+        console.log('Auto-saved draft at', now.toLocaleTimeString());
+      }
+    }, 5000); // 5 seconds
+
+    return () => clearInterval(autoSaveInterval);
+  }, [title, description, imageUrl, content, category, postSettings]);
+
   
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
@@ -161,8 +230,60 @@ export default function CMSPostEditor(): React.ReactElement {
       const editor = quillRef.current.getEditor();
       const range = editor.getSelection(true);
       if (range) {
-        editor.insertEmbed(range.index, 'toggle', 'Toggle title', 'user');
-        editor.setSelection(range.index + 1, 0);
+        const currentIndex = range.index;
+
+        // Insert new line if not at start
+        if (currentIndex > 0) {
+          const prevChar = editor.getText(currentIndex - 1, 1);
+          if (prevChar !== '\n') {
+            editor.insertText(currentIndex, '\n', 'user');
+          }
+        }
+
+        // Insert toggle marker with title
+        editor.insertText(currentIndex + 1, '[TOGGLE] Toggle title\n', {
+          'background': '#f0f0f0',
+          'bold': true
+        });
+
+        // Insert content placeholder
+        editor.insertText(currentIndex + 1 + 22, 'Add your content here...\n', 'user');
+
+        // Insert end toggle marker
+        editor.insertText(currentIndex + 1 + 22 + 24, '[END TOGGLE]\n\n', {
+          'background': '#f0f0f0',
+          'bold': true
+        });
+
+        // Position cursor after title for editing
+        editor.setSelection(currentIndex + 1 + 9, 13); // Select "Toggle title"
+      }
+    }
+  };
+
+  const insertEndToggle = () => {
+    if (quillRef.current) {
+      const editor = quillRef.current.getEditor();
+      const range = editor.getSelection(true);
+      if (range) {
+        const currentIndex = range.index;
+
+        // Insert new line if not at start
+        if (currentIndex > 0) {
+          const prevChar = editor.getText(currentIndex - 1, 1);
+          if (prevChar !== '\n') {
+            editor.insertText(currentIndex, '\n', 'user');
+          }
+        }
+
+        // Insert end toggle marker
+        editor.insertText(currentIndex + 1, '[END TOGGLE]\n\n', {
+          'background': '#f0f0f0',
+          'bold': true
+        });
+
+        // Position cursor after the end marker
+        editor.setSelection(currentIndex + 1 + 14, 0);
       }
     }
   };
@@ -207,6 +328,11 @@ export default function CMSPostEditor(): React.ReactElement {
       // Save as draft to localStorage for now
       localStorage.setItem('cms-draft', JSON.stringify(draftData));
 
+      // Show auto-save indicator
+      const now = new Date();
+      setLastAutoSaveTime(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      setShowAutoSaveIndicator(true);
+
       setSubmitStatus({
         type: 'success',
         message: 'Draft saved successfully!'
@@ -235,6 +361,9 @@ export default function CMSPostEditor(): React.ReactElement {
     setContent('');
     setCategory('Life');
     setSubmitStatus(null);
+    setShowAutoSaveIndicator(false);
+    setLastAutoSaveTime('');
+    localStorage.removeItem('cms-draft');
   };
 
   const validateForm = () => {
@@ -316,7 +445,10 @@ export default function CMSPostEditor(): React.ReactElement {
         type: 'success',
         message: 'Post created successfully!'
       });
-      
+
+      // Clear draft from localStorage
+      localStorage.removeItem('cms-draft');
+
       // Reset form after successful submission
       setTimeout(() => {
         resetForm();
@@ -362,6 +494,40 @@ export default function CMSPostEditor(): React.ReactElement {
     'list', 'bullet', 'link', 'image', 'blockquote',
     'code-block', 'align', 'hr', 'toggle'
   ];
+
+  const processContentForPreview = (htmlContent: string) => {
+    if (!htmlContent) return '<p>No content yet...</p>';
+
+    // Convert [TOGGLE] markers to actual details/summary elements
+    let processed = htmlContent;
+
+    // Match toggle markers and capture content until [END TOGGLE]
+    // [END TOGGLE] can be anywhere in the content, not just in its own paragraph
+    processed = processed.replace(
+      /<p><strong[^>]*>\[TOGGLE\]\s*([^<]+)<\/strong><\/p>([\s\S]*?)(?:<strong[^>]*>\[END TOGGLE\]<\/strong>|(?=<p><strong[^>]*>\[TOGGLE\])|$)/gi,
+      (match, title, content) => {
+        // Clean up the content and wrap in toggle
+        // Remove [END TOGGLE] marker from content if it exists
+        let cleanContent = content.trim() || '<p>Add your content here...</p>';
+
+        // Remove any trailing [END TOGGLE] markers and their surrounding tags
+        cleanContent = cleanContent.replace(/<strong[^>]*>\[END TOGGLE\]<\/strong>/gi, '');
+
+        return `<details class="cms-toggle-details">
+          <summary class="cms-toggle-summary">${title.trim()}</summary>
+          <div class="cms-toggle-content">${cleanContent}</div>
+        </details>`;
+      }
+    );
+
+    // Remove any remaining standalone [END TOGGLE] markers
+    processed = processed.replace(
+      /<strong[^>]*>\[END TOGGLE\]<\/strong>/gi,
+      ''
+    );
+
+    return processed;
+  };
 
   const renderPreview = () => {
     if (!showPreview) return null;
@@ -410,7 +576,7 @@ export default function CMSPostEditor(): React.ReactElement {
               )}
               <div
                 className="cms-preview-body"
-                dangerouslySetInnerHTML={{ __html: content || '<p>No content yet...</p>' }}
+                dangerouslySetInnerHTML={{ __html: processContentForPreview(content) }}
               />
             </article>
           </div>
@@ -518,7 +684,15 @@ export default function CMSPostEditor(): React.ReactElement {
   return (
     <div className="cms-editor-container">
   <div className="cms-editor-header">
-    <h2>Create Blog Post</h2>
+    <div className="cms-header-left">
+      <h2>Create Blog Post</h2>
+      {showAutoSaveIndicator && (
+        <div className="cms-autosave-indicator">
+          <span className="cms-autosave-tick">✓</span>
+          <span className="cms-autosave-text">Saved at {lastAutoSaveTime}</span>
+        </div>
+      )}
+    </div>
     <div className="cms-header-controls">
       <button
         onClick={handleSave}
@@ -538,6 +712,14 @@ export default function CMSPostEditor(): React.ReactElement {
       >
         {showPreview ? <EyeOff size={18} /> : <Eye size={18} />}
       </button>
+      <button
+        onClick={() => setShowSettings(!showSettings)}
+        className="cms-settings-button"
+        type="button"
+        title="Post Settings"
+      >
+        <Settings size={18} />
+      </button>
       <ThemeToggle />
       <button onClick={handleLogout} className="cms-logout-button">
         Logout
@@ -548,69 +730,77 @@ export default function CMSPostEditor(): React.ReactElement {
   {renderSettings()}
 
   <form onSubmit={handleSubmit}>
-    <input
-      type="text"
-      placeholder="Title *"
-      value={title}
-      onChange={(e) => setTitle(e.target.value)}
-      className="cms-editor-input"
-      disabled={isSubmitting}
-      required
-    />
-
-    <input
-      type="text"
-      placeholder="Description"
-      value={description}
-      onChange={(e) => setDescription(e.target.value)}
-      className="cms-editor-input"
-      disabled={isSubmitting}
-    />
-
-    <div className="cms-image-input-container">
-      <input
-        type="url"
-        placeholder="Image URL"
-        value={imageUrl}
-        onChange={(e) => setImageUrl(e.target.value)}
-        className="cms-editor-input cms-image-url-input"
-        disabled={isSubmitting || isUploadingImage}
-      />
-      <div className="cms-image-upload-section">
+    <div className="cms-metadata-grid">
+      <div className="cms-metadata-full">
         <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageUpload}
-          className="cms-file-input"
-          id="image-file-input"
-          disabled={isSubmitting || isUploadingImage}
+          type="text"
+          placeholder="Post Title *"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="cms-editor-input cms-title-input"
+          disabled={isSubmitting}
+          required
         />
-        <label 
-          htmlFor="image-file-input" 
-          className={`cms-upload-button ${isUploadingImage ? 'uploading' : ''}`}
-        >
-          <div className="cms-upload-icon">
-            📁
+      </div>
+
+      <div className="cms-metadata-full">
+        <input
+          type="text"
+          placeholder="Short Description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="cms-editor-input"
+          disabled={isSubmitting}
+        />
+      </div>
+
+      <div className="cms-metadata-row">
+        <div className="cms-image-input-container">
+          <input
+            type="url"
+            placeholder="Image URL"
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+            className="cms-editor-input cms-image-url-input"
+            disabled={isSubmitting || isUploadingImage}
+          />
+          <div className="cms-image-upload-section">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="cms-file-input"
+              id="image-file-input"
+              disabled={isSubmitting || isUploadingImage}
+            />
+            <label
+              htmlFor="image-file-input"
+              className={`cms-upload-button ${isUploadingImage ? 'uploading' : ''}`}
+            >
+              <div className="cms-upload-icon">
+                📁
+              </div>
+              <span className="cms-upload-text">
+                {isUploadingImage ? 'Uploading...' : 'Upload'}
+              </span>
+            </label>
           </div>
-          <span className="cms-upload-text">
-            {isUploadingImage ? 'Uploading...' : 'Upload'}
-          </span>
-        </label>
+        </div>
+
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="cms-editor-input cms-category-select"
+          disabled={isSubmitting}
+        >
+          <option value="Life">Life</option>
+          <option value="Work">Work</option>
+          <option value="Books">Books</option>
+          <option value="Notes">Notes</option>
+          <option value="Motives">Motives</option>
+        </select>
       </div>
     </div>
-
-    <select
-      value={category}
-      onChange={(e) => setCategory(e.target.value)}
-      className="cms-editor-input"
-      disabled={isSubmitting}
-    >
-      <option value="Life">Life</option>
-      <option value="Work">Work</option>
-      <option value="Books">Books</option>
-      <option value="Notes">Notes</option>
-      <option value="Motives">Motives</option>
-    </select>
 
     {/* Custom Toolbar */}
     <div id="toolbar">
@@ -647,6 +837,15 @@ export default function CMSPostEditor(): React.ReactElement {
         title="Insert Toggle Block"
       >
         ▶
+      </button>
+      <button
+        type="button"
+        onClick={insertEndToggle}
+        disabled={isSubmitting}
+        className="cms-end-toggle-button"
+        title="End Toggle Block"
+      >
+        ▼
       </button>
     </div>
 
