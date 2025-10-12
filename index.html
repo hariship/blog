@@ -6,8 +6,20 @@
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
-      content="Personal Blog"
+      content="Personal Blog by Hari"
     />
+
+    <!-- Open Graph tags for WhatsApp, Slack, Instagram -->
+    <meta property="og:title" content="Hari's Blog" />
+    <meta property="og:description" content="Personal Blog by Hari" />
+    <meta property="og:image" content="https://blog.haripriya.org/logo192.png" />
+    <meta property="og:image:secure_url" content="https://blog.haripriya.org/logo192.png" />
+    <meta property="og:image:width" content="192" />
+    <meta property="og:image:height" content="192" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://blog.haripriya.org/" />
+    <meta property="og:site_name" content="Hari's Blog" />
+
     <link rel="apple-touch-icon" href="/logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -16,21 +28,21 @@
     <link rel="manifest" href="/manifest.json" />
     <link rel="stylesheet" href="https://www.blogextras.com/widget.css" />
     <script async defer src="https://www.blogextras.com/widget.js"></script>
-    
+
     <!-- Prevent theme flash on load -->
     <script>
       (function() {
         try {
           // Check system preference first, then localStorage
           let theme;
-          
+
           if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             theme = 'dark';
           } else {
             const savedTheme = localStorage.getItem('theme');
             theme = savedTheme || 'light';
           }
-          
+
           // Apply theme immediately to prevent flash
           document.documentElement.setAttribute('data-theme', theme);
         } catch (error) {
@@ -48,7 +60,7 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>Haripriya</title>
+    <title>Hari</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

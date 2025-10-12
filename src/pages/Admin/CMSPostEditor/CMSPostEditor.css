@@ -330,7 +330,7 @@
   }
 
   .cms-editor-button {
-    background-color: #4CAF50;
+    background-color: #2563eb;
     color: white;
     font-size: 16px;
     font-weight: 600;
@@ -343,7 +343,7 @@
   }
 
   .cms-editor-button:hover {
-    background-color: #45a049;
+    background-color: #1d4ed8;
     transform: translateY(-2px);
     box-shadow: var(--shadow-medium);
   }
@@ -358,6 +358,18 @@
     transform: none;
   }
 
+  /* Dark mode submit button - earthy brown/tan */
+  [data-theme="dark"] .cms-editor-button {
+    background-color: #8b6f47;
+    color: #ffffff;
+  }
+
+  [data-theme="dark"] .cms-editor-button:hover {
+    background-color: #a08357;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+  }
+
   .cms-editor-button-secondary {
     background-color: var(--color-bg-secondary);
     color: var(--color-text-primary);
@@ -366,6 +378,17 @@
 
   .cms-editor-button-secondary:hover {
     background-color: var(--color-bg-tertiary);
+    border-color: var(--color-border-dark);
+  }
+
+  /* Dark mode secondary button */
+  [data-theme="dark"] .cms-editor-button-secondary {
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-border-medium);
+  }
+
+  [data-theme="dark"] .cms-editor-button-secondary:hover {
+    background-color: var(--color-bg-secondary);
     border-color: var(--color-border-dark);
   }
 

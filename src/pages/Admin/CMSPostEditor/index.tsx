@@ -288,12 +288,12 @@ export default function CMSPostEditor(): React.ReactElement {
     }
   };
 
-  const handleSave = async () => {
-    const validationErrors = validateForm();
-    if (validationErrors.length > 0) {
+  const handleSave = () => {
+    // Don't validate for saving drafts - allow saving incomplete posts
+    if (!title && !content) {
       setSubmitStatus({
         type: 'error',
-        message: validationErrors.join(', ')
+        message: 'Nothing to save'
       });
       return;
     }
@@ -302,34 +302,23 @@ export default function CMSPostEditor(): React.ReactElement {
     setSubmitStatus(null);
 
     try {
-      // Process content for images
-      let processedContent = content.trim();
-      try {
-        const { uploadAndReplaceImagesInHtml } = await import('../../../utils/imageUploadReplace');
-        processedContent = await uploadAndReplaceImagesInHtml(processedContent, `${process.env.REACT_APP_API_BASE_URL}/upload-image`);
-      } catch (err) {
-        console.error('Failed to upload/replace images:', err);
-        setSubmitStatus({ type: 'error', message: 'Failed to upload images in content.' });
-        setIsSaving(false);
-        return;
-      }
-
+      const now = new Date();
       const draftData = {
         title: title.trim(),
         description: description.trim(),
         image_url: imageUrl.trim(),
-        content: processedContent,
+        content: content, // Save raw content, don't process images
         category,
         enclosure: imageUrl.trim(),
         ...postSettings,
-        isDraft: true
+        isDraft: true,
+        lastSaved: now.toISOString()
       };
 
-      // Save as draft to localStorage for now
+      // Save to localStorage
       localStorage.setItem('cms-draft', JSON.stringify(draftData));
 
       // Show auto-save indicator
-      const now = new Date();
       setLastAutoSaveTime(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
       setShowAutoSaveIndicator(true);
 
