@@ -237,6 +237,33 @@ const Post: React.FC = () => {
     console.log('Is fallback logo?:', ogImageUrl === 'https://blog.haripriya.org/logo192.png');
   }, [ogImageUrl, postImage]);
 
+  // Process content to convert [TOGGLE] markers into <details> elements
+  const processToggleBlocks = (htmlContent: string): string => {
+    if (!htmlContent) return htmlContent;
+
+    let processed = htmlContent;
+
+    // Match toggle markers and capture content until [END TOGGLE]
+    processed = processed.replace(
+      /<p><strong[^>]*>\[TOGGLE\]\s*([^<]+)<\/strong><\/p>([\s\S]*?)(?:<strong[^>]*>\[END TOGGLE\]<\/strong>|(?=<p><strong[^>]*>\[TOGGLE\])|$)/gi,
+      (match, title, content) => {
+        let cleanContent = content.trim() || '';
+        // Remove any [END TOGGLE] markers from content
+        cleanContent = cleanContent.replace(/<strong[^>]*>\[END TOGGLE\]<\/strong>/gi, '');
+
+        return `<details class="post-toggle-details">
+          <summary class="post-toggle-summary">${title.trim()}</summary>
+          <div class="post-toggle-content">${cleanContent}</div>
+        </details>`;
+      }
+    );
+
+    // Remove any remaining standalone [END TOGGLE] markers
+    processed = processed.replace(/<strong[^>]*>\[END TOGGLE\]<\/strong>/gi, '');
+
+    return processed;
+  };
+
   return (
     <div className={`post-container ${isJournal ? 'journal-post' : ''}`}>
       <Helmet>
@@ -281,7 +308,7 @@ const Post: React.FC = () => {
           </div>
           <div className="post-content">
                 {
-                    parse(postContent, {
+                    parse(processToggleBlocks(postContent), {
                     replace: (domNode: any) => {
                         if (domNode.attribs && domNode.attribs.style) {
                         delete domNode.attribs.style;
