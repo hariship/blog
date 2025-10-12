@@ -19,6 +19,7 @@ const NavBar: React.FC = () => {
         <ul className="nav-links">
           <li><Link to="/">Home</Link></li>
           <li><Link to="/personal-goals">Personal Goals</Link></li>
+          <li><a href="https://apps.haripriya.org" target="_blank" rel="noopener noreferrer">Apps</a></li>
           {/* <li><Link to="/books">Books</Link></li> */}
           {/* <li><Link to="/movies-and-series">Movies & Series</Link></li> */}
         </ul>
@@ -34,6 +35,7 @@ const NavBar: React.FC = () => {
         <ul>
           <li><Link to="/" className={location.pathname === "/" ? "active" : ""} onClick={() => setIsOpen(false)}>Home</Link></li>
           <li><Link to="/personal-goals" className={location.pathname === "/personal-goals" ? "active" : ""} onClick={() => setIsOpen(false)}>Personal Goals</Link></li>
+          <li><a href="https://apps.haripriya.org" target="_blank" rel="noopener noreferrer" onClick={() => setIsOpen(false)}>Apps</a></li>
           {/* <li><Link to="/books" className={location.pathname === "/books" ? "active" : ""} onClick={() => setIsOpen(false)}>Books</Link></li> */}
           {/* <li><Link to="/movies-and-series" className={location.pathname === "/movies-and-series" ? "active" : ""} onClick={() => setIsOpen(false)}>Movies & Series</Link></li> */}
         </ul>
