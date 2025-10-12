@@ -79,7 +79,12 @@ const Post: React.FC = () => {
       }
       
       const post = await response.json();
-  
+
+      console.log('=== API Response Debug ===');
+      console.log('Full post object:', post);
+      console.log('Enclosure field:', post.enclosure);
+      console.log('Image URL field:', post.imageUrl);
+
       if (post) {
         const { content, title, pubDate, category, enclosure, description } = post;
         setPostTitle(title);
@@ -223,22 +228,33 @@ const Post: React.FC = () => {
 
   const ogImageUrl = getAbsoluteImageUrl(postImage);
 
+  // Debug logging for image URL
+  React.useEffect(() => {
+    console.log('=== Image URL Debug ===');
+    console.log('Post Image (raw):', postImage);
+    console.log('Post Image empty?:', !postImage || postImage.trim() === '');
+    console.log('Generated OG Image URL:', ogImageUrl);
+    console.log('Is fallback logo?:', ogImageUrl === 'https://blog.haripriya.org/logo192.png');
+  }, [ogImageUrl, postImage]);
+
   return (
     <div className={`post-container ${isJournal ? 'journal-post' : ''}`}>
       <Helmet>
         <title>{postTitle || 'Blog Post'}</title>
-        {/* Open Graph tags - used by WhatsApp, Slack, Instagram */}
+        <meta property="og:url" content={`https://blog.haripriya.org/post/${normalized}`} />
+        <meta property="og:type" content="article" />
         <meta property="og:title" content={postTitle || 'Blog Post'} />
         <meta property="og:description" content={description || 'Read this blog post by Hari'} />
         <meta property="og:image" content={ogImageUrl} />
         <meta property="og:image:secure_url" content={ogImageUrl} />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
+        <meta property="og:image:type" content="image/jpeg" />
         <meta property="og:image:alt" content={postTitle || 'Blog post preview'} />
-        <meta property="og:type" content="article" />
-        <meta property="og:url" content={`https://blog.haripriya.org/post/${normalized}`} />
         <meta property="og:site_name" content="Hari's Blog" />
         <meta property="article:author" content="Hari" />
+
+        {/* Twitter/WhatsApp specific tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content={ogImageUrl} />
       </Helmet>
       {loading ? (
         <div className="loader"></div>
