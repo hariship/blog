@@ -523,6 +523,7 @@ hr {
   justify-content: space-between;
   transition: all var(--transition-fast);
   background: var(--color-bg-secondary);
+  font-family: inherit;
 }
 
 .post-toggle-summary::-webkit-details-marker {
@@ -549,10 +550,11 @@ hr {
 
 .post-toggle-content {
   padding: 0 var(--spacing-lg) var(--spacing-lg) var(--spacing-lg);
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1.6;
   color: var(--color-text-primary);
   animation: fadeIn 0.3s ease-in-out;
+  font-family: inherit;
 }
 
 @keyframes fadeIn {
@@ -587,12 +589,14 @@ hr {
 /* Responsive toggle blocks */
 @media (max-width: 768px) {
   .post-toggle-summary {
-    font-size: 16px;
+    font-size: 18px;
     padding: var(--spacing-sm) var(--spacing-md);
+    font-family: inherit;
   }
 
   .post-toggle-content {
     padding: 0 var(--spacing-md) var(--spacing-md) var(--spacing-md);
-    font-size: 16px;
+    font-size: 20px;
+    font-family: inherit;
   }
 }
