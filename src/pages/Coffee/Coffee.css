@@ -1,0 +1,115 @@
+/* Coffee Page Container */
+.coffee-page {
+  min-height: 100vh;
+  background: var(--card-bg, white);
+  padding: 20px;
+}
+
+.coffee-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.coffee-back-btn {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text-color, #333);
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.coffee-back-btn:hover {
+  background: var(--hover-bg, #f0f0f0);
+}
+
+.coffee-page-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.coffee-page-content {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.coffee-page-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 16px;
+  color: var(--color-accent-warm);
+}
+
+.coffee-page-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: var(--text-color, #333);
+}
+
+.coffee-page-description {
+  font-size: 16px;
+  color: var(--text-secondary, #666);
+  margin: 0 0 40px 0;
+}
+
+/* Import shared styles */
+@import '../../components/widgets/BuyMeCoffee/BuyMeCoffee.css';
+
+/* Dark mode */
+[data-theme="dark"] .coffee-page {
+  background: #1e1e1e;
+}
+
+[data-theme="dark"] .coffee-back-btn {
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .coffee-back-btn:hover {
+  background: #2a2a2a;
+}
+
+[data-theme="dark"] .coffee-page-title {
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .coffee-page-description {
+  color: #b0b0b0;
+}
+
+[data-theme="dark"] .coffee-page-icon {
+  color: var(--color-accent-warm);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .coffee-page {
+    padding: 16px;
+  }
+
+  .coffee-page-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+  }
+
+  .coffee-page-title {
+    font-size: 24px;
+  }
+
+  .coffee-page-description {
+    font-size: 14px;
+  }
+}

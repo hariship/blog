@@ -11,18 +11,53 @@
   transition: background-color var(--transition-normal), border-color var(--transition-normal);
 }
 
+/* Brand Name */
+.navbar-brand {
+  position: absolute;
+  left: 60px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  animation: float 3s ease-in-out infinite;
+}
+
+.navbar-brand:hover {
+  color: var(--color-accent-warm);
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* Coffee Button - Inline with nav links */
+.navbar-coffee-item {
+  display: flex;
+  align-items: center;
+  margin: 0 10px !important;
+}
+
 /* Desktop Navigation (Centered) */
 .nav-links {
   display: flex;
   justify-content: center;
+  align-items: center;
   list-style: none;
   margin: 0;
   padding: 0;
-  width: 100%;
+  flex: 1;
+  flex-wrap: nowrap;
 }
 
 .nav-links li {
   margin: 0 20px;
+  white-space: nowrap;
 }
 
 .nav-links a {
@@ -142,6 +177,10 @@
     margin-top: 0 !important;
   }
 
+  .navbar-brand {
+    display: none; /* Hide brand name on mobile */
+  }
+
   .menu-icon {
     display: block;
     font-size: 26px; /* Slightly larger for better tap area */
@@ -167,5 +206,23 @@
   .sidebar a {
     font-size: 20px; /* Bigger text */
     padding: 16px; /* Comfortable touch area */
+  }
+
+  .navbar-coffee-item {
+    display: none; /* Hide on mobile, show in sidebar instead */
+  }
+}
+
+/* Sidebar Coffee Link */
+.sidebar-coffee-icon {
+  display: inline;
+  vertical-align: middle;
+  margin-left: 8px;
+  font-size: 20px;
+}
+
+@media screen and (min-width: 769px) {
+  .sidebar-coffee-link {
+    display: none; /* Hide in sidebar on desktop */
   }
 }

@@ -8,6 +8,7 @@ import NavBar from './components/layout/Navbar';
 import PersonalGoals from './pages/Content/PersonalGoals';
 import ManageSubscription from './pages/Subscribe/ManageSubscription';
 import CMSDashboard from './pages/Admin/CMSDashboard';
+import Coffee from './pages/Coffee';
 
 const App: React.FC = () => {
   return (
@@ -19,7 +20,8 @@ const App: React.FC = () => {
         <Route path="/movies-and-series" element={<MoviesAndSeries />} />
         <Route path="/books" element={<Books />} />
         <Route path="/manage-subscription/:email" element={<ManageSubscription />} />
-        <Route path="/personal-goals" element={<PersonalGoals />} /> {/* New Route */}
+        <Route path="/personal-goals" element={<PersonalGoals />} />
+        <Route path="/coffee" element={<Coffee />} />
         <Route path="/admin/cms" element={<CMSDashboard />} />
       </Routes>
     </Router>

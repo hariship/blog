@@ -31,6 +31,16 @@
   align-items: center;
   justify-content: center;
   transition: transform var(--transition-normal);
+  animation: glow 3s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 2px rgba(255, 193, 7, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 6px rgba(255, 193, 7, 0.7));
+  }
 }
 
 .theme-toggle:hover .theme-toggle-icon {

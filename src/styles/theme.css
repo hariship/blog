@@ -35,6 +35,10 @@
   --color-button-secondary-hover: #475569;
   --color-icon-primary: #374151;
   --color-icon-secondary: #6b7280;
+
+  /* Warm/Earthy Accent Colors */
+  --color-accent-warm: #8b6f47;
+  --color-accent-warm-hover: #a08357;
   
   /* Status Colors */
   --color-success: #28a745;

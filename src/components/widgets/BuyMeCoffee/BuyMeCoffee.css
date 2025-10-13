@@ -1,0 +1,475 @@
+/* Buy Me a Coffee Button */
+.buy-me-coffee-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: transparent;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-color, #333);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.buy-me-coffee-button:hover {
+  background: var(--hover-bg, #f5f5f5);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.coffee-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  10% {
+    transform: scale(1.1);
+  }
+  20% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.1);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+/* Modal Overlay */
+.coffee-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modal Content */
+.coffee-modal-content {
+  background: var(--card-bg, white);
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 450px;
+  width: 90%;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.coffee-modal-header-controls {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 10;
+}
+
+.coffee-modal-header-controls > * {
+  pointer-events: auto;
+}
+
+.coffee-modal-close {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text-color, #666);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.coffee-modal-close:hover {
+  background: var(--hover-bg, #f0f0f0);
+  color: var(--text-color, #333);
+}
+
+/* Menu View */
+.coffee-menu {
+  text-align: center;
+}
+
+.coffee-menu-header {
+  margin-bottom: 24px;
+}
+
+.coffee-menu-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  display: block;
+  margin: 0 auto 12px;
+  color: var(--color-accent-warm);
+  animation: bounce 1s ease infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.coffee-modal-title {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-color, #333);
+}
+
+.coffee-modal-description {
+  margin: 0 0 24px 0;
+  color: var(--text-secondary, #666);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Option Cards */
+.coffee-options {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.coffee-option-card {
+  background: var(--card-secondary-bg, #f9f9f9);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.coffee-option-card:hover {
+  border-color: var(--color-accent-warm);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 111, 71, 0.2);
+}
+
+.coffee-option-card:hover .coffee-option-arrow {
+  transform: translateX(4px);
+}
+
+.coffee-option-icon {
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 12px;
+  color: var(--color-accent-warm);
+}
+
+.coffee-option-icon-inline {
+  font-size: 20px;
+  vertical-align: middle;
+  margin-right: 8px;
+  color: var(--color-accent-warm);
+}
+
+.coffee-option-title {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-color, #333);
+  display: flex;
+  align-items: center;
+}
+
+.coffee-option-description {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-secondary, #666);
+  line-height: 1.4;
+}
+
+.coffee-option-arrow {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  font-size: 24px;
+  color: var(--color-accent-warm);
+  transition: transform 0.2s ease;
+}
+
+/* Back Button */
+.coffee-back-button {
+  background: transparent;
+  border: none;
+  color: var(--color-accent-warm);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 0;
+  margin-bottom: 16px;
+  transition: opacity 0.2s ease;
+  display: inline-block;
+}
+
+.coffee-back-button:hover {
+  opacity: 0.7;
+}
+
+/* Payment View */
+.coffee-payment-view {
+  text-align: center;
+}
+
+.coffee-qr-container {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 0 auto 16px;
+  display: inline-block;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.coffee-qr-image {
+  width: 200px;
+  height: 200px;
+  display: block;
+  border-radius: 8px;
+}
+
+.coffee-fallback {
+  display: none;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-secondary, #666);
+}
+
+.coffee-fallback p {
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.coffee-fallback-text {
+  font-size: 12px;
+  color: var(--text-tertiary, #999);
+  margin-top: 16px;
+}
+
+.coffee-fallback code {
+  background: var(--code-bg, #f5f5f5);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 11px;
+}
+
+.coffee-scan-text {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-secondary, #666);
+  font-weight: 500;
+}
+
+/* Calendar View */
+.coffee-calendar-view {
+  text-align: center;
+}
+
+.coffee-calendar-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  display: block;
+  color: var(--color-accent-warm);
+}
+
+.coffee-desc-icon {
+  font-size: 16px;
+  vertical-align: middle;
+  margin: 0 4px;
+  color: var(--color-accent-warm);
+}
+
+.coffee-schedule-button {
+  width: 100%;
+  background: var(--color-accent-warm);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.coffee-schedule-button:hover {
+  background: var(--color-accent-warm-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 111, 71, 0.4);
+}
+
+.coffee-email-hint {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-tertiary, #999);
+  font-family: monospace;
+}
+
+/* Dark mode support */
+[data-theme="dark"] .buy-me-coffee-button {
+  border-color: #4a4a4a;
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .buy-me-coffee-button:hover {
+  background: #2a2a2a;
+}
+
+[data-theme="dark"] .coffee-modal-content {
+  background: #1e1e1e;
+}
+
+[data-theme="dark"] .coffee-modal-title {
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .coffee-modal-description {
+  color: #b0b0b0;
+}
+
+[data-theme="dark"] .coffee-modal-close {
+  color: #b0b0b0;
+}
+
+[data-theme="dark"] .coffee-modal-close:hover {
+  background: #2a2a2a;
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .coffee-option-card {
+  background: #2a2a2a;
+}
+
+[data-theme="dark"] .coffee-option-title {
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .coffee-option-description {
+  color: #b0b0b0;
+}
+
+[data-theme="dark"] .coffee-qr-container {
+  background: #2a2a2a;
+}
+
+
+[data-theme="dark"] .coffee-fallback {
+  color: #b0b0b0;
+}
+
+[data-theme="dark"] .coffee-fallback-text {
+  color: #808080;
+}
+
+[data-theme="dark"] .coffee-fallback code {
+  background: #2a2a2a;
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .coffee-scan-text {
+  color: #b0b0b0;
+}
+
+[data-theme="dark"] .coffee-email-hint {
+  color: #808080;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .coffee-modal-content {
+    padding: 24px;
+    width: 95%;
+  }
+
+  .coffee-modal-title {
+    font-size: 20px;
+  }
+
+  .coffee-menu-icon {
+    font-size: 40px;
+  }
+
+  .coffee-calendar-icon {
+    font-size: 40px;
+  }
+
+  .coffee-option-icon {
+    font-size: 28px;
+  }
+
+  .coffee-qr-image {
+    width: 180px;
+    height: 180px;
+  }
+
+  .coffee-option-card {
+    padding: 16px;
+  }
+
+  .coffee-option-title {
+    font-size: 16px;
+  }
+
+  .coffee-schedule-button {
+    font-size: 14px;
+    padding: 12px 20px;
+  }
+}
