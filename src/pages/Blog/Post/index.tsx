@@ -321,7 +321,7 @@ const Post: React.FC = () => {
           <span className="like-button" onClick={() => {
             playButtonSound();
             handleLikeToggle();
-          }}>
+          }} style={{ display: 'none' }}>
             {likesCount !== null && ( // Only show the heart after likes update
               <svg
                 className={`heart-icon ${isLiked ? 'liked' : 'not-liked'}`}

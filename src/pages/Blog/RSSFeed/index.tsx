@@ -233,7 +233,7 @@ const RSSFeed: React.FC = () => {
               <div className="list-item-meta">
                 <span className="list-item-date">{new Date(item.pub_date).toLocaleDateString()}</span>
                 {likesData.length > 0 && (
-                  <span onClick={(e) => { e.stopPropagation(); playButtonSound(); handleLikeToggle(item.title); }} className="favorite-icon">
+                  <span onClick={(e) => { e.stopPropagation(); playButtonSound(); handleLikeToggle(item.title); }} className="favorite-icon" style={{ display: 'none' }}>
                     <svg
                       className={isPostLiked(item.title) ? 'liked' : 'not-liked'}
                       stroke="currentColor"
@@ -275,7 +275,7 @@ const RSSFeed: React.FC = () => {
             <div className="grid-card-meta">
               <span className="grid-card-date">{new Date(item.pub_date).toLocaleDateString()}</span>
               {likesData.length > 0 && (
-                <span onClick={(e) => { e.stopPropagation(); playButtonSound(); handleLikeToggle(item.title); }} className="favorite-icon">
+                <span onClick={(e) => { e.stopPropagation(); playButtonSound(); handleLikeToggle(item.title); }} className="favorite-icon" style={{ display: 'none' }}>
                   <svg
                     className={isPostLiked(item.title) ? 'liked' : 'not-liked'}
                     stroke="currentColor"

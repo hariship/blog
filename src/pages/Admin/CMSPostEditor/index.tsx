@@ -155,6 +155,73 @@ export default function CMSPostEditor(): React.ReactElement {
     window.location.reload(); // Simple reset, shows login again
   };
 
+  const compressImage = (file: File, maxSizeKB: number = 300): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+
+          // Calculate max dimensions while keeping aspect ratio
+          const maxDimension = 1200;
+          if (width > height && width > maxDimension) {
+            height = (height * maxDimension) / width;
+            width = maxDimension;
+          } else if (height > maxDimension) {
+            width = (width * maxDimension) / height;
+            height = maxDimension;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          // Try different quality levels to get under target size
+          let quality = 0.8;
+          const tryCompress = () => {
+            canvas.toBlob(
+              (blob) => {
+                if (!blob) {
+                  reject(new Error('Compression failed'));
+                  return;
+                }
+
+                const sizeKB = blob.size / 1024;
+                console.log(`Compressed to ${sizeKB.toFixed(2)}KB at quality ${quality}`);
+
+                if (sizeKB <= maxSizeKB || quality <= 0.5) {
+                  // Success or reached minimum quality
+                  const compressedFile = new File([blob], file.name, {
+                    type: 'image/jpeg',
+                    lastModified: Date.now(),
+                  });
+                  resolve(compressedFile);
+                } else {
+                  // Try lower quality
+                  quality -= 0.1;
+                  tryCompress();
+                }
+              },
+              'image/jpeg',
+              quality
+            );
+          };
+
+          tryCompress();
+        };
+        img.onerror = () => reject(new Error('Failed to load image'));
+      };
+      reader.onerror = () => reject(new Error('Failed to read file'));
+    });
+  };
+
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -168,22 +235,17 @@ export default function CMSPostEditor(): React.ReactElement {
       return;
     }
 
-    // Validate file size (e.g., 5MB limit)
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (file.size > maxSize) {
-      setSubmitStatus({
-        type: 'error',
-        message: 'Image size must be less than 5MB'
-      });
-      return;
-    }
-
     setIsUploadingImage(true);
     setSubmitStatus(null);
 
     try {
+      // Compress image for WhatsApp compatibility (target: 300KB)
+      console.log(`Original image size: ${(file.size / 1024).toFixed(2)}KB`);
+      const compressedFile = await compressImage(file, 300);
+      console.log(`Compressed image size: ${(compressedFile.size / 1024).toFixed(2)}KB`);
+
       const formData = new FormData();
-      formData.append('image', file);
+      formData.append('image', compressedFile);
 
       const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/upload-image`, formData, {
         headers: {
@@ -196,7 +258,7 @@ export default function CMSPostEditor(): React.ReactElement {
         setImageUrl(response.data.imageUrl);
         setSubmitStatus({
           type: 'success',
-          message: 'Image uploaded successfully!'
+          message: `Image compressed to ${(compressedFile.size / 1024).toFixed(0)}KB and uploaded successfully!`
         });
       } else {
         throw new Error(response.data.message || 'Upload failed');
@@ -206,7 +268,7 @@ export default function CMSPostEditor(): React.ReactElement {
       console.error('Image upload error:', error);
       setSubmitStatus({
         type: 'error',
-        message: error.response?.data?.message || 'Failed to upload image. Please try again.'
+        message: error.response?.data?.message || error.message || 'Failed to upload image. Please try again.'
       });
     } finally {
       setIsUploadingImage(false);
