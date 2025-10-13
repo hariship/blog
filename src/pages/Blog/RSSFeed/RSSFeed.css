@@ -811,7 +811,7 @@ button.theme-toggle:hover svg {
   background-color: var(--color-bg-card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-medium);
-  padding: var(--spacing-md);
+  padding: 0;
 }
 
 .rss-feed-sidebar {
@@ -1414,7 +1414,7 @@ button.theme-toggle:hover svg {
   border-bottom: 1px solid var(--color-border-light);
   height: auto;
   transition: background-color var(--transition-normal), border-color var(--transition-normal);
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
 }
 
 .home-icon {
@@ -1467,7 +1467,7 @@ button.theme-toggle:hover svg {
   }
 
   .rss-feed-main {
-    padding: var(--spacing-sm);
+    padding: 0;
   }
 
   .rss-feed-title {
