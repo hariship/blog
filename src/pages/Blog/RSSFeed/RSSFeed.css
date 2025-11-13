@@ -1835,7 +1835,7 @@ button.theme-toggle:hover svg {
   padding: 0;
 }
 
-/* Like Button and Heart Icon */
+/* Read Button and Icon */
 .favorite-icon {
   cursor: pointer;
   display: inline-flex;
@@ -1859,13 +1859,76 @@ button.theme-toggle:hover svg {
 }
 
 .favorite-icon svg.not-liked {
-  fill: none;
-  stroke: var(--color-text-secondary);
-  stroke-width: 2;
+  fill: var(--color-text-secondary);
+  stroke: none;
 }
 
 .favorite-icon svg.not-liked:hover {
-  stroke: var(--color-button-primary);
+  fill: var(--color-button-primary);
+}
+
+/* Specific styling for read icon */
+.read-icon svg {
+  font-size: 1.1em;
+}
+
+.read-icon svg.liked {
+  fill: var(--color-button-primary);
+  opacity: 1;
+}
+
+.read-icon svg.not-liked {
+  fill: var(--color-text-secondary);
+  opacity: 0.6;
+}
+
+.read-icon svg.not-liked:hover {
+  fill: var(--color-button-primary);
+  opacity: 1;
+}
+
+/* Read text styling */
+.read-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.025em;
+}
+
+.favorite-icon.read-icon:hover .read-text {
+  color: var(--color-button-primary);
+}
+
+/* Compact view read icon */
+.compact-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.compact-read-icon {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.compact-read-icon svg {
+  height: 1em;
+  width: 1em;
+}
+
+/* Magazine view read icon */
+.magazine-item-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-xs);
+}
+
+.magazine-read-icon svg {
+  height: 0.9em;
+  width: 0.9em;
 }
 
 /* Pagination */

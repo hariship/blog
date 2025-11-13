@@ -67,6 +67,21 @@ const Post: React.FC = () => {
   const normalized = normalizeTitle(title || ''); // Normalize title
   const isJournal = normalized === 'life-lately-20-2025';
 
+  // Load read status from localStorage
+  const getReadStatusFromStorage = (postTitle: string): boolean => {
+    try {
+      const stored = localStorage.getItem('readPosts');
+      if (stored) {
+        const readPosts = JSON.parse(stored);
+        return readPosts.includes(postTitle);
+      }
+      return false;
+    } catch (error) {
+      console.error('Error loading read status from localStorage:', error);
+      return false;
+    }
+  };
+
   // Fetch post content by title
   const fetchPostContent = async (postTitleFromURL: string) => {
     const normalizedTitle = normalizeTitle(postTitleFromURL); // Normalize title
@@ -77,7 +92,7 @@ const Post: React.FC = () => {
       if (!response.ok) {
         throw new Error('Post not found');
       }
-      
+
       const post = await response.json();
 
       console.log('=== API Response Debug ===');
@@ -93,20 +108,25 @@ const Post: React.FC = () => {
         setPostContent(content || 'No content available');
         setPostImage(enclosure || '');
         setDescription(description);
-  
+
         // Check if content is actually available - if not, load from local file
         if (content === 'No content available' || !content) {
           console.log('No content from API, loading local content');
           loadLocalContent(normalizedTitle);
         }
-  
+
+        // First check localStorage for read status
+        const isReadInStorage = getReadStatusFromStorage(title);
+
+        // Then check context
         const postLikesData = likesData.find(like => like.title === title);
         if (postLikesData) {
           setLikesCount(postLikesData.likesCount);
           setIsLiked(postLikesData.isLiked);
         } else {
           setLikesCount(0);
-          setIsLiked(false);
+          // Use localStorage value if context doesn't have it yet
+          setIsLiked(isReadInStorage);
         }
       } else {
         console.error('Post not found');
@@ -169,7 +189,18 @@ const Post: React.FC = () => {
     if (title) {
       fetchPostContent(title);
     }
-  }, [title, likesData]);
+  }, [title]);
+
+  // Separate useEffect to sync isLiked state with likesData context
+  useEffect(() => {
+    if (postTitle && likesData.length > 0) {
+      const postLikesData = likesData.find(like => like.title === postTitle);
+      if (postLikesData) {
+        setIsLiked(postLikesData.isLiked);
+        setLikesCount(postLikesData.likesCount);
+      }
+    }
+  }, [likesData, postTitle]);
 
   const handleGoBack = () => {
     playButtonSound();
@@ -177,9 +208,13 @@ const Post: React.FC = () => {
   };
 
   const handleLikeToggle = async () => {
+    const previousIsLiked = isLiked;
+    const previousLikesCount = likesCount;
     const newIsLiked = !isLiked;
     // Calculate new likes count
     const updatedLikesCount = newIsLiked ? likesCount + 1 : likesCount - 1;
+
+    // Optimistic update
     updateLikesData(postTitle, updatedLikesCount, newIsLiked);
     setIsLiked(newIsLiked);
     setLikesCount(updatedLikesCount);
@@ -193,20 +228,16 @@ const Post: React.FC = () => {
         body: JSON.stringify({ title: postTitle, likesCount: updatedLikesCount }),
       });
 
-      if (response.ok) {
-        // Update context data only when server confirms
-        updateLikesData(postTitle, updatedLikesCount, newIsLiked);
-        setIsLiked(newIsLiked);
-        setLikesCount(updatedLikesCount);
-      } else {
+      if (!response.ok) {
         throw new Error('Failed to update likes');
       }
     } catch (error) {
       console.error('Failed to update likes:', error);
 
       // Revert the UI changes if the server request fails
-      setIsLiked(isLiked);
-      setLikesCount(likesCount);
+      updateLikesData(postTitle, previousLikesCount, previousIsLiked);
+      setIsLiked(previousIsLiked);
+      setLikesCount(previousLikesCount);
     }
   };
 
@@ -318,24 +349,37 @@ const Post: React.FC = () => {
                 }
         </div>
 
-          <span className="like-button" onClick={() => {
+          <span className="like-button read-button" onClick={() => {
             playButtonSound();
             handleLikeToggle();
-          }} style={{ display: 'none' }}>
-            {likesCount !== null && ( // Only show the heart after likes update
-              <svg
-                className={`heart-icon ${isLiked ? 'liked' : 'not-liked'}`}
-                stroke="currentColor"
-                fill="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                height="1em"
-                width="1em"
-              >
-                <path d="m12 21.35-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
-              </svg>
+          }}>
+            {likesCount !== null && (
+              isLiked ? (
+                <svg
+                  className="heart-icon liked"
+                  stroke="currentColor"
+                  fill="currentColor"
+                  strokeWidth="0"
+                  viewBox="0 0 16 16"
+                  height="1.2em"
+                  width="1.2em"
+                >
+                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                </svg>
+              ) : (
+                <svg
+                  className="heart-icon not-liked"
+                  stroke="currentColor"
+                  fill="currentColor"
+                  strokeWidth="0"
+                  viewBox="0 0 16 16"
+                  height="1.2em"
+                  width="1.2em"
+                >
+                  <path d="M4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm2.625.547a3 3 0 0 0-5.584.953H.5a.5.5 0 0 0 0 1h.541A3 3 0 0 0 7 8a1 1 0 0 1 2 0 3 3 0 0 0 5.959.5h.541a.5.5 0 0 0 0-1h-.541a3 3 0 0 0-5.584-.953A1.993 1.993 0 0 0 8 6c-.532 0-1.016.208-1.375.547zM14 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
+                </svg>
+              )
             )}
-            <span>{likesCount !== null ? likesCount || '' : ''}</span>
           </span>
           <br/>
           <br/>

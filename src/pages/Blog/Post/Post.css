@@ -297,9 +297,44 @@ hr {
 }
 
 .heart-icon.not-liked {
-    fill: none;
-    stroke: var(--color-text-secondary);
-    stroke-width: 2;
+    fill: var(--color-text-secondary);
+    stroke: none;
+}
+
+/* Read button specific styling */
+.read-button .heart-icon {
+    font-size: 1.2em;
+}
+
+.read-button .heart-icon.liked {
+    fill: var(--color-button-primary);
+    opacity: 1;
+}
+
+.read-button .heart-icon.not-liked {
+    fill: var(--color-text-secondary);
+    opacity: 0.6;
+}
+
+.read-button:hover .heart-icon.not-liked {
+    fill: var(--color-button-primary);
+    opacity: 1;
+}
+
+/* Read text styling */
+.read-button .read-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    letter-spacing: 0.025em;
+}
+
+.read-button:hover .read-text {
+    color: var(--color-button-primary);
+}
+
+.read-button .heart-icon.liked + .read-text {
+    color: var(--color-button-primary);
 }
 
 /* Comments Section */

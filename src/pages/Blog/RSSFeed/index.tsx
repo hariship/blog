@@ -233,19 +233,32 @@ const RSSFeed: React.FC = () => {
               <div className="list-item-meta">
                 <span className="list-item-date">{new Date(item.pub_date).toLocaleDateString()}</span>
                 {likesData.length > 0 && (
-                  <span onClick={(e) => { e.stopPropagation(); playButtonSound(); handleLikeToggle(item.title); }} className="favorite-icon" style={{ display: 'none' }}>
-                    <svg
-                      className={isPostLiked(item.title) ? 'liked' : 'not-liked'}
-                      stroke="currentColor"
-                      fill="currentColor"
-                      strokeWidth="2"
-                      viewBox="0 0 24 24"
-                      height="1em"
-                      width="1em"
-                    >
-                      <path d="m12 21.35-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
-                    </svg>
-                    <span>{getLikesForPost(item.title)}</span>
+                  <span onClick={(e) => { e.stopPropagation(); playButtonSound(); handleLikeToggle(item.title); }} className="favorite-icon read-icon">
+                    {isPostLiked(item.title) ? (
+                      <svg
+                        className="liked"
+                        stroke="currentColor"
+                        fill="currentColor"
+                        strokeWidth="0"
+                        viewBox="0 0 16 16"
+                        height="1.1em"
+                        width="1.1em"
+                      >
+                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                      </svg>
+                    ) : (
+                      <svg
+                        className="not-liked"
+                        stroke="currentColor"
+                        fill="currentColor"
+                        strokeWidth="0"
+                        viewBox="0 0 16 16"
+                        height="1.1em"
+                        width="1.1em"
+                      >
+                        <path d="M4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm2.625.547a3 3 0 0 0-5.584.953H.5a.5.5 0 0 0 0 1h.541A3 3 0 0 0 7 8a1 1 0 0 1 2 0 3 3 0 0 0 5.959.5h.541a.5.5 0 0 0 0-1h-.541a3 3 0 0 0-5.584-.953A1.993 1.993 0 0 0 8 6c-.532 0-1.016.208-1.375.547zM14 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
+                      </svg>
+                    )}
                   </span>
                 )}
               </div>
@@ -275,19 +288,32 @@ const RSSFeed: React.FC = () => {
             <div className="grid-card-meta">
               <span className="grid-card-date">{new Date(item.pub_date).toLocaleDateString()}</span>
               {likesData.length > 0 && (
-                <span onClick={(e) => { e.stopPropagation(); playButtonSound(); handleLikeToggle(item.title); }} className="favorite-icon" style={{ display: 'none' }}>
-                  <svg
-                    className={isPostLiked(item.title) ? 'liked' : 'not-liked'}
-                    stroke="currentColor"
-                    fill="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                    height="1em"
-                    width="1em"
-                  >
-                    <path d="m12 21.35-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
-                  </svg>
-                  <span>{getLikesForPost(item.title)}</span>
+                <span onClick={(e) => { e.stopPropagation(); playButtonSound(); handleLikeToggle(item.title); }} className="favorite-icon read-icon">
+                  {isPostLiked(item.title) ? (
+                    <svg
+                      className="liked"
+                      stroke="currentColor"
+                      fill="currentColor"
+                      strokeWidth="0"
+                      viewBox="0 0 16 16"
+                      height="1.1em"
+                      width="1.1em"
+                    >
+                      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                    </svg>
+                  ) : (
+                    <svg
+                      className="not-liked"
+                      stroke="currentColor"
+                      fill="currentColor"
+                      strokeWidth="0"
+                      viewBox="0 0 16 16"
+                      height="1.1em"
+                      width="1.1em"
+                    >
+                      <path d="M4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm2.625.547a3 3 0 0 0-5.584.953H.5a.5.5 0 0 0 0 1h.541A3 3 0 0 0 7 8a1 1 0 0 1 2 0 3 3 0 0 0 5.959.5h.541a.5.5 0 0 0 0-1h-.541a3 3 0 0 0-5.584-.953A1.993 1.993 0 0 0 8 6c-.532 0-1.016.208-1.375.547zM14 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
+                    </svg>
+                  )}
                 </span>
               )}
             </div>
@@ -313,6 +339,35 @@ const RSSFeed: React.FC = () => {
           </span>
           <span className="compact-title">{item.title}</span>
           {!isMobile && item.category && <span className="compact-category">{item.category}</span>}
+          {likesData.length > 0 && (
+            <span onClick={(e) => { e.stopPropagation(); playButtonSound(); handleLikeToggle(item.title); }} className="favorite-icon read-icon compact-read-icon">
+              {isPostLiked(item.title) ? (
+                <svg
+                  className="liked"
+                  stroke="currentColor"
+                  fill="currentColor"
+                  strokeWidth="0"
+                  viewBox="0 0 16 16"
+                  height="1em"
+                  width="1em"
+                >
+                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                </svg>
+              ) : (
+                <svg
+                  className="not-liked"
+                  stroke="currentColor"
+                  fill="currentColor"
+                  strokeWidth="0"
+                  viewBox="0 0 16 16"
+                  height="1em"
+                  width="1em"
+                >
+                  <path d="M4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm2.625.547a3 3 0 0 0-5.584.953H.5a.5.5 0 0 0 0 1h.541A3 3 0 0 0 7 8a1 1 0 0 1 2 0 3 3 0 0 0 5.959.5h.541a.5.5 0 0 0 0-1h-.541a3 3 0 0 0-5.584-.953A1.993 1.993 0 0 0 8 6c-.532 0-1.016.208-1.375.547zM14 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
+                </svg>
+              )}
+            </span>
+          )}
         </div>
       ))}
     </div>
@@ -339,6 +394,35 @@ const RSSFeed: React.FC = () => {
               <div className="magazine-featured-meta">
                 <span>{new Date(featured.pub_date).toLocaleDateString()}</span>
                 {featured.category && <span className="magazine-featured-category">{featured.category}</span>}
+                {likesData.length > 0 && (
+                  <span onClick={(e) => { e.stopPropagation(); playButtonSound(); handleLikeToggle(featured.title); }} className="favorite-icon read-icon">
+                    {isPostLiked(featured.title) ? (
+                      <svg
+                        className="liked"
+                        stroke="currentColor"
+                        fill="currentColor"
+                        strokeWidth="0"
+                        viewBox="0 0 16 16"
+                        height="1.1em"
+                        width="1.1em"
+                      >
+                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                      </svg>
+                    ) : (
+                      <svg
+                        className="not-liked"
+                        stroke="currentColor"
+                        fill="currentColor"
+                        strokeWidth="0"
+                        viewBox="0 0 16 16"
+                        height="1.1em"
+                        width="1.1em"
+                      >
+                        <path d="M4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm2.625.547a3 3 0 0 0-5.584.953H.5a.5.5 0 0 0 0 1h.541A3 3 0 0 0 7 8a1 1 0 0 1 2 0 3 3 0 0 0 5.959.5h.541a.5.5 0 0 0 0-1h-.541a3 3 0 0 0-5.584-.953A1.993 1.993 0 0 0 8 6c-.532 0-1.016.208-1.375.547zM14 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
+                      </svg>
+                    )}
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -355,7 +439,38 @@ const RSSFeed: React.FC = () => {
               )}
               <div className="magazine-item-content">
                 <h3 className="magazine-item-title">{item.title}</h3>
-                <span className="magazine-item-date">{new Date(item.pub_date).toLocaleDateString()}</span>
+                <div className="magazine-item-meta">
+                  <span className="magazine-item-date">{new Date(item.pub_date).toLocaleDateString()}</span>
+                  {likesData.length > 0 && (
+                    <span onClick={(e) => { e.stopPropagation(); playButtonSound(); handleLikeToggle(item.title); }} className="favorite-icon read-icon magazine-read-icon">
+                      {isPostLiked(item.title) ? (
+                        <svg
+                          className="liked"
+                          stroke="currentColor"
+                          fill="currentColor"
+                          strokeWidth="0"
+                          viewBox="0 0 16 16"
+                          height="1em"
+                          width="1em"
+                        >
+                          <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                        </svg>
+                      ) : (
+                        <svg
+                          className="not-liked"
+                          stroke="currentColor"
+                          fill="currentColor"
+                          strokeWidth="0"
+                          viewBox="0 0 16 16"
+                          height="1em"
+                          width="1em"
+                        >
+                          <path d="M4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm2.625.547a3 3 0 0 0-5.584.953H.5a.5.5 0 0 0 0 1h.541A3 3 0 0 0 7 8a1 1 0 0 1 2 0 3 3 0 0 0 5.959.5h.541a.5.5 0 0 0 0-1h-.541a3 3 0 0 0-5.584-.953A1.993 1.993 0 0 0 8 6c-.532 0-1.016.208-1.375.547zM14 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
+                        </svg>
+                      )}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           ))}
