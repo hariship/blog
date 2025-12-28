@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
       likes: undefined
     }))
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       posts: transformedPosts,
       pagination: {
         currentPage: page,
@@ -50,6 +50,10 @@ export async function GET(request: NextRequest) {
         itemsPerPage: limit
       }
     })
+
+    // Cache for 60 seconds, stale-while-revalidate for 5 minutes
+    response.headers.set('Cache-Control', 's-maxage=60, stale-while-revalidate=300')
+    return response
   } catch (error) {
     console.error('Error in posts API:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
