@@ -277,7 +277,28 @@
 
   .cms-editor-quill .ql-editor {
     min-height: 500px;
+    max-height: 70vh;
+    overflow-y: auto !important;
     padding: var(--spacing-lg);
+  }
+
+  /* Scrollbar styling for editor */
+  .cms-editor-quill .ql-editor::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .cms-editor-quill .ql-editor::-webkit-scrollbar-track {
+    background: var(--color-bg-secondary);
+    border-radius: 4px;
+  }
+
+  .cms-editor-quill .ql-editor::-webkit-scrollbar-thumb {
+    background: var(--color-border-medium);
+    border-radius: 4px;
+  }
+
+  .cms-editor-quill .ql-editor::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-muted);
   }
 
   .cms-editor-quill .ql-container {

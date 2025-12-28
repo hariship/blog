@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { v2 as cloudinary } from 'cloudinary'
 
+// Check if Cloudinary is configured
+const isCloudinaryConfigured = () => {
+  return !!(
+    process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME &&
+    process.env.CLOUDINARY_API_KEY &&
+    process.env.CLOUDINARY_API_SECRET
+  )
+}
+
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -9,11 +18,24 @@ cloudinary.config({
 
 export async function POST(request: NextRequest) {
   try {
+    // Check Cloudinary configuration
+    if (!isCloudinaryConfigured()) {
+      console.error('Cloudinary not configured. Missing env vars.')
+      return NextResponse.json({
+        error: 'Image upload service not configured'
+      }, { status: 500 })
+    }
+
     const formData = await request.formData()
     const file = formData.get('image') as File
 
     if (!file) {
       return NextResponse.json({ error: 'No image provided' }, { status: 400 })
+    }
+
+    // Check file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      return NextResponse.json({ error: 'Image too large (max 10MB)' }, { status: 400 })
     }
 
     // Convert file to base64
@@ -33,8 +55,12 @@ export async function POST(request: NextRequest) {
       url: result.secure_url,
       public_id: result.public_id
     })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error uploading image:', error)
-    return NextResponse.json({ error: 'Failed to upload image' }, { status: 500 })
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    return NextResponse.json({
+      error: 'Failed to upload image',
+      details: errorMessage
+    }, { status: 500 })
   }
 }
