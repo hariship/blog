@@ -265,14 +265,14 @@ export default function CMSPostEditor() {
 
       const data = await response.json()
 
-      if (data.success) {
-        setImageUrl(data.imageUrl)
+      if (data.success && data.url) {
+        setImageUrl(data.url)
         setSubmitStatus({
           type: 'success',
           message: `Image compressed to ${(compressedFile.size / 1024).toFixed(0)}KB and uploaded!`
         })
       } else {
-        throw new Error(data.message || 'Upload failed')
+        throw new Error(data.error || data.message || 'Upload failed')
       }
     } catch (error: unknown) {
       const err = error as Error
