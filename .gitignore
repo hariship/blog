@@ -18,3 +18,4 @@ yarn-error.log*
 # Backup and scripts
 _backup/
 scripts/migration-data.json
+.vercel
