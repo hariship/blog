@@ -39,8 +39,10 @@
 .post-content {
     font-size: 20px;
     line-height: 1.6;
-    overflow-x: auto;
+    overflow-x: hidden;
     box-sizing: border-box;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 /* Post content links with better contrast */
@@ -69,19 +71,40 @@
 
 .post-content pre {
     display: block;
-    overflow-x: auto;
+    overflow-x: scroll;
+    overflow-y: hidden;
     white-space: pre;
     max-width: 100%;
     background: var(--color-bg-secondary);
     font-family: monospace;
-    font-size: 13px;
+    font-size: 12px;
     padding: var(--spacing-md);
     border-radius: var(--radius-md);
     box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
 }
 
 .post-content p {
     margin-bottom: var(--spacing-md);
+}
+
+.post-content ul,
+.post-content ol {
+    margin: var(--spacing-md) 0;
+    padding-left: var(--spacing-xl);
+}
+
+.post-content ul {
+    list-style-type: disc;
+}
+
+.post-content ol {
+    list-style-type: decimal;
+}
+
+.post-content li {
+    margin-bottom: var(--spacing-sm);
+    display: list-item;
 }
 
 /* Remove extra margin from first paragraph if followed by hr */
