@@ -344,11 +344,14 @@ export default function CMSPostEditor() {
     setIsSubmitting(true)
     setSubmitStatus(null)
 
+    // Replace &nbsp; with regular spaces for proper word wrapping
+    const cleanedContent = content.replace(/&nbsp;/g, ' ').trim()
+
     const postData = {
       title: title.trim(),
       description: description.trim(),
       image_url: imageUrl.trim(),
-      content: content.trim(),
+      content: cleanedContent,
       category,
       enclosure: imageUrl.trim(),
       ...postSettings

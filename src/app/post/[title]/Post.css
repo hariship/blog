@@ -4,13 +4,15 @@
 .post-container {
     background-color: var(--color-bg-card);
     max-width: 740px;
+    width: 100%;
     margin: var(--spacing-lg) auto;
     padding: var(--spacing-lg);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-medium);
     color: var(--color-text-primary);
     font-family: 'Source Sans Pro', serif;
-    overflow-x: hidden;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
 .post-title {
@@ -39,11 +41,9 @@
 .post-content {
     font-size: 20px;
     line-height: 1.6;
-    overflow-x: hidden;
     box-sizing: border-box;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
 }
+
 
 /* Post content links with better contrast */
 .post-content a {
@@ -104,7 +104,6 @@
 
 .post-content li {
     margin-bottom: var(--spacing-sm);
-    display: list-item;
 }
 
 /* Remove extra margin from first paragraph if followed by hr */

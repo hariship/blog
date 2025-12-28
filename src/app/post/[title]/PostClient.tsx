@@ -169,7 +169,8 @@ export default function PostClient({ title }: PostClientProps) {
   const processToggleBlocks = (htmlContent: string): string => {
     if (!htmlContent) return htmlContent
 
-    let processed = htmlContent
+    // Replace non-breaking spaces with regular spaces for proper word wrapping
+    let processed = htmlContent.replace(/&nbsp;/g, ' ')
 
     processed = processed.replace(
       /<p><strong[^>]*>\[TOGGLE\]\s*([^<]+)<\/strong><\/p>([\s\S]*?)(?:<strong[^>]*>\[END TOGGLE\]<\/strong>|(?=<p><strong[^>]*>\[TOGGLE\])|$)/gi,
