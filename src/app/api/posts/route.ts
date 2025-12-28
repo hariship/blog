@@ -1,6 +1,9 @@
 import { createServerClient } from '@/lib/supabase'
 import { NextRequest, NextResponse } from 'next/server'
 
+// Use Edge runtime for faster cold starts
+export const runtime = 'edge'
+
 // Cache for 60 seconds
 export const revalidate = 60
 
