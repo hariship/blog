@@ -261,11 +261,22 @@ button.theme-toggle:hover svg {
   stroke: none !important;
   display: block !important;
   visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.controls-group .subscribe-button,
+.subscribe-button {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 [data-theme="dark"] .controls-group .subscribe-button svg,
 [data-theme="dark"] .subscribe-button svg {
   fill: var(--lcars-slate, #6b7c93) !important;
+  opacity: 1 !important;
 }
 
 [data-theme="dark"] .controls-group .subscribe-button:hover svg,
