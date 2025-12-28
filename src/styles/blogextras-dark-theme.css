@@ -1,3 +1,81 @@
+/* Light theme styles for BlogExtras comments widget */
+#blogextras-comments {
+  background-color: var(--color-bg-card) !important;
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--color-border-light) !important;
+  padding: var(--spacing-lg) !important;
+  color: var(--color-text-primary) !important;
+}
+
+#blogextras-comments * {
+  color: var(--color-text-primary) !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Variable", "Segoe UI", system-ui, ui-sans-serif, Helvetica, Arial, sans-serif !important;
+}
+
+#blogextras-comments input,
+#blogextras-comments textarea,
+#blogextras-comments select {
+  background-color: var(--color-bg-secondary) !important;
+  color: var(--color-text-primary) !important;
+  border: 1px solid var(--color-border-medium) !important;
+  border-radius: var(--radius-sm) !important;
+  padding: 10px !important;
+  font-size: 14px !important;
+}
+
+#blogextras-comments input:focus,
+#blogextras-comments textarea:focus,
+#blogextras-comments select:focus {
+  border-color: var(--color-border-dark) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px var(--color-border-light) !important;
+}
+
+#blogextras-comments button,
+#blogextras-comments input[type="submit"],
+#blogextras-comments .submit-button,
+#blogextras-comments .btn,
+#blogextras-comments [class*="submit"],
+#blogextras-comments [class*="post"],
+#blogextras-comments [class*="send"] {
+  background-color: var(--color-button-primary) !important;
+  background: var(--color-button-primary) !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: var(--radius-sm) !important;
+  padding: 10px 20px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all var(--transition-fast) !important;
+}
+
+#blogextras-comments button:hover,
+#blogextras-comments input[type="submit"]:hover,
+#blogextras-comments .submit-button:hover,
+#blogextras-comments .btn:hover {
+  background-color: var(--color-button-primary-hover) !important;
+  background: var(--color-button-primary-hover) !important;
+}
+
+#blogextras-comments .comment,
+#blogextras-comments .comment-item,
+#blogextras-comments .be-comment {
+  background-color: var(--color-bg-secondary) !important;
+  border: 1px solid var(--color-border-light) !important;
+  border-radius: var(--radius-sm) !important;
+  padding: var(--spacing-md) !important;
+  margin: var(--spacing-sm) 0 !important;
+}
+
+#blogextras-comments label,
+#blogextras-comments .form-label {
+  color: var(--color-text-primary) !important;
+  font-weight: 500 !important;
+  margin-bottom: 6px !important;
+  display: block !important;
+}
+
 /* Dark theme overrides for BlogExtras comments widget */
 [data-theme="dark"] #blogextras-comments {
   /* Main container styling */

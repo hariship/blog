@@ -1,6 +1,8 @@
 node_modules/
 build/
 dist/
+.next/
+out/
 .env
 .env.local
 .env.development.local
@@ -8,8 +10,11 @@ dist/
 .env.production.local
 *.sql
 *.csv
-*.txt
 .DS_Store
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Backup and scripts
+_backup/
+scripts/migration-data.json

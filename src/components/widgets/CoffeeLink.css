@@ -1,0 +1,61 @@
+/* Coffee Link Styles */
+.coffee-inline-link {
+  color: var(--color-link, #007bff);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.coffee-link-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.coffee-inline-link:hover {
+  border-bottom-color: var(--color-link, #007bff);
+  opacity: 0.8;
+}
+
+.coffee-block-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--color-link, #007bff);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  margin: 8px 0;
+}
+
+.coffee-block-link:hover {
+  background: var(--color-link-hover, #0056b3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+/* Dark mode for links */
+[data-theme="dark"] .coffee-inline-link {
+  color: #66b3ff;
+}
+
+[data-theme="dark"] .coffee-inline-link:hover {
+  border-bottom-color: #66b3ff;
+}
+
+[data-theme="dark"] .coffee-block-link {
+  background: #0066cc;
+}
+
+[data-theme="dark"] .coffee-block-link:hover {
+  background: #0052a3;
+}

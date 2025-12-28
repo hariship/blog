@@ -1,0 +1,96 @@
+.container {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: var(--spacing-lg);
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-medium);
+  text-align: center;
+  font-family: 'Merriweather', sans-serif;
+  transition: background-color var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+/* Header with title on the left and pagination on the right */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.title {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--color-text-primary);
+  margin: 0;
+  flex: 1;
+  text-align: left;
+  transition: color var(--transition-fast);
+}
+
+/* Pagination styles */
+.pagination {
+  display: flex;
+}
+
+.page-button {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-medium);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  margin-left: var(--spacing-xs);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  color: var(--color-text-primary);
+  transition: all var(--transition-fast);
+}
+
+.page-button:hover {
+  background: var(--color-bg-secondary);
+  border-color: var(--color-border-dark);
+}
+
+.page-button.active {
+  background: var(--color-button-primary);
+  color: var(--color-text-inverse);
+  border-color: var(--color-button-primary);
+}
+
+/* Styling for each goal */
+.post-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--color-bg-secondary);
+  padding: var(--spacing-md);
+  margin: var(--spacing-sm) 0;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-light);
+  transition: all var(--transition-fast);
+}
+
+.post-card:hover {
+  box-shadow: var(--shadow-medium);
+  transform: translateY(-1px);
+}
+
+.goal-text {
+  font-size: 18px;
+  text-align: left;
+  flex: 1;
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  transition: color var(--transition-fast);
+}
+
+.goal-text.completed {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+}
+
+.checkmark {
+  font-size: 20px;
+  color: var(--color-success);
+}

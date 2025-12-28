@@ -1,0 +1,231 @@
+/* Subscribe Container */
+.subscribe-container {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0;
+  padding: 0;
+  width: auto;
+}
+
+/* Subscribe Button - Inside controls-group (matches ViewSwitcher styling) */
+.subscribe-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  font-size: 18px;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
+}
+
+.subscribe-button:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+  transform: none;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.subscribe-button svg {
+  width: 18px !important;
+  height: 18px !important;
+  fill: #333 !important;
+  display: block !important;
+  visibility: visible !important;
+}
+
+[data-theme="dark"] .subscribe-button svg {
+  fill: var(--lcars-slate, #6b7c93) !important;
+}
+
+[data-theme="dark"] .subscribe-button:hover svg {
+  fill: #000 !important;
+}
+
+/* Mobile Button Specific Styles */
+.mobile-button {
+  width: 36px !important;
+  height: 36px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  vertical-align: middle;
+  border-radius: 6px;
+}
+
+/* Dark mode support */
+[data-theme="dark"] .subscribe-button {
+  background: transparent;
+  color: var(--lcars-slate, #6b7c93);
+}
+
+[data-theme="dark"] .subscribe-button:hover {
+  background: var(--lcars-slate, #6b7c93);
+  color: #000;
+}
+
+/* Modal Overlay */
+.subscribe-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal Container */
+.subscribe-modal {
+  background-color: var(--color-bg-card);
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Modal Header */
+.subscribe-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.subscribe-modal-header h2 {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: 1.5rem;
+}
+
+.close-modal-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.close-modal-button:hover {
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+
+/* Modal Content */
+.subscribe-modal-content {
+  padding: 20px;
+}
+
+/* Form Elements */
+.form-group {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--color-border-medium);
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--color-button-primary);
+  box-shadow: 0 0 0 2px rgba(var(--color-button-primary-rgb, 53, 73, 94), 0.1);
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.submit-button {
+  background-color: var(--color-button-primary);
+  color: var(--color-button-text);
+  border: none;
+  border-radius: 4px;
+  padding: 12px 24px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 100%;
+  max-width: 200px;
+}
+
+.submit-button:hover {
+  background-color: var(--color-button-primary-hover);
+  cursor: pointer;
+}
+
+.submit-button:disabled {
+  background-color: var(--color-bg-tertiary);
+  cursor: not-allowed;
+}
+
+/* Notification Messages */
+.message {
+  padding: 10px;
+  margin: 15px 0;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.message.success {
+  background-color: #e7f7e7;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.message.error {
+  background-color: #fdecea;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+.subscribe-container-wrapper {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}

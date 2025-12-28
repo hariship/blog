@@ -1,0 +1,87 @@
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: var(--color-bg-secondary);
+  border: 2px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-sm) var(--spacing-md);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-light);
+}
+
+.theme-toggle:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-border-medium);
+  box-shadow: var(--shadow-medium);
+  transform: translateY(-1px);
+}
+
+.theme-toggle:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-light);
+}
+
+.theme-toggle-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition-normal);
+  animation: glow 3s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 2px rgba(255, 193, 7, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 6px rgba(255, 193, 7, 0.7));
+  }
+}
+
+.theme-toggle:hover .theme-toggle-icon {
+  transform: rotate(15deg);
+}
+
+.theme-toggle-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .theme-toggle {
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    justify-content: center;
+  }
+
+  .theme-toggle-text {
+    display: none;
+  }
+}
+
+/* Focus styles for accessibility */
+.theme-toggle:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Animation for smooth icon transition */
+.theme-toggle-icon svg {
+  transition: opacity var(--transition-fast);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .theme-toggle {
+    border-width: 3px;
+  }
+}
