@@ -373,6 +373,9 @@ export default function HomePage() {
                 <div className="desktop-view-switcher">
                   <ViewSwitcher currentView={viewMode} onViewChange={setViewMode} />
                 </div>
+                <div className="mobile-view-switcher">
+                  <ViewSwitcher currentView={viewMode} onViewChange={setViewMode} hideMagazine />
+                </div>
               </div>
               <div className="header-controls">
                 <div className="controls-group">
@@ -409,7 +412,7 @@ export default function HomePage() {
                   <input
                     type="text"
                     className="search-input"
-                    placeholder="Search posts..."
+                    placeholder="Search..."
                     value={searchQuery}
                     onChange={(e) => {
                       setSearchQuery(e.target.value)
@@ -421,9 +424,6 @@ export default function HomePage() {
                       }
                     }}
                   />
-                </div>
-                <div className="mobile-view-switcher-inline">
-                  <ViewSwitcher currentView={viewMode} onViewChange={setViewMode} hideMagazine />
                 </div>
                 <div className="pagination-controls-inline">
                   <button

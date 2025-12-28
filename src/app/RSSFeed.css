@@ -584,9 +584,10 @@ button.theme-toggle:hover svg {
 }
 
 .compact-date {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--color-text-muted);
-  min-width: 80px;
+  min-width: 50px;
+  width: 50px;
   flex-shrink: 0;
 }
 
@@ -1641,13 +1642,19 @@ button.theme-toggle:hover svg {
   justify-content: center;
 }
 
+/* Mobile View Switcher - Hidden on desktop */
+.mobile-view-switcher {
+  display: none;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
+  /* Show mobile view switcher, hide desktop */
   .desktop-view-switcher {
     display: none;
   }
 
-  .mobile-view-switcher-inline {
+  .mobile-view-switcher {
     display: block;
   }
 
@@ -1655,197 +1662,216 @@ button.theme-toggle:hover svg {
     display: none;
   }
 
-  /* Show title centered on desktop but hidden on mobile */
+  /* Blog header on mobile */
   .blog-header {
-    text-align: center;
-  }
-
-  /* Increase font sizes for better mobile readability */
-  .filter-section select {
-    font-size: 17px !important;
-    padding: 12px 16px !important;
-    text-align: center;
-    text-align-last: center;
-    border-radius: 8px;
-  }
-
-  .filter-section label {
-    font-size: 16px !important;
-  }
-
-  .pagination-info {
-    font-size: 16px !important;
-  }
-
-  .pagination-button {
-    font-size: 18px !important;
-    padding: 8px 12px !important;
-  }
-
-  .pagination-controls-inline {
-    gap: 4px !important;
-  }
-
-  /* Mobile filter controls layout */
-  .filter-controls {
-    display: flex;
+    display: flex !important;
     justify-content: space-between;
     align-items: center;
-    gap: 4px;
-    padding: 6px 8px;
+    padding: 10px 12px !important;
   }
 
-  .filter-section {
-    flex: 1;
-    min-width: 0;
-    max-width: none;
+  .nav-home-container {
+    flex: 0 0 auto;
   }
 
-  .filter-section select {
-    font-size: 14px !important;
-    padding: 8px 10px !important;
+  /* Category dropdown container */
+  .category-dropdown {
+    padding: 8px 12px;
+  }
+
+  /* Mobile filter controls layout - single row */
+  .category-dropdown .filter-controls {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    flex-wrap: nowrap !important;
+  }
+
+  /* Category dropdown - fixed width */
+  .filter-controls .filter-section {
+    flex: 0 0 auto !important;
+  }
+
+  .filter-controls .filter-section select,
+  .filter-section select.category-select {
+    font-size: 15px !important;
+    padding: 8px 12px !important;
     width: auto !important;
-    min-width: 120px !important;
     font-weight: 500 !important;
+    border-radius: 6px !important;
+  }
+
+  /* Search - same size as categories */
+  .filter-controls .search-section {
+    flex: 1 1 auto !important;
+    min-width: 80px !important;
+  }
+
+  .filter-controls .search-input,
+  .search-section .search-input {
+    font-size: 13px !important;
+    padding: 8px 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    height: 36px !important;
+    border-radius: 6px !important;
+  }
+
+  /* Make categories and search same height */
+  .filter-controls .filter-section select,
+  .filter-section select.category-select {
+    height: 36px !important;
+  }
+
+  /* Pagination - simple text, no boxes */
+  .filter-controls .pagination-controls-inline {
+    flex: 0 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 2px !important;
+  }
+
+  .pagination-controls-inline .pagination-button,
+  .filter-controls .pagination-button {
+    padding: 4px 6px !important;
+    margin: 0 !important;
+    font-size: 16px !important;
+    min-width: auto !important;
+    border-radius: 4px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: var(--color-text-secondary) !important;
+  }
+
+  .pagination-controls-inline .pagination-button:hover:not(:disabled) {
     color: var(--color-text-primary) !important;
+    background: rgba(255,255,255,0.1) !important;
   }
 
-  .pagination-controls-inline {
-    flex-shrink: 0;
-    margin: 0;
-    font-size: 12px;
+  .pagination-controls-inline .pagination-button:disabled {
+    opacity: 0.3 !important;
   }
 
-  .pagination-button {
-    padding: 2px 6px;
-    margin: 0 1px;
-    font-size: 12px;
-    min-width: 24px;
+  .pagination-controls-inline .pagination-info,
+  .filter-controls .pagination-info {
+    margin: 0 2px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: var(--color-text-secondary) !important;
   }
 
-  .pagination-info {
-    margin: 0 2px;
-    white-space: nowrap;
-    font-size: 11px;
+  /* Compact view - dates on single line */
+  .view-compact .compact-date,
+  .compact-item .compact-date {
+    min-width: 55px !important;
+    width: auto !important;
+    font-size: 12px !important;
+    flex-shrink: 0 !important;
+    text-align: left !important;
+    white-space: nowrap !important;
+    padding-right: 10px !important;
+  }
+
+  .view-compact .compact-title,
+  .compact-item .compact-title {
+    flex: 1 !important;
+    min-width: 0 !important;
+    font-size: 15px !important;
+  }
+
+  /* Hide category in compact view on mobile */
+  .view-compact .compact-category,
+  .compact-item .compact-category {
+    display: none !important;
   }
 }
 
 /* iPhone specific adjustments */
 @media (max-width: 430px) {
-  .filter-controls {
-    gap: 2px;
-    padding: 4px 6px;
+  .category-dropdown .filter-controls {
+    gap: 6px !important;
   }
 
-  .filter-section {
-    max-width: none;
+  .filter-section select.category-select,
+  .filter-controls .filter-section select {
+    font-size: 15px !important;
+    padding: 8px 12px !important;
   }
 
-  .filter-section select {
+  .filter-controls .search-input,
+  .search-section .search-input {
+    font-size: 15px !important;
+    padding: 8px 12px !important;
+  }
+
+  .pagination-controls-inline .pagination-button {
+    padding: 3px 5px !important;
     font-size: 14px !important;
-    padding: 6px 8px !important;
+  }
+
+  .pagination-controls-inline .pagination-info {
+    font-size: 12px !important;
+  }
+
+  /* Compact view - dates */
+  .view-compact .compact-date,
+  .compact-item .compact-date {
+    min-width: 50px !important;
     width: auto !important;
-    min-width: 100px !important;
-    font-weight: 500 !important;
-    color: var(--color-text-primary) !important;
+    font-size: 12px !important;
+    text-align: left !important;
+    white-space: nowrap !important;
   }
 
-  .pagination-controls-inline {
-    font-size: 11px;
+  .mobile-view-switcher .view-btn {
+    width: 32px;
+    height: 32px;
   }
-
-  .pagination-button {
-    padding: 1px 4px;
-    margin: 0;
-    font-size: 11px;
-    min-width: 20px;
-  }
-
-  .pagination-info {
-    margin: 0 1px;
-    font-size: 10px;
-  }
-
-
 }
 
 /* iPhone SE specific (375px and smaller) */
 @media (max-width: 375px) {
-  .filter-controls {
-    gap: 1px;
-    padding: 3px 4px;
+  .category-dropdown .filter-controls {
+    gap: 4px !important;
   }
 
-  .filter-section {
-    max-width: none;
-  }
-
-  .filter-section select {
+  .filter-section select.category-select,
+  .filter-controls .filter-section select {
     font-size: 14px !important;
-    padding: 6px 8px !important;
+    padding: 8px 10px !important;
+  }
+
+  .filter-controls .search-input,
+  .search-section .search-input {
+    font-size: 14px !important;
+    padding: 8px 10px !important;
+  }
+
+  .pagination-controls-inline .pagination-button {
+    padding: 2px 4px !important;
+    font-size: 13px !important;
+  }
+
+  .pagination-controls-inline .pagination-info {
+    font-size: 11px !important;
+  }
+
+  .view-compact .compact-date,
+  .compact-item .compact-date {
+    min-width: 48px !important;
     width: auto !important;
-    min-width: 100px !important;
-    font-weight: 500 !important;
-    color: var(--color-text-primary) !important;
-    background-color: var(--color-bg-card) !important;
+    font-size: 11px !important;
+    text-align: left !important;
+    white-space: nowrap !important;
   }
 
-  .pagination-controls-inline {
-    font-size: 10px;
-  }
-
-  .pagination-button {
-    padding: 1px 3px;
-    margin: 0;
-    font-size: 10px;
-    min-width: 18px;
-  }
-
-  .pagination-info {
-    margin: 0;
-    font-size: 9px;
+  .mobile-view-switcher .view-btn {
+    width: 28px;
+    height: 28px;
   }
 }
-
-
-  .compact-date {
-    min-width: 50px !important;
-    font-size: 12px !important;
-    color: var(--color-text-secondary) !important;
-    margin-right: 12px !important;
-    flex-shrink: 0 !important;
-    display: inline-block !important;
-  }
-
-  .compact-title {
-    font-size: 15px !important;
-    line-height: 1.4 !important;
-    flex: 1 !important;
-    min-width: 0 !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    display: inline-block !important;
-  }
-
-  /* Hide thumbnails in grid view on mobile for better performance */
-  .grid-card-image {
-    display: none;
-  }
-
-  .grid-card {
-    padding: 12px;
-  }
-
-  .grid-card-title {
-    font-size: 16px;
-    line-height: 1.3;
-  }
-
-  .grid-card-description {
-    font-size: 14px;
-    line-height: 1.4;
-  }
 
 /* RSS Feed Button Container */
 .rss-feed-button-container {
