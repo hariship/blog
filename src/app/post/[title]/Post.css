@@ -10,6 +10,7 @@
     box-shadow: var(--shadow-medium);
     color: var(--color-text-primary);
     font-family: 'Source Sans Pro', serif;
+    overflow-x: hidden;
 }
 
 .post-title {
