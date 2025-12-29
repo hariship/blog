@@ -109,13 +109,26 @@ export default function PostClient({ title, initialPost }: PostClientProps) {
     }
   }
 
+  // Sync initialPost prop to state when it changes (for client-side navigation)
+  useEffect(() => {
+    if (initialPost) {
+      setPostContent(initialPost.content || '')
+      setPostTitle(initialPost.title || '')
+      setPostDate(initialPost.pub_date || '')
+      setPostCategory(initialPost.category || '')
+      setPostImage(initialPost.enclosure || '')
+      setLikesCount(initialPost.likesCount || 0)
+      setLoading(false)
+    }
+  }, [initialPost])
+
   useEffect(() => {
     // Only fetch if no initial post data was provided (client-side navigation fallback)
     if (title && !initialPost) {
       fetchPostContent(title)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [title])
+  }, [title, initialPost])
 
   useEffect(() => {
     if (postTitle && likesData.length > 0) {
