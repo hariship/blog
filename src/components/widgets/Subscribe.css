@@ -8,7 +8,7 @@
 }
 
 /* Subscribe Button - Inside controls-group (matches ViewSwitcher styling) */
-.subscribe-button {
+.subscribe-icon-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -28,7 +28,7 @@
   box-shadow: none;
 }
 
-.subscribe-button:hover {
+.subscribe-icon-btn:hover {
   background: var(--color-bg-hover);
   color: var(--color-text-primary);
   transform: none;
@@ -36,20 +36,20 @@
   cursor: pointer;
 }
 
-.subscribe-button svg {
+.subscribe-icon-btn svg {
   width: 18px !important;
   height: 18px !important;
-  fill: #333 !important;
+  stroke: #333 !important;
   display: block !important;
   visibility: visible !important;
 }
 
-[data-theme="dark"] .subscribe-button svg {
-  fill: var(--lcars-slate, #6b7c93) !important;
+[data-theme="dark"] .subscribe-icon-btn svg {
+  stroke: var(--lcars-slate, #6b7c93) !important;
 }
 
-[data-theme="dark"] .subscribe-button:hover svg {
-  fill: #000 !important;
+[data-theme="dark"] .subscribe-icon-btn:hover svg {
+  stroke: #000 !important;
 }
 
 /* Mobile Button Specific Styles */
@@ -67,12 +67,12 @@
 }
 
 /* Dark mode support */
-[data-theme="dark"] .subscribe-button {
+[data-theme="dark"] .subscribe-icon-btn {
   background: transparent;
   color: var(--lcars-slate, #6b7c93);
 }
 
-[data-theme="dark"] .subscribe-button:hover {
+[data-theme="dark"] .subscribe-icon-btn:hover {
   background: var(--lcars-slate, #6b7c93);
   color: #000;
 }
@@ -177,8 +177,8 @@
 }
 
 .submit-button {
-  background-color: var(--color-button-primary);
-  color: var(--color-button-text);
+  background-color: #333;
+  color: #fff;
   border: none;
   border-radius: 4px;
   padding: 12px 24px;
@@ -190,8 +190,17 @@
 }
 
 .submit-button:hover {
-  background-color: var(--color-button-primary-hover);
+  background-color: #555;
   cursor: pointer;
+}
+
+[data-theme="dark"] .submit-button {
+  background-color: var(--lcars-slate, #6b7c93);
+  color: #000;
+}
+
+[data-theme="dark"] .submit-button:hover {
+  background-color: #8b9cb3;
 }
 
 .submit-button:disabled {

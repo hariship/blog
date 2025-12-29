@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { Plus } from 'lucide-react'
 import { useSounds } from '@/contexts/SoundContext'
 import './Subscribe.css'
 
@@ -11,21 +12,7 @@ const Subscribe = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const [message, setMessage] = useState<string>('')
   const [messageType, setMessageType] = useState<string>('')
-  const [isMobile, setIsMobile] = useState<boolean>(false)
   const { playButtonSound, playKeypadBeep } = useSounds()
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 667)
-    }
-
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-
-    return () => {
-      window.removeEventListener('resize', checkMobile)
-    }
-  }, [])
 
   const openModal = () => {
     playButtonSound()
@@ -100,10 +87,8 @@ const Subscribe = () => {
 
   return (
     <div className="subscribe-container">
-      <button className={`subscribe-button ${isMobile ? 'mobile-button' : ''}`} onClick={openModal} title="Subscribe to Newsletter">
-        <svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-        </svg>
+      <button className="subscribe-icon-btn" onClick={openModal} title="Subscribe to Newsletter">
+        <Plus size={18} />
       </button>
 
       {isModalOpen && (
