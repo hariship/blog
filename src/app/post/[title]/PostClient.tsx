@@ -8,10 +8,12 @@ import { useLikes } from '@/contexts/LikesContext'
 import { useSounds } from '@/contexts/SoundContext'
 import { CommentsWidget } from '@/components/widgets'
 import { ThemeToggle, SoundToggle } from '@/components/common'
+import type { PostData } from './page'
 import './Post.css'
 
 interface PostClientProps {
   title: string
+  initialPost?: PostData | null
 }
 
 const normalizeTitle = (title: string): string => {
@@ -41,16 +43,16 @@ const formatDate = (dateString: string): string => {
   }
 }
 
-export default function PostClient({ title }: PostClientProps) {
-  const [postContent, setPostContent] = useState<string>('')
-  const [postTitle, setPostTitle] = useState<string>('')
-  const [postDate, setPostDate] = useState<string>('')
-  const [postCategory, setPostCategory] = useState<string>('')
-  const [postImage, setPostImage] = useState<string>('')
+export default function PostClient({ title, initialPost }: PostClientProps) {
+  const [postContent, setPostContent] = useState<string>(initialPost?.content || '')
+  const [postTitle, setPostTitle] = useState<string>(initialPost?.title || '')
+  const [postDate, setPostDate] = useState<string>(initialPost?.pub_date || '')
+  const [postCategory, setPostCategory] = useState<string>(initialPost?.category || '')
+  const [postImage, setPostImage] = useState<string>(initialPost?.enclosure || '')
   const { likesData, updateLikesData } = useLikes()
-  const [likesCount, setLikesCount] = useState<number>(0)
+  const [likesCount, setLikesCount] = useState<number>(initialPost?.likesCount || 0)
   const [isLiked, setIsLiked] = useState<boolean>(false)
-  const [loading, setLoading] = useState<boolean>(true)
+  const [loading, setLoading] = useState<boolean>(!initialPost)
   const [showComments, setShowComments] = useState<boolean>(false)
 
   const router = useRouter()
@@ -108,7 +110,8 @@ export default function PostClient({ title }: PostClientProps) {
   }
 
   useEffect(() => {
-    if (title) {
+    // Only fetch if no initial post data was provided (client-side navigation fallback)
+    if (title && !initialPost) {
       fetchPostContent(title)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

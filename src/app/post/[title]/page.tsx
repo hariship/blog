@@ -6,6 +6,16 @@ interface Props {
   params: Promise<{ title: string }>
 }
 
+export interface PostData {
+  content: string
+  title: string
+  pub_date: string
+  category: string
+  enclosure: string
+  likesCount: number
+  description?: string
+}
+
 const normalizeTitle = (title: string): string => {
   return title
     .toLowerCase()
@@ -14,16 +24,28 @@ const normalizeTitle = (title: string): string => {
     .replace(/-+/g, '-')
 }
 
-async function getPost(title: string) {
+async function getPost(title: string): Promise<PostData | null> {
   const normalized = normalizeTitle(title)
 
-  const { data: post } = await supabase
+  const { data: post, error } = await supabase
     .from('posts')
-    .select('*')
+    .select('*, likes(likes_count)')
     .eq('normalized_title', normalized)
     .single()
 
-  return post
+  if (error || !post) {
+    return null
+  }
+
+  return {
+    content: post.content,
+    title: post.title,
+    pub_date: post.pub_date,
+    category: post.category,
+    enclosure: post.enclosure || '',
+    likesCount: post.likes?.[0]?.likes_count || 0,
+    description: post.description
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -70,5 +92,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PostPage({ params }: Props) {
   const { title } = await params
-  return <PostClient title={title} />
+  const initialPost = await getPost(title)
+  return <PostClient title={title} initialPost={initialPost} />
 }
