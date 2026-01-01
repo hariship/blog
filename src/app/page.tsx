@@ -9,6 +9,7 @@ import { RSSFeedButton, Subscribe, CoffeeLink } from '@/components/widgets'
 import ViewSwitcher, { ViewMode } from '@/components/ViewSwitcher'
 import { useLikes } from '@/contexts/LikesContext'
 import { useSounds } from '@/contexts/SoundContext'
+import { useAdmin } from '@/contexts/AdminContext'
 import { PostWithLikes } from '@/types'
 import './RSSFeed.css'
 
@@ -38,6 +39,9 @@ export default function HomePage() {
   const router = useRouter()
   const { likesData, updateLikesData } = useLikes()
   const { playButtonSound, playKeypadBeep } = useSounds()
+  const { isAdmin, adminToken, mounted: adminMounted } = useAdmin()
+  const [publishingPostId, setPublishingPostId] = useState<number | null>(null)
+  const [inkHouseError, setInkHouseError] = useState<string | null>(null)
 
   // Fetch categories
   useEffect(() => {
@@ -117,6 +121,80 @@ export default function HomePage() {
     }
   }
 
+  const handleInkHouseToggle = async (post: PostWithLikes) => {
+    if (!adminToken || post.inkhouse_published) return
+
+    setPublishingPostId(post.id)
+    setInkHouseError(null)
+
+    try {
+      const response = await fetch('/api/admin/inkhouse', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        },
+        body: JSON.stringify({
+          postId: post.id,
+          title: post.title,
+          content: post.content,
+          description: post.description || '',
+          category: post.category || 'General',
+          status: 'published',
+          image_url: post.enclosure || post.image_url || ''
+        })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        // Update local state
+        setPosts(prevPosts => prevPosts.map(p =>
+          p.id === post.id ? { ...p, inkhouse_published: true } : p
+        ))
+      } else {
+        const errorMsg = data.error || data.details || `HTTP ${response.status}`
+        setInkHouseError(errorMsg)
+        console.error('InkHouse error:', errorMsg)
+        setTimeout(() => setInkHouseError(null), 5000)
+      }
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Network error'
+      setInkHouseError(errorMsg)
+      console.error('Failed to publish to InkHouse:', error)
+      setTimeout(() => setInkHouseError(null), 5000)
+    } finally {
+      setPublishingPostId(null)
+    }
+  }
+
+  const renderInkHouseControl = (post: PostWithLikes) => {
+    if (!isAdmin || !adminMounted) return null
+
+    const isPublished = post.inkhouse_published
+    const isPublishing = publishingPostId === post.id
+
+    return (
+      <label
+        className="inkhouse-toggle-label"
+        onClick={(e) => e.stopPropagation()}
+        title={isPublished ? "Published to InkHouse" : "Publish to InkHouse"}
+      >
+        <input
+          type="checkbox"
+          className="inkhouse-toggle-input"
+          checked={isPublished}
+          disabled={isPublished || isPublishing}
+          onChange={() => handleInkHouseToggle(post)}
+        />
+        <span className={`inkhouse-toggle-slider ${isPublishing ? 'publishing' : ''}`}></span>
+        <span className={`inkhouse-toggle-text ${isPublishing ? 'publishing' : ''}`}>
+          {isPublished ? 'Published' : isPublishing ? 'Publishing...' : 'InkHouse'}
+        </span>
+      </label>
+    )
+  }
+
   const renderListView = () => (
     <div className="view-list">
       {posts.map((post) => (
@@ -149,10 +227,12 @@ export default function HomePage() {
               )}
               <div className="list-item-meta">
                 <span>Hari · {formatDate(post.pub_date)}</span>
+                {renderInkHouseControl(post)}
                 <span
                   className="favorite-icon read-icon"
                   onClick={(e) => { e.stopPropagation(); playButtonSound(); handleReadToggle(post.title); }}
                   title={isPostRead(post.title) ? "Mark as unread" : "Mark as read"}
+                  style={{ display: 'none' }}
                 >
                   {isPostRead(post.title) ? (
                     <svg className="heart-icon liked" viewBox="0 0 16 16" height="1.2em" width="1.2em" fill="currentColor">
@@ -199,10 +279,12 @@ export default function HomePage() {
             <div className="grid-card-meta">
               <span>{formatDate(post.pub_date)}</span>
               {post.category && <span>{post.category}</span>}
+              {renderInkHouseControl(post)}
               <span
                 className="favorite-icon read-icon"
                 onClick={(e) => { e.stopPropagation(); playButtonSound(); handleReadToggle(post.title); }}
                 title={isPostRead(post.title) ? "Mark as unread" : "Mark as read"}
+                style={{ display: 'none' }}
               >
                 {isPostRead(post.title) ? (
                   <svg className="heart-icon liked" viewBox="0 0 16 16" height="1.2em" width="1.2em" fill="currentColor">
@@ -234,10 +316,12 @@ export default function HomePage() {
           {post.category && (
             <span className="compact-category">{post.category}</span>
           )}
+          {renderInkHouseControl(post)}
           <span
             className="compact-read-icon favorite-icon read-icon"
             onClick={(e) => { e.stopPropagation(); playButtonSound(); handleReadToggle(post.title); }}
             title={isPostRead(post.title) ? "Mark as unread" : "Mark as read"}
+            style={{ display: 'none' }}
           >
             {isPostRead(post.title) ? (
               <svg className="heart-icon liked" viewBox="0 0 16 16" height="1em" width="1em" fill="currentColor">
@@ -454,6 +538,11 @@ export default function HomePage() {
             </div>
 
             {/* Content */}
+            {inkHouseError && (
+              <div className="inkhouse-error-banner">
+                InkHouse error: {inkHouseError}
+              </div>
+            )}
             <div className="rss-feed-list">
               {loading ? (
                 <div className="loader"></div>

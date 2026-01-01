@@ -26,6 +26,7 @@ interface PostSettings {
   enableComments: boolean
   featured: boolean
   sendNewsletter: boolean
+  publishToInkHouse: boolean
 }
 
 interface SubmitStatus {
@@ -49,6 +50,7 @@ export default function CMSPostEditor() {
     enableComments: true,
     featured: false,
     sendNewsletter: false,
+    publishToInkHouse: false,
   })
   const [isSaving, setIsSaving] = useState<boolean>(false)
   const [showAutoSaveIndicator, setShowAutoSaveIndicator] = useState<boolean>(false)
@@ -57,6 +59,17 @@ export default function CMSPostEditor() {
   const [loginPin, setLoginPin] = useState<string>('')
   const [loginError, setLoginError] = useState<string>('')
   const [mounted, setMounted] = useState(false)
+  const [inkHouseError, setInkHouseError] = useState<string | null>(null)
+  const [isRetryingInkHouse, setIsRetryingInkHouse] = useState<boolean>(false)
+  const [lastSubmittedPost, setLastSubmittedPost] = useState<{
+    postId: number
+    title: string
+    content: string
+    description: string
+    category: string
+    publishImmediately: boolean
+    image_url: string
+  } | null>(null)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const quillRef = useRef<any>(null)
@@ -104,6 +117,7 @@ export default function CMSPostEditor() {
             enableComments: draft.enableComments ?? true,
             featured: draft.featured ?? false,
             sendNewsletter: draft.sendNewsletter ?? false,
+            publishToInkHouse: draft.publishToInkHouse ?? false,
           })
         }
 
@@ -325,7 +339,71 @@ export default function CMSPostEditor() {
     setSubmitStatus(null)
     setShowAutoSaveIndicator(false)
     setLastAutoSaveTime('')
+    setInkHouseError(null)
+    setLastSubmittedPost(null)
     localStorage.removeItem('cms-draft')
+  }
+
+  const publishToInkHouse = async (postData: {
+    postId: number
+    title: string
+    content: string
+    description: string
+    category: string
+    publishImmediately: boolean
+    image_url: string
+  }): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const token = localStorage.getItem('adminToken')
+      const response = await fetch('/api/admin/inkhouse', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          postId: postData.postId,
+          title: postData.title,
+          content: postData.content,
+          description: postData.description,
+          category: postData.category,
+          status: postData.publishImmediately ? 'published' : 'draft',
+          image_url: postData.image_url
+        })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        return { success: false, error: data.error || data.details || 'Unknown error' }
+      }
+
+      return { success: true }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Network error'
+      return { success: false, error: errorMessage }
+    }
+  }
+
+  const handleRetryInkHouse = async () => {
+    if (!lastSubmittedPost) return
+
+    setIsRetryingInkHouse(true)
+    setInkHouseError(null)
+
+    const result = await publishToInkHouse(lastSubmittedPost)
+
+    if (result.success) {
+      setSubmitStatus({ type: 'success', message: 'Successfully published to InkHouse!' })
+      setLastSubmittedPost(null)
+      setInkHouseError(null)
+      resetForm()
+    } else {
+      setInkHouseError(result.error || 'Failed to publish to InkHouse')
+      setSubmitStatus({ type: 'error', message: `InkHouse publish failed: ${result.error}` })
+    }
+
+    setIsRetryingInkHouse(false)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -343,6 +421,7 @@ export default function CMSPostEditor() {
 
     setIsSubmitting(true)
     setSubmitStatus(null)
+    setInkHouseError(null)
 
     // Replace &nbsp; with regular spaces for proper word wrapping
     const cleanedContent = content.replace(/&nbsp;/g, ' ').trim()
@@ -371,8 +450,36 @@ export default function CMSPostEditor() {
       const data = await response.json()
 
       if (response.ok) {
-        setSubmitStatus({ type: 'success', message: 'Post created successfully!' })
-        resetForm()
+        let successMessage = 'Post created successfully!'
+
+        // If InkHouse toggle is on, attempt to publish there too
+        if (postSettings.publishToInkHouse && data.id) {
+          const inkHouseData = {
+            postId: data.id,
+            title: title.trim(),
+            content: cleanedContent,
+            description: description.trim(),
+            category,
+            publishImmediately: postSettings.publishImmediately,
+            image_url: imageUrl.trim()
+          }
+
+          const inkHouseResult = await publishToInkHouse(inkHouseData)
+
+          if (inkHouseResult.success) {
+            successMessage = 'Post created and published to InkHouse!'
+            resetForm()
+          } else {
+            // Store post data for retry
+            setLastSubmittedPost(inkHouseData)
+            setInkHouseError(inkHouseResult.error || 'Unknown error')
+            successMessage = 'Post created, but InkHouse publish failed. You can retry below.'
+          }
+        } else {
+          resetForm()
+        }
+
+        setSubmitStatus({ type: 'success', message: successMessage })
       } else {
         throw new Error(data.error || 'Failed to create post')
       }
@@ -560,6 +667,19 @@ export default function CMSPostEditor() {
                 <span className="cms-toggle-text">Send newsletter</span>
               </label>
             </div>
+            <div className="cms-setting-item">
+              <label className="cms-toggle-label">
+                <input
+                  type="checkbox"
+                  className="cms-toggle-input"
+                  checked={postSettings.publishToInkHouse}
+                  onChange={(e) => setPostSettings({ ...postSettings, publishToInkHouse: e.target.checked })}
+                />
+                <span className="cms-toggle-slider"></span>
+                <span className="cms-toggle-text">Publish to InkHouse</span>
+              </label>
+              <p className="cms-setting-description">Cross-post to inkhouse.haripriya.org</p>
+            </div>
           </div>
         </div>
       )}
@@ -568,6 +688,24 @@ export default function CMSPostEditor() {
       {submitStatus && (
         <div className={`cms-status-message ${submitStatus.type}`}>
           {submitStatus.message}
+        </div>
+      )}
+
+      {/* InkHouse Error with Retry Button */}
+      {inkHouseError && lastSubmittedPost && (
+        <div className="cms-inkhouse-error">
+          <div className="cms-inkhouse-error-message">
+            <span className="cms-inkhouse-error-icon">!</span>
+            <span>InkHouse publish failed: {inkHouseError}</span>
+          </div>
+          <button
+            type="button"
+            className="cms-inkhouse-retry-button"
+            onClick={handleRetryInkHouse}
+            disabled={isRetryingInkHouse}
+          >
+            {isRetryingInkHouse ? 'Retrying...' : 'Retry InkHouse'}
+          </button>
         </div>
       )}
 
