@@ -44,7 +44,8 @@ export async function GET(request: NextRequest) {
     const transformedPosts = posts?.map(post => ({
       ...post,
       likesCount: post.likes?.[0]?.likes_count || 0,
-      likes: undefined
+      likes: undefined,
+      inkhouse_published: post.inkhouse_published || false
     }))
 
     const response = NextResponse.json({

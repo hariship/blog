@@ -19,6 +19,7 @@ export interface PostWithLikes extends Post {
   }[]
   likesCount?: number
   isRead?: boolean
+  inkhouse_published?: boolean
 }
 
 export interface BlogPost {

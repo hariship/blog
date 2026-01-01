@@ -2158,3 +2158,167 @@ button.theme-toggle:hover svg {
   text-transform: uppercase !important;
   font-size: 0.7rem !important;
 }
+
+/* InkHouse Toggle on Home Page */
+.inkhouse-toggle-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.inkhouse-toggle-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.inkhouse-toggle-slider {
+  position: relative;
+  width: 32px;
+  height: 18px;
+  background-color: #ccc;
+  border-radius: 18px;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.inkhouse-toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.inkhouse-toggle-slider.publishing {
+  opacity: 0.7;
+  background-color: var(--lcars-green, #7a9b7c);
+}
+
+.inkhouse-toggle-slider.publishing::before {
+  opacity: 0;
+}
+
+.inkhouse-toggle-input:checked + .inkhouse-toggle-slider {
+  background-color: var(--lcars-green, #7a9b7c);
+}
+
+.inkhouse-toggle-input:checked + .inkhouse-toggle-slider::before {
+  transform: translateX(14px);
+}
+
+.inkhouse-toggle-input:disabled + .inkhouse-toggle-slider {
+  cursor: not-allowed;
+}
+
+.inkhouse-toggle-text {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+.inkhouse-toggle-input:checked ~ .inkhouse-toggle-text {
+  color: var(--lcars-green, #7a9b7c);
+}
+
+.inkhouse-toggle-text.publishing {
+  color: var(--lcars-green, #7a9b7c);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+[data-theme="dark"] .inkhouse-toggle-slider {
+  background-color: #4a4a4a;
+}
+
+[data-theme="dark"] .inkhouse-toggle-input:checked + .inkhouse-toggle-slider {
+  background-color: var(--lcars-green, #7a9b7c);
+}
+
+[data-theme="dark"] .inkhouse-toggle-input:checked ~ .inkhouse-toggle-text {
+  color: var(--lcars-green, #7a9b7c);
+}
+
+/* Compact view adjustments */
+.compact-item .inkhouse-toggle-slider {
+  width: 28px;
+  height: 16px;
+}
+
+.compact-item .inkhouse-toggle-slider::before {
+  width: 12px;
+  height: 12px;
+}
+
+.compact-item .inkhouse-toggle-input:checked + .inkhouse-toggle-slider::before {
+  transform: translateX(12px);
+}
+
+.compact-item .inkhouse-toggle-text {
+  font-size: 9px;
+}
+
+/* InkHouse Error Banner */
+.inkhouse-error-banner {
+  background-color: #fff3e0;
+  border: 1px solid #ffb74d;
+  color: #e65100;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  animation: slideDown 0.3s ease-out;
+}
+
+[data-theme="dark"] .inkhouse-error-banner {
+  background-color: #4a3f35;
+  border-color: #8b6f47;
+  color: #ffb74d;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Publishing animation */
+.inkhouse-toggle-slider.publishing::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 14px;
+  border: 2px solid transparent;
+  border-top-color: var(--lcars-green, #7a9b7c);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+

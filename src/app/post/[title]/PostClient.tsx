@@ -6,6 +6,7 @@ import parse from 'html-react-parser'
 import { IoIosArrowBack } from 'react-icons/io'
 import { useLikes } from '@/contexts/LikesContext'
 import { useSounds } from '@/contexts/SoundContext'
+import { useAdmin } from '@/contexts/AdminContext'
 import { CommentsWidget } from '@/components/widgets'
 import { ThemeToggle, SoundToggle } from '@/components/common'
 import type { PostData } from './page'
@@ -54,9 +55,14 @@ export default function PostClient({ title, initialPost }: PostClientProps) {
   const [isLiked, setIsLiked] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(!initialPost)
   const [showComments, setShowComments] = useState<boolean>(false)
+  const [postId, setPostId] = useState<number | null>(initialPost?.id || null)
+  const [inkHousePublished, setInkHousePublished] = useState<boolean>(initialPost?.inkhouse_published || false)
+  const [isPublishingToInkHouse, setIsPublishingToInkHouse] = useState<boolean>(false)
+  const [inkHouseMessage, setInkHouseMessage] = useState<string | null>(null)
 
   const router = useRouter()
   const { playButtonSound } = useSounds()
+  const { isAdmin, adminToken, mounted: adminMounted } = useAdmin()
   const normalized = normalizeTitle(title || '')
   const isJournal = normalized === 'life-lately-20-2025'
 
@@ -118,6 +124,8 @@ export default function PostClient({ title, initialPost }: PostClientProps) {
       setPostCategory(initialPost.category || '')
       setPostImage(initialPost.enclosure || '')
       setLikesCount(initialPost.likesCount || 0)
+      setPostId(initialPost.id || null)
+      setInkHousePublished(initialPost.inkhouse_published || false)
       setLoading(false)
     }
   }, [initialPost])
@@ -206,6 +214,49 @@ export default function PostClient({ title, initialPost }: PostClientProps) {
     return processed
   }
 
+  const handlePublishToInkHouse = async () => {
+    if (!postId || !adminToken) return
+
+    setIsPublishingToInkHouse(true)
+    setInkHouseMessage(null)
+
+    try {
+      const response = await fetch('/api/admin/inkhouse', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        },
+        body: JSON.stringify({
+          postId,
+          title: postTitle,
+          content: postContent,
+          description: '',
+          category: postCategory,
+          status: 'published',
+          image_url: postImage || ''
+        })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setInkHousePublished(true)
+        setInkHouseMessage('Published to InkHouse!')
+        setTimeout(() => setInkHouseMessage(null), 3000)
+      } else {
+        setInkHouseMessage(`Failed: ${data.error || 'Unknown error'}`)
+        setTimeout(() => setInkHouseMessage(null), 5000)
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Network error'
+      setInkHouseMessage(`Failed: ${errorMessage}`)
+      setTimeout(() => setInkHouseMessage(null), 5000)
+    } finally {
+      setIsPublishingToInkHouse(false)
+    }
+  }
+
   return (
     <div className={`post-container ${isJournal ? 'journal-post' : ''}`}>
       {loading ? (
@@ -216,6 +267,26 @@ export default function PostClient({ title, initialPost }: PostClientProps) {
             <div className="back-button" onClick={handleGoBack}>
               <IoIosArrowBack className="back-icon" />
             </div>
+            {isAdmin && adminMounted && (
+              <div className="admin-inkhouse-controls">
+                {inkHousePublished ? (
+                  <span className="inkhouse-badge">Published to InkHouse</span>
+                ) : (
+                  <button
+                    onClick={handlePublishToInkHouse}
+                    disabled={isPublishingToInkHouse || !postId}
+                    className="inkhouse-publish-btn"
+                  >
+                    {isPublishingToInkHouse ? 'Publishing...' : 'Publish to InkHouse'}
+                  </button>
+                )}
+                {inkHouseMessage && (
+                  <span className={`inkhouse-message ${inkHouseMessage.startsWith('Failed') ? 'error' : 'success'}`}>
+                    {inkHouseMessage}
+                  </span>
+                )}
+              </div>
+            )}
             <div className="post-theme-toggle">
               <SoundToggle />
               <ThemeToggle />

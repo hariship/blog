@@ -696,7 +696,7 @@
 }
 
 .cms-toggle-input:checked + .cms-toggle-slider {
-  background-color: #4CAF50;
+  background-color: var(--lcars-green, #7a9b7c);
 }
 
 .cms-toggle-input:checked + .cms-toggle-slider::before {
@@ -715,7 +715,7 @@
 }
 
 .cms-toggle-input:focus + .cms-toggle-slider {
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+  box-shadow: 0 0 0 3px rgba(122, 155, 124, 0.3);
 }
 
 /* Preview Overlay */
@@ -928,7 +928,7 @@
 }
 
 [data-theme="dark"] .cms-toggle-input:checked + .cms-toggle-slider {
-  background-color: #4CAF50;
+  background-color: var(--lcars-green, #7a9b7c);
 }
 
 [data-theme="dark"] .cms-toggle-input:checked + .cms-toggle-slider::before {
@@ -1300,4 +1300,109 @@
   border: 2px solid var(--color-border-medium);
   border-radius: var(--radius-md);
   color: var(--color-text-muted);
+}
+
+/* InkHouse Error and Retry Styles */
+.cms-inkhouse-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  margin: var(--spacing-md) 0;
+  background-color: #fff3e0;
+  border: 1px solid #ffb74d;
+  border-radius: var(--radius-md);
+  animation: fadeInSlide 0.3s ease-out;
+}
+
+[data-theme="dark"] .cms-inkhouse-error {
+  background-color: #4a3f35;
+  border-color: #8b6f47;
+}
+
+.cms-inkhouse-error-message {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  color: #e65100;
+  font-weight: 500;
+}
+
+[data-theme="dark"] .cms-inkhouse-error-message {
+  color: #ffb74d;
+}
+
+.cms-inkhouse-error-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background-color: #e65100;
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+[data-theme="dark"] .cms-inkhouse-error-icon {
+  background-color: #8b6f47;
+}
+
+.cms-inkhouse-retry-button {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background-color: #ff9800;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-light);
+}
+
+.cms-inkhouse-retry-button:hover {
+  background-color: #f57c00;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
+}
+
+.cms-inkhouse-retry-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+[data-theme="dark"] .cms-inkhouse-retry-button {
+  background-color: #8b6f47;
+}
+
+[data-theme="dark"] .cms-inkhouse-retry-button:hover {
+  background-color: #a08357;
+}
+
+/* Setting description text */
+.cms-setting-description {
+  margin: 4px 0 0 52px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+/* Mobile responsive adjustments for InkHouse */
+@media (max-width: 768px) {
+  .cms-inkhouse-error {
+    padding: var(--spacing-md);
+  }
+
+  .cms-inkhouse-error-message {
+    font-size: 14px;
+    text-align: center;
+    flex-direction: column;
+  }
+
+  .cms-inkhouse-retry-button {
+    width: 100%;
+  }
 }

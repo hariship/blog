@@ -7,6 +7,7 @@ interface Props {
 }
 
 export interface PostData {
+  id: number
   content: string
   title: string
   pub_date: string
@@ -14,6 +15,7 @@ export interface PostData {
   enclosure: string
   likesCount: number
   description?: string
+  inkhouse_published?: boolean
 }
 
 const normalizeTitle = (title: string): string => {
@@ -38,13 +40,15 @@ async function getPost(title: string): Promise<PostData | null> {
   }
 
   return {
+    id: post.id,
     content: post.content,
     title: post.title,
     pub_date: post.pub_date,
     category: post.category,
     enclosure: post.enclosure || '',
     likesCount: post.likes?.[0]?.likes_count || 0,
-    description: post.description
+    description: post.description,
+    inkhouse_published: post.inkhouse_published || false
   }
 }
 
