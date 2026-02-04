@@ -814,6 +814,29 @@ hr {
   border-color: #2d5a45;
 }
 
+.admin-edit-btn {
+  padding: 6px 12px;
+  background-color: #8b6f47;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.admin-edit-btn:hover {
+  background-color: #a08357;
+  transform: translateY(-1px);
+}
+
+.admin-edit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .inkhouse-publish-btn {
   padding: 6px 12px;
   background-color: #8b6f47;
@@ -871,6 +894,7 @@ hr {
     gap: 4px;
   }
 
+  .admin-edit-btn,
   .inkhouse-badge,
   .inkhouse-publish-btn {
     font-size: 11px;

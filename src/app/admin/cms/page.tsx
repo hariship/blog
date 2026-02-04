@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
+import React, { Suspense, useState, useRef, useEffect } from 'react'
 import dynamic from 'next/dynamic'
+import { useSearchParams } from 'next/navigation'
 import { Eye, EyeOff, Settings, Save } from 'lucide-react'
 import { ThemeToggle } from '@/components/common'
 import './CMSPostEditor.css'
@@ -35,6 +36,14 @@ interface SubmitStatus {
 }
 
 export default function CMSPostEditor() {
+  return (
+    <Suspense fallback={<div className="quill-loading">Loading editor...</div>}>
+      <CMSPostEditorInner />
+    </Suspense>
+  )
+}
+
+function CMSPostEditorInner() {
   const [title, setTitle] = useState<string>('')
   const [description, setDescription] = useState<string>('')
   const [imageUrl, setImageUrl] = useState<string>('')
@@ -59,6 +68,7 @@ export default function CMSPostEditor() {
   const [loginPin, setLoginPin] = useState<string>('')
   const [loginError, setLoginError] = useState<string>('')
   const [mounted, setMounted] = useState(false)
+  const [editingPostId, setEditingPostId] = useState<number | null>(null)
   const [inkHouseError, setInkHouseError] = useState<string | null>(null)
   const [isRetryingInkHouse, setIsRetryingInkHouse] = useState<boolean>(false)
   const [lastSubmittedPost, setLastSubmittedPost] = useState<{
@@ -73,6 +83,7 @@ export default function CMSPostEditor() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const quillRef = useRef<any>(null)
+  const searchParams = useSearchParams()
 
   // Set mounted state and load Quill CSS
   useEffect(() => {
@@ -97,9 +108,31 @@ export default function CMSPostEditor() {
     }
   }, [])
 
-  // Load draft from localStorage on mount
+  // Load draft or edit post from localStorage on mount
   useEffect(() => {
     if (!isAuthenticated) return
+
+    // Check if we're in edit mode
+    const editId = searchParams.get('edit')
+    if (editId) {
+      const editData = localStorage.getItem('cms-edit-post')
+      if (editData) {
+        try {
+          const post = JSON.parse(editData)
+          setEditingPostId(post.id)
+          setTitle(post.title || '')
+          setDescription(post.description || '')
+          setImageUrl(post.image_url || post.enclosure || '')
+          setContent(post.content || '')
+          setCategory(post.category || 'Life')
+          setSubmitStatus({ type: 'success', message: 'Post loaded for editing' })
+          setTimeout(() => setSubmitStatus(null), 3000)
+          return
+        } catch (error) {
+          console.error('Failed to load edit post:', error)
+        }
+      }
+    }
 
     const savedDraft = localStorage.getItem('cms-draft')
     if (savedDraft) {
@@ -133,6 +166,7 @@ export default function CMSPostEditor() {
         console.error('Failed to load draft:', error)
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated])
 
   // Auto-save draft every 5 seconds
@@ -341,7 +375,9 @@ export default function CMSPostEditor() {
     setLastAutoSaveTime('')
     setInkHouseError(null)
     setLastSubmittedPost(null)
+    setEditingPostId(null)
     localStorage.removeItem('cms-draft')
+    localStorage.removeItem('cms-edit-post')
   }
 
   const publishToInkHouse = async (postData: {
@@ -427,6 +463,7 @@ export default function CMSPostEditor() {
     const cleanedContent = content.replace(/&nbsp;/g, ' ').trim()
 
     const postData = {
+      ...(editingPostId ? { id: editingPostId } : {}),
       title: title.trim(),
       description: description.trim(),
       image_url: imageUrl.trim(),
@@ -450,7 +487,7 @@ export default function CMSPostEditor() {
       const data = await response.json()
 
       if (response.ok) {
-        let successMessage = 'Post created successfully!'
+        let successMessage = editingPostId ? 'Post updated successfully!' : 'Post created successfully!'
 
         // If InkHouse toggle is on, attempt to publish there too
         if (postSettings.publishToInkHouse && data.id) {
@@ -585,7 +622,7 @@ export default function CMSPostEditor() {
       {/* Header */}
       <div className="cms-editor-header">
         <div className="cms-header-left">
-          <h2>Create New Post</h2>
+          <h2>{editingPostId ? 'Edit Post' : 'Create New Post'}</h2>
           {showAutoSaveIndicator && (
             <div className="cms-autosave-indicator">
               <span className="cms-autosave-tick">✓</span>
@@ -865,7 +902,7 @@ export default function CMSPostEditor() {
               className="cms-editor-button"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Publishing...' : 'Publish Post'}
+              {isSubmitting ? (editingPostId ? 'Updating...' : 'Publishing...') : (editingPostId ? 'Update Post' : 'Publish Post')}
             </button>
           </div>
         </form>

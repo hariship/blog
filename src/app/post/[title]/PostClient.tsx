@@ -50,6 +50,7 @@ export default function PostClient({ title, initialPost }: PostClientProps) {
   const [postDate, setPostDate] = useState<string>(initialPost?.pub_date || '')
   const [postCategory, setPostCategory] = useState<string>(initialPost?.category || '')
   const [postImage, setPostImage] = useState<string>(initialPost?.enclosure || '')
+  const [postDescription, setPostDescription] = useState<string>(initialPost?.description || '')
   const { likesData, updateLikesData } = useLikes()
   const [likesCount, setLikesCount] = useState<number>(initialPost?.likesCount || 0)
   const [isLiked, setIsLiked] = useState<boolean>(false)
@@ -123,6 +124,7 @@ export default function PostClient({ title, initialPost }: PostClientProps) {
       setPostDate(initialPost.pub_date || '')
       setPostCategory(initialPost.category || '')
       setPostImage(initialPost.enclosure || '')
+      setPostDescription(initialPost.description || '')
       setLikesCount(initialPost.likesCount || 0)
       setPostId(initialPost.id || null)
       setInkHousePublished(initialPost.inkhouse_published || false)
@@ -214,6 +216,22 @@ export default function PostClient({ title, initialPost }: PostClientProps) {
     return processed
   }
 
+  const handleEditPost = () => {
+    if (!postId) return
+    playButtonSound()
+    const editData = {
+      id: postId,
+      title: postTitle,
+      description: postDescription,
+      content: postContent,
+      category: postCategory,
+      image_url: postImage,
+      enclosure: postImage,
+    }
+    localStorage.setItem('cms-edit-post', JSON.stringify(editData))
+    router.push(`/admin/cms?edit=${postId}`)
+  }
+
   const handlePublishToInkHouse = async () => {
     if (!postId || !adminToken) return
 
@@ -269,6 +287,13 @@ export default function PostClient({ title, initialPost }: PostClientProps) {
             </div>
             {isAdmin && adminMounted && (
               <div className="admin-inkhouse-controls">
+                <button
+                  onClick={handleEditPost}
+                  disabled={!postId}
+                  className="admin-edit-btn"
+                >
+                  Edit
+                </button>
                 {inkHousePublished ? (
                   <span className="inkhouse-badge">Published to InkHouse</span>
                 ) : (

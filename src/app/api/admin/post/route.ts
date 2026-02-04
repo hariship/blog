@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { title, description, content, category, image_url, enclosure } = body
+    const { id, title, description, content, category, image_url, enclosure } = body
 
     if (!title || !content) {
       return NextResponse.json({ error: 'Title and content are required' }, { status: 400 })
@@ -48,7 +48,30 @@ export async function POST(request: NextRequest) {
 
     const normalized_title = normalizeTitle(title)
 
-    // Check if post already exists
+    // If an ID is provided, update by ID directly (allows title changes during editing)
+    if (id) {
+      const { error: updateError } = await supabase
+        .from('posts')
+        .update({
+          title,
+          normalized_title,
+          description,
+          content,
+          category,
+          image_url,
+          enclosure
+        })
+        .eq('id', id)
+
+      if (updateError) {
+        console.error('Error updating post:', updateError)
+        return NextResponse.json({ error: updateError.message }, { status: 500 })
+      }
+
+      return NextResponse.json({ success: true, message: 'Post updated', id })
+    }
+
+    // Check if post already exists by normalized title
     const { data: existingPost } = await supabase
       .from('posts')
       .select('id')
