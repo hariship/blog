@@ -496,10 +496,11 @@ button.theme-toggle:hover svg {
 
 .list-item-meta {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: var(--spacing-sm);
   color: var(--color-text-muted);
   font-size: 14px;
+  flex-wrap: wrap;
 }
 
 /* --- Grid View --- */
@@ -565,10 +566,11 @@ button.theme-toggle:hover svg {
 
 .grid-card-meta {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: var(--spacing-sm);
   font-size: 13px;
   color: var(--color-text-muted);
+  flex-wrap: wrap;
 }
 
 /* --- Compact View --- */
@@ -1926,6 +1928,11 @@ button.theme-toggle:hover svg {
 }
 
 /* Specific styling for read icon */
+.list-item-meta > .read-icon,
+.grid-card-meta > .read-icon {
+  margin-left: auto;
+}
+
 .read-icon svg {
   font-size: 1.1em;
 }

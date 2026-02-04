@@ -324,6 +324,25 @@ export default function PostClient({ title, initialPost }: PostClientProps) {
               &nbsp;{formatDate(postDate)} &bull;
             </span>
             <span className="post-category">&nbsp;{postCategory}</span>
+            <span
+              className="like-button read-button read-button-top"
+              onClick={() => {
+                playButtonSound()
+                handleLikeToggle()
+              }}
+            >
+              &bull;&nbsp;
+              {isLiked ? (
+                <svg className="heart-icon liked" stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 16 16" height="1.2em" width="1.2em">
+                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                </svg>
+              ) : (
+                <svg className="heart-icon not-liked" stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 16 16" height="1.2em" width="1.2em">
+                  <path d="M4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm2.625.547a3 3 0 0 0-5.584.953H.5a.5.5 0 0 0 0 1h.541A3 3 0 0 0 7 8a1 1 0 0 1 2 0 3 3 0 0 0 5.959.5h.541a.5.5 0 0 0 0-1h-.541a3 3 0 0 0-5.584-.953A1.993 1.993 0 0 0 8 6c-.532 0-1.016.208-1.375.547zM14 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
+                </svg>
+              )}
+              <span className="read-text">{isLiked ? 'Read' : 'Mark as read'}</span>
+            </span>
             {isJournal && <hr className="hr-journal" />}
           </div>
           <div className="post-content">
@@ -338,40 +357,22 @@ export default function PostClient({ title, initialPost }: PostClientProps) {
           </div>
 
           <span
-            className="like-button read-button"
+            className="like-button read-button read-button-bottom"
             onClick={() => {
               playButtonSound()
               handleLikeToggle()
             }}
-            style={{ display: 'none' }}
           >
-            {likesCount !== null && (
-              isLiked ? (
-                <svg
-                  className="heart-icon liked"
-                  stroke="currentColor"
-                  fill="currentColor"
-                  strokeWidth="0"
-                  viewBox="0 0 16 16"
-                  height="1.2em"
-                  width="1.2em"
-                >
-                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-                </svg>
-              ) : (
-                <svg
-                  className="heart-icon not-liked"
-                  stroke="currentColor"
-                  fill="currentColor"
-                  strokeWidth="0"
-                  viewBox="0 0 16 16"
-                  height="1.2em"
-                  width="1.2em"
-                >
-                  <path d="M4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm2.625.547a3 3 0 0 0-5.584.953H.5a.5.5 0 0 0 0 1h.541A3 3 0 0 0 7 8a1 1 0 0 1 2 0 3 3 0 0 0 5.959.5h.541a.5.5 0 0 0 0-1h-.541a3 3 0 0 0-5.584-.953A1.993 1.993 0 0 0 8 6c-.532 0-1.016.208-1.375.547zM14 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
-                </svg>
-              )
+            {isLiked ? (
+              <svg className="heart-icon liked" stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 16 16" height="1.2em" width="1.2em">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+              </svg>
+            ) : (
+              <svg className="heart-icon not-liked" stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 16 16" height="1.2em" width="1.2em">
+                <path d="M4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm2.625.547a3 3 0 0 0-5.584.953H.5a.5.5 0 0 0 0 1h.541A3 3 0 0 0 7 8a1 1 0 0 1 2 0 3 3 0 0 0 5.959.5h.541a.5.5 0 0 0 0-1h-.541a3 3 0 0 0-5.584-.953A1.993 1.993 0 0 0 8 6c-.532 0-1.016.208-1.375.547zM14 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
+              </svg>
             )}
+            <span className="read-text">{isLiked ? 'Read' : 'Mark as read'}</span>
           </span>
           <br/>
           <br/>

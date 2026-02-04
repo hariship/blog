@@ -232,7 +232,6 @@ export default function HomePage() {
                   className="favorite-icon read-icon"
                   onClick={(e) => { e.stopPropagation(); playButtonSound(); handleReadToggle(post.title); }}
                   title={isPostRead(post.title) ? "Mark as unread" : "Mark as read"}
-                  style={{ display: 'none' }}
                 >
                   {isPostRead(post.title) ? (
                     <svg className="heart-icon liked" viewBox="0 0 16 16" height="1.2em" width="1.2em" fill="currentColor">
@@ -284,7 +283,6 @@ export default function HomePage() {
                 className="favorite-icon read-icon"
                 onClick={(e) => { e.stopPropagation(); playButtonSound(); handleReadToggle(post.title); }}
                 title={isPostRead(post.title) ? "Mark as unread" : "Mark as read"}
-                style={{ display: 'none' }}
               >
                 {isPostRead(post.title) ? (
                   <svg className="heart-icon liked" viewBox="0 0 16 16" height="1.2em" width="1.2em" fill="currentColor">
@@ -321,7 +319,6 @@ export default function HomePage() {
             className="compact-read-icon favorite-icon read-icon"
             onClick={(e) => { e.stopPropagation(); playButtonSound(); handleReadToggle(post.title); }}
             title={isPostRead(post.title) ? "Mark as unread" : "Mark as read"}
-            style={{ display: 'none' }}
           >
             {isPostRead(post.title) ? (
               <svg className="heart-icon liked" viewBox="0 0 16 16" height="1em" width="1em" fill="currentColor">

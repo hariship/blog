@@ -355,6 +355,16 @@ hr {
     opacity: 1;
 }
 
+.read-button-top {
+    font-size: 16px;
+}
+
+.read-button-bottom {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
 /* Read text styling */
 .read-button .read-text {
     font-size: 0.875rem;
