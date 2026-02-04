@@ -178,7 +178,7 @@ export default function PostClient({ title, initialPost }: PostClientProps) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ title: postTitle, likesCount: updatedLikesCount }),
+        body: JSON.stringify({ postTitle: normalized, increment: newIsLiked }),
       })
 
       if (!response.ok) {
