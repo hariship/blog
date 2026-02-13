@@ -30,6 +30,9 @@ export const metadata: Metadata = {
     description: "Personal blog by Hari - thoughts, projects, and life updates",
     images: ["https://blog.haripriya.org/logo512.png"],
   },
+  verification: {
+    google: 'kpYwakAHhinu9v6zxKNFILU-u5lumjWXp9DEqE5z9Fo',
+  },
 };
 
 // Theme detection script to prevent flash on load
