@@ -800,7 +800,7 @@
 }
 
 .cms-preview-article {
-  max-width: 700px;
+  max-width: 820px;
   margin: 0 auto;
 }
 
@@ -1403,6 +1403,835 @@
   }
 
   .cms-inkhouse-retry-button {
+    width: 100%;
+  }
+}
+
+/* ========================================
+   FOCUS MODE — the main editor layout
+   ======================================== */
+
+.cms-focus-mode {
+  min-height: 100vh;
+  background-color: var(--color-bg-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- Header bar ---- */
+.cms-focus-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--color-border-light);
+  flex-shrink: 0;
+}
+
+.cms-focus-header-left {
+  display: flex;
+  align-items: center;
+}
+
+.cms-focus-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cms-focus-autosave {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cms-focus-autosave .cms-autosave-tick {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.cms-focus-wordcount {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  margin-right: 4px;
+}
+
+/* Inline status message in header */
+.cms-focus-status {
+  font-size: 12px;
+  margin-left: 8px;
+  animation: focusSlideDown 0.2s ease-out;
+}
+
+.cms-focus-status.success {
+  color: var(--color-text-muted);
+}
+
+.cms-focus-status.error {
+  color: #e57373;
+}
+
+/* Icon buttons in header */
+.cms-focus-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.cms-focus-btn:hover {
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-secondary);
+}
+
+.cms-focus-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Publish button */
+.cms-focus-publish {
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  background-color: var(--color-text-muted);
+  color: var(--color-bg-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.cms-focus-publish:hover {
+  background-color: var(--color-text-secondary);
+}
+
+.cms-focus-publish:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Logout */
+.cms-focus-logout {
+  padding: 6px 12px;
+  font-size: 12px;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+  opacity: 0.6;
+}
+
+.cms-focus-logout:hover {
+  color: #e57373;
+  opacity: 1;
+}
+
+/* ---- Settings panel ---- */
+.cms-focus-settings {
+  border-bottom: 1px solid var(--color-border-light);
+  animation: focusSlideDown 0.2s ease-out;
+}
+
+@keyframes focusSlideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cms-focus-settings-inner {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 32px;
+}
+
+.cms-focus-settings-inner .cms-setting-item {
+  margin-bottom: 0;
+}
+
+.cms-focus-clear {
+  padding: 6px 14px;
+  font-size: 12px;
+  background: none;
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.cms-focus-clear:hover {
+  color: #e57373;
+  border-color: #e57373;
+}
+
+/* ---- Writing body ---- */
+.cms-focus-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 820px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 24px 24px;
+  min-height: 0;
+}
+
+/* Ghost title */
+.cms-focus-title {
+  width: 100%;
+  border: none;
+  background: none;
+  outline: none;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  padding: 0;
+  margin-bottom: 12px;
+  font-family: inherit;
+  line-height: 1.3;
+}
+
+.cms-focus-title::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.4;
+}
+
+/* ---- Meta toggle ---- */
+.cms-focus-meta-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 0;
+  margin-bottom: 8px;
+  font-family: inherit;
+  transition: color var(--transition-fast);
+  text-align: left;
+  max-width: 100%;
+}
+
+.cms-focus-meta-toggle:hover {
+  color: var(--color-text-secondary);
+}
+
+.cms-focus-meta-summary {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cms-focus-meta-arrow {
+  font-size: 9px;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+/* ---- Meta panel ---- */
+.cms-focus-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 12px;
+  animation: focusSlideDown 0.2s ease-out;
+}
+
+.cms-focus-description {
+  width: 100%;
+  border: none;
+  background: none;
+  outline: none;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  padding: 0;
+  font-family: inherit;
+  resize: none;
+  line-height: 1.5;
+}
+
+.cms-focus-description::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.4;
+}
+
+.cms-focus-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cms-focus-category {
+  border: none;
+  background: none;
+  outline: none;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  padding: 4px 8px 4px 0;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  border-bottom: 1px dashed var(--color-border-medium);
+}
+
+.cms-focus-category:hover,
+.cms-focus-category:focus {
+  color: var(--color-text-secondary);
+  border-bottom-color: var(--color-text-muted);
+}
+
+/* Image upload in meta */
+.cms-focus-image-upload {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.cms-focus-image-url {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  outline: none;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  padding: 4px 0;
+  font-family: inherit;
+  border-bottom: 1px dashed var(--color-border-light);
+}
+
+.cms-focus-image-url::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.4;
+}
+
+.cms-focus-image-url:focus {
+  color: var(--color-text-secondary);
+  border-bottom-color: var(--color-text-muted);
+}
+
+.cms-focus-upload-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.cms-focus-upload-label:hover {
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-secondary);
+}
+
+/* Image preview thumbnail */
+.cms-focus-image-preview {
+  position: relative;
+  display: inline-block;
+  max-width: 200px;
+}
+
+.cms-focus-image-preview img {
+  width: 100%;
+  height: 80px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  opacity: 0.7;
+}
+
+.cms-focus-image-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cms-focus-image-remove:hover {
+  background: rgba(0,0,0,0.8);
+}
+
+/* ---- Toolbar — completely transparent ---- */
+.cms-focus-body #toolbar-focus {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 8px 0;
+  margin: 8px 0 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+  position: relative;
+  z-index: 10;
+}
+
+.cms-focus-body #toolbar-focus:hover,
+.cms-focus-body #toolbar-focus:focus-within {
+  opacity: 1;
+}
+
+.cms-focus-body #toolbar-focus .ql-formats button {
+  color: var(--color-text-secondary) !important;
+}
+
+.cms-focus-body #toolbar-focus .ql-formats button .ql-stroke {
+  stroke: var(--color-text-secondary) !important;
+}
+
+.cms-focus-body #toolbar-focus .ql-formats button .ql-fill {
+  fill: var(--color-text-secondary) !important;
+}
+
+.cms-focus-body #toolbar-focus .ql-formats button:hover {
+  color: var(--color-text-primary) !important;
+}
+
+.cms-focus-body #toolbar-focus .ql-formats button:hover .ql-stroke {
+  stroke: var(--color-text-primary) !important;
+}
+
+.cms-focus-body #toolbar-focus .ql-formats button:hover .ql-fill {
+  fill: var(--color-text-primary) !important;
+}
+
+.cms-focus-body #toolbar-focus .ql-formats button.ql-active {
+  color: var(--color-text-primary) !important;
+}
+
+.cms-focus-body #toolbar-focus .ql-formats button.ql-active .ql-stroke {
+  stroke: var(--color-text-primary) !important;
+}
+
+.cms-focus-body #toolbar-focus .ql-formats button.ql-active .ql-fill {
+  fill: var(--color-text-primary) !important;
+}
+
+/* Heading buttons in focus toolbar */
+.cms-focus-body #toolbar-focus button.ql-header {
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  min-width: 26px !important;
+  color: var(--color-text-secondary) !important;
+  background: transparent !important;
+  border: none !important;
+  opacity: 1 !important;
+}
+
+.cms-focus-body #toolbar-focus button.ql-header .ql-stroke {
+  display: none !important;
+}
+
+.cms-focus-body #toolbar-focus button.ql-header:hover {
+  color: var(--color-text-primary) !important;
+}
+
+.cms-focus-body #toolbar-focus button.ql-header.ql-active {
+  color: var(--color-text-primary) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 3px !important;
+}
+
+.cms-focus-body #toolbar-focus button.cms-header-normal {
+  font-weight: 500 !important;
+  color: var(--color-text-secondary) !important;
+}
+
+.cms-focus-body #toolbar-focus button.cms-header-normal:hover {
+  color: var(--color-text-primary) !important;
+}
+
+.cms-focus-body #toolbar-focus .cms-hr-button,
+.cms-focus-body #toolbar-focus .cms-toggle-button,
+.cms-focus-body #toolbar-focus .cms-end-toggle-button {
+  background: transparent;
+  border-color: transparent;
+  color: var(--color-text-secondary);
+}
+
+.cms-focus-body #toolbar-focus .cms-hr-button:hover,
+.cms-focus-body #toolbar-focus .cms-toggle-button:hover,
+.cms-focus-body #toolbar-focus .cms-end-toggle-button:hover {
+  background: transparent;
+  color: var(--color-text-primary);
+  border-color: transparent;
+}
+
+/* ---- Editor — seamless ---- */
+.cms-focus-editor {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.cms-focus-editor .ql-container {
+  border: none !important;
+  background: transparent !important;
+  font-size: 17px !important;
+  flex: 1;
+}
+
+.cms-focus-editor .ql-editor {
+  font-size: 17px !important;
+  line-height: 1.8 !important;
+  padding: 20px 0 !important;
+  color: var(--color-text-primary) !important;
+  background: transparent !important;
+  min-height: 50vh;
+}
+
+.cms-focus-editor .ql-editor h1 {
+  font-size: 2em !important;
+  font-weight: 700 !important;
+  margin: 0.5em 0 0.3em !important;
+}
+
+.cms-focus-editor .ql-editor h2 {
+  font-size: 1.5em !important;
+  font-weight: 600 !important;
+  margin: 0.5em 0 0.3em !important;
+}
+
+.cms-focus-editor .ql-editor h3 {
+  font-size: 1.17em !important;
+  font-weight: 600 !important;
+  margin: 0.4em 0 0.2em !important;
+}
+
+.cms-focus-editor .ql-editor.ql-blank::before {
+  font-style: normal !important;
+  color: var(--color-text-muted) !important;
+  opacity: 0.3;
+  left: 0 !important;
+}
+
+.cms-focus-editor .ql-toolbar {
+  display: none !important;
+}
+
+/* Remove all quill snow borders in focus mode */
+.cms-focus-body .ql-snow {
+  border: none !important;
+}
+
+/* ========================================
+   DARK MODE — terminal / IDE feel
+   ======================================== */
+
+/* Background: deep near-black */
+[data-theme="dark"] .cms-focus-mode {
+  background-color: #0d0f11;
+}
+
+/* Header: subtle separator, muted chrome */
+[data-theme="dark"] .cms-focus-header {
+  border-bottom-color: #1c1f24;
+}
+
+[data-theme="dark"] .cms-focus-autosave {
+  color: #4a6;
+}
+
+[data-theme="dark"] .cms-focus-autosave .cms-autosave-tick {
+  color: #5b8;
+}
+
+[data-theme="dark"] .cms-focus-wordcount {
+  color: #555d68;
+}
+
+[data-theme="dark"] .cms-focus-btn {
+  color: #6b737e;
+}
+
+[data-theme="dark"] .cms-focus-btn:hover {
+  color: #c9d1d9;
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .cms-focus-publish {
+  background-color: #238636;
+  color: #fff;
+}
+
+[data-theme="dark"] .cms-focus-publish:hover {
+  background-color: #2ea043;
+}
+
+[data-theme="dark"] .cms-focus-logout {
+  color: #555d68;
+}
+
+[data-theme="dark"] .cms-focus-logout:hover {
+  color: #f85149;
+}
+
+/* Settings panel */
+[data-theme="dark"] .cms-focus-settings {
+  border-bottom-color: #1c1f24;
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+[data-theme="dark"] .cms-focus-clear {
+  color: #6b737e;
+  border-color: #30363d;
+}
+
+[data-theme="dark"] .cms-focus-clear:hover {
+  color: #f85149;
+  border-color: #f85149;
+}
+
+/* Title: crisp, high contrast */
+[data-theme="dark"] .cms-focus-title {
+  color: #e6edf3;
+}
+
+[data-theme="dark"] .cms-focus-title::placeholder {
+  color: #3d444d;
+}
+
+/* Meta toggle */
+[data-theme="dark"] .cms-focus-meta-toggle {
+  color: #555d68;
+}
+
+[data-theme="dark"] .cms-focus-meta-toggle:hover {
+  color: #8b949e;
+}
+
+/* Meta fields */
+[data-theme="dark"] .cms-focus-description {
+  color: #c9d1d9;
+}
+
+[data-theme="dark"] .cms-focus-description::placeholder {
+  color: #3d444d;
+}
+
+[data-theme="dark"] .cms-focus-category {
+  color: #8b949e;
+  border-bottom-color: #30363d;
+}
+
+[data-theme="dark"] .cms-focus-category:hover,
+[data-theme="dark"] .cms-focus-category:focus {
+  color: #c9d1d9;
+  border-bottom-color: #58a6ff;
+}
+
+[data-theme="dark"] .cms-focus-category option {
+  background-color: #161b22;
+  color: #c9d1d9;
+}
+
+[data-theme="dark"] .cms-focus-image-url {
+  color: #8b949e;
+  border-bottom-color: #30363d;
+}
+
+[data-theme="dark"] .cms-focus-image-url:focus {
+  color: #c9d1d9;
+  border-bottom-color: #58a6ff;
+}
+
+[data-theme="dark"] .cms-focus-upload-label {
+  color: #6b737e;
+}
+
+[data-theme="dark"] .cms-focus-upload-label:hover {
+  color: #c9d1d9;
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+/* Toolbar: medium contrast, blue accent on active */
+[data-theme="dark"] .cms-focus-body #toolbar-focus .ql-formats button {
+  color: #6b737e !important;
+}
+
+[data-theme="dark"] .cms-focus-body #toolbar-focus .ql-formats button .ql-stroke {
+  stroke: #6b737e !important;
+}
+
+[data-theme="dark"] .cms-focus-body #toolbar-focus .ql-formats button .ql-fill {
+  fill: #6b737e !important;
+}
+
+[data-theme="dark"] .cms-focus-body #toolbar-focus .ql-formats button:hover {
+  color: #c9d1d9 !important;
+}
+
+[data-theme="dark"] .cms-focus-body #toolbar-focus .ql-formats button:hover .ql-stroke {
+  stroke: #c9d1d9 !important;
+}
+
+[data-theme="dark"] .cms-focus-body #toolbar-focus .ql-formats button:hover .ql-fill {
+  fill: #c9d1d9 !important;
+}
+
+[data-theme="dark"] .cms-focus-body #toolbar-focus .ql-formats button.ql-active {
+  color: #58a6ff !important;
+}
+
+[data-theme="dark"] .cms-focus-body #toolbar-focus .ql-formats button.ql-active .ql-stroke {
+  stroke: #58a6ff !important;
+}
+
+[data-theme="dark"] .cms-focus-body #toolbar-focus .ql-formats button.ql-active .ql-fill {
+  fill: #58a6ff !important;
+}
+
+[data-theme="dark"] .cms-focus-body #toolbar-focus button.ql-header {
+  color: #6b737e !important;
+}
+
+[data-theme="dark"] .cms-focus-body #toolbar-focus button.ql-header:hover {
+  color: #c9d1d9 !important;
+}
+
+[data-theme="dark"] .cms-focus-body #toolbar-focus button.ql-header.ql-active {
+  color: #58a6ff !important;
+  background: rgba(88, 166, 255, 0.1) !important;
+}
+
+[data-theme="dark"] .cms-focus-body #toolbar-focus button.cms-header-normal {
+  color: #6b737e !important;
+}
+
+[data-theme="dark"] .cms-focus-body #toolbar-focus button.cms-header-normal:hover {
+  color: #c9d1d9 !important;
+}
+
+[data-theme="dark"] .cms-focus-body #toolbar-focus .cms-hr-button,
+[data-theme="dark"] .cms-focus-body #toolbar-focus .cms-toggle-button,
+[data-theme="dark"] .cms-focus-body #toolbar-focus .cms-end-toggle-button {
+  color: #6b737e;
+}
+
+[data-theme="dark"] .cms-focus-body #toolbar-focus .cms-hr-button:hover,
+[data-theme="dark"] .cms-focus-body #toolbar-focus .cms-toggle-button:hover,
+[data-theme="dark"] .cms-focus-body #toolbar-focus .cms-end-toggle-button:hover {
+  color: #c9d1d9;
+}
+
+/* Editor text: high contrast, readable */
+[data-theme="dark"] .cms-focus-editor .ql-editor {
+  color: #c9d1d9 !important;
+}
+
+[data-theme="dark"] .cms-focus-editor .ql-editor h1,
+[data-theme="dark"] .cms-focus-editor .ql-editor h2,
+[data-theme="dark"] .cms-focus-editor .ql-editor h3 {
+  color: #e6edf3 !important;
+}
+
+[data-theme="dark"] .cms-focus-editor .ql-editor.ql-blank::before {
+  color: #3d444d !important;
+}
+
+[data-theme="dark"] .cms-focus-editor .ql-editor blockquote {
+  border-left-color: #30363d !important;
+  color: #8b949e !important;
+}
+
+[data-theme="dark"] .cms-focus-editor .ql-editor a {
+  color: #58a6ff !important;
+}
+
+[data-theme="dark"] .cms-focus-editor .ql-editor pre.ql-syntax {
+  background-color: #161b22 !important;
+  color: #c9d1d9 !important;
+}
+
+/* Status messages */
+[data-theme="dark"] .cms-focus-status.success {
+  color: #4a6;
+}
+
+[data-theme="dark"] .cms-focus-status.error {
+  color: #f85149;
+}
+
+/* ---- Mobile ---- */
+@media (max-width: 768px) {
+  .cms-focus-header {
+    padding: 8px 12px;
+    gap: 6px;
+  }
+
+  .cms-focus-header-right {
+    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .cms-focus-wordcount {
+    display: none;
+  }
+
+  .cms-focus-body {
+    padding: 24px 16px 16px;
+  }
+
+  .cms-focus-title {
+    font-size: 22px;
+  }
+
+  .cms-focus-editor .ql-editor {
+    font-size: 16px !important;
+    padding: 16px 0 !important;
+  }
+
+  .cms-focus-settings-inner {
+    padding: 12px 16px;
+    gap: 12px 20px;
+  }
+
+  .cms-focus-meta-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .cms-focus-image-upload {
     width: 100%;
   }
 }
