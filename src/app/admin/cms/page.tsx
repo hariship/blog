@@ -1,9 +1,9 @@
 'use client'
 
-import React, { Suspense, useState, useRef, useEffect } from 'react'
+import React, { Suspense, useState, useRef, useEffect, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 import { useSearchParams } from 'next/navigation'
-import { Eye, EyeOff, Settings, Save } from 'lucide-react'
+import { Eye, EyeOff, Settings, Save, ImagePlus } from 'lucide-react'
 import { ThemeToggle } from '@/components/common'
 import './CMSPostEditor.css'
 
@@ -18,7 +18,7 @@ const ReactQuill = dynamic(
   },
   {
     ssr: false,
-    loading: () => <div className="quill-loading">Loading editor...</div>
+    loading: () => null
   }
 )
 
@@ -37,7 +37,7 @@ interface SubmitStatus {
 
 export default function CMSPostEditor() {
   return (
-    <Suspense fallback={<div className="quill-loading">Loading editor...</div>}>
+    <Suspense fallback={null}>
       <CMSPostEditorInner />
     </Suspense>
   )
@@ -71,6 +71,7 @@ function CMSPostEditorInner() {
   const [editingPostId, setEditingPostId] = useState<number | null>(null)
   const [inkHouseError, setInkHouseError] = useState<string | null>(null)
   const [isRetryingInkHouse, setIsRetryingInkHouse] = useState<boolean>(false)
+  const [showMeta, setShowMeta] = useState<boolean>(false)
   const [lastSubmittedPost, setLastSubmittedPost] = useState<{
     postId: number
     title: string
@@ -85,26 +86,23 @@ function CMSPostEditorInner() {
   const quillRef = useRef<any>(null)
   const searchParams = useSearchParams()
 
-  // Set mounted state and load Quill CSS
+  // Check authentication and set mounted state
   useEffect(() => {
-    setMounted(true)
+    const token = localStorage.getItem('adminToken')
+    const expiry = localStorage.getItem('adminTokenExpiry')
+    if (token && expiry && new Date(expiry) > new Date()) {
+      setIsAuthenticated(true)
+    }
+
     // Load Quill CSS dynamically
     const link = document.createElement('link')
     link.rel = 'stylesheet'
     link.href = 'https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css'
     document.head.appendChild(link)
+
+    setMounted(true)
     return () => {
       document.head.removeChild(link)
-    }
-  }, [])
-
-  // Check authentication on mount
-  useEffect(() => {
-    const token = localStorage.getItem('adminToken')
-    const expiry = localStorage.getItem('adminTokenExpiry')
-
-    if (token && expiry && new Date(expiry) > new Date()) {
-      setIsAuthenticated(true)
     }
   }, [])
 
@@ -195,6 +193,11 @@ function CMSPostEditorInner() {
 
     return () => clearInterval(autoSaveInterval)
   }, [isAuthenticated, title, description, imageUrl, content, category, postSettings])
+
+  // Word count derived from content
+  const wordCount = content
+    ? content.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim().split(/\s+/).filter(Boolean).length
+    : 0
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -442,9 +445,7 @@ function CMSPostEditorInner() {
     setIsRetryingInkHouse(false)
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
+  const handleSubmit = async () => {
     if (!title.trim()) {
       setSubmitStatus({ type: 'error', message: 'Title is required' })
       return
@@ -547,16 +548,17 @@ function CMSPostEditorInner() {
     return processed
   }
 
-  const quillModules = {
+  const quillModules = useMemo(() => ({
     toolbar: {
-      container: '#toolbar'
+      container: '#toolbar-focus'
     }
-  }
+  }), [])
 
   const insertHr = () => {
     if (quillRef.current) {
       const editor = quillRef.current.getEditor()
-      const range = editor.getSelection(true)
+      editor.focus()
+      const range = editor.getSelection()
       if (range) {
         editor.insertEmbed(range.index, 'hr', true, 'user')
         editor.setSelection(range.index + 1, 0)
@@ -567,7 +569,8 @@ function CMSPostEditorInner() {
   const insertToggle = () => {
     if (quillRef.current) {
       const editor = quillRef.current.getEditor()
-      const range = editor.getSelection(true)
+      editor.focus()
+      const range = editor.getSelection()
       if (range) {
         const currentIndex = range.index
         editor.insertText(currentIndex, '\n[TOGGLE] Toggle title\n', { bold: true })
@@ -581,12 +584,17 @@ function CMSPostEditorInner() {
   const insertEndToggle = () => {
     if (quillRef.current) {
       const editor = quillRef.current.getEditor()
-      const range = editor.getSelection(true)
+      editor.focus()
+      const range = editor.getSelection()
       if (range) {
         editor.insertText(range.index, '\n[END TOGGLE]\n\n', { bold: true })
         editor.setSelection(range.index + 14, 0)
       }
     }
+  }
+
+  if (!mounted) {
+    return null
   }
 
   // Login form
@@ -618,141 +626,111 @@ function CMSPostEditorInner() {
   }
 
   return (
-    <div className="cms-editor-container">
-      {/* Header */}
-      <div className="cms-editor-header">
-        <div className="cms-header-left">
-          <h2>{editingPostId ? 'Edit Post' : 'Create New Post'}</h2>
+    <div className="cms-focus-mode">
+      {/* Header bar */}
+      <div className="cms-focus-header">
+        <div className="cms-focus-header-left">
           {showAutoSaveIndicator && (
-            <div className="cms-autosave-indicator">
-              <span className="cms-autosave-tick">✓</span>
-              <span className="cms-autosave-text">Saved at {lastAutoSaveTime}</span>
-            </div>
+            <span className="cms-focus-autosave">
+              <span className="cms-autosave-tick">✓</span> Saved {lastAutoSaveTime}
+            </span>
+          )}
+          {submitStatus && (
+            <span className={`cms-focus-status ${submitStatus.type}`}>
+              {submitStatus.message}
+            </span>
           )}
         </div>
-        <div className="cms-header-controls">
-          <button className="cms-save-button" onClick={handleSave} disabled={isSaving}>
-            <Save size={16} />
-            {isSaving ? 'Saving...' : 'Save'}
+        <div className="cms-focus-header-right">
+          <span className="cms-focus-wordcount">{wordCount} {wordCount === 1 ? 'word' : 'words'}</span>
+          <button type="button" className="cms-focus-btn" onClick={handleSave} disabled={isSaving} title="Save draft">
+            <Save size={15} />
           </button>
-          <button className="cms-preview-button" onClick={() => setShowPreview(!showPreview)}>
-            {showPreview ? <EyeOff size={16} /> : <Eye size={16} />}
-            {showPreview ? 'Edit' : 'Preview'}
+          <button type="button" className="cms-focus-btn" onClick={() => setShowPreview(!showPreview)} title="Preview">
+            {showPreview ? <EyeOff size={15} /> : <Eye size={15} />}
           </button>
-          <button className="cms-settings-button" onClick={() => setShowSettings(!showSettings)}>
-            <Settings size={16} />
-            Settings
+          <button type="button" className="cms-focus-btn" onClick={() => setShowSettings(!showSettings)} title="Settings">
+            <Settings size={15} />
           </button>
           <ThemeToggle />
-          <button className="cms-logout-button" onClick={handleLogout}>Logout</button>
+          <button
+            type="button"
+            className="cms-focus-publish"
+            disabled={isSubmitting}
+            onClick={handleSubmit}
+          >
+            {isSubmitting ? (editingPostId ? 'Updating...' : 'Publishing...') : (editingPostId ? 'Update' : 'Publish')}
+          </button>
+          <button type="button" className="cms-focus-logout" onClick={handleLogout}>Logout</button>
         </div>
       </div>
 
       {/* Settings Panel */}
       {showSettings && (
-        <div className="cms-settings-panel">
-          <div className="cms-settings-header">
-            <h3>Post Settings</h3>
-            <button className="cms-settings-close" onClick={() => setShowSettings(false)}>&times;</button>
-          </div>
-          <div className="cms-settings-content">
+        <div className="cms-focus-settings">
+          <div className="cms-focus-settings-inner">
             <div className="cms-setting-item">
               <label className="cms-toggle-label">
-                <input
-                  type="checkbox"
-                  className="cms-toggle-input"
-                  checked={postSettings.publishImmediately}
-                  onChange={(e) => setPostSettings({ ...postSettings, publishImmediately: e.target.checked })}
-                />
+                <input type="checkbox" className="cms-toggle-input" checked={postSettings.publishImmediately} onChange={(e) => setPostSettings({ ...postSettings, publishImmediately: e.target.checked })} />
                 <span className="cms-toggle-slider"></span>
                 <span className="cms-toggle-text">Publish immediately</span>
               </label>
             </div>
             <div className="cms-setting-item">
               <label className="cms-toggle-label">
-                <input
-                  type="checkbox"
-                  className="cms-toggle-input"
-                  checked={postSettings.enableComments}
-                  onChange={(e) => setPostSettings({ ...postSettings, enableComments: e.target.checked })}
-                />
+                <input type="checkbox" className="cms-toggle-input" checked={postSettings.enableComments} onChange={(e) => setPostSettings({ ...postSettings, enableComments: e.target.checked })} />
                 <span className="cms-toggle-slider"></span>
                 <span className="cms-toggle-text">Enable comments</span>
               </label>
             </div>
             <div className="cms-setting-item">
               <label className="cms-toggle-label">
-                <input
-                  type="checkbox"
-                  className="cms-toggle-input"
-                  checked={postSettings.featured}
-                  onChange={(e) => setPostSettings({ ...postSettings, featured: e.target.checked })}
-                />
+                <input type="checkbox" className="cms-toggle-input" checked={postSettings.featured} onChange={(e) => setPostSettings({ ...postSettings, featured: e.target.checked })} />
                 <span className="cms-toggle-slider"></span>
                 <span className="cms-toggle-text">Featured post</span>
               </label>
             </div>
             <div className="cms-setting-item">
               <label className="cms-toggle-label">
-                <input
-                  type="checkbox"
-                  className="cms-toggle-input"
-                  checked={postSettings.sendNewsletter}
-                  onChange={(e) => setPostSettings({ ...postSettings, sendNewsletter: e.target.checked })}
-                />
+                <input type="checkbox" className="cms-toggle-input" checked={postSettings.sendNewsletter} onChange={(e) => setPostSettings({ ...postSettings, sendNewsletter: e.target.checked })} />
                 <span className="cms-toggle-slider"></span>
                 <span className="cms-toggle-text">Send newsletter</span>
               </label>
             </div>
             <div className="cms-setting-item">
               <label className="cms-toggle-label">
-                <input
-                  type="checkbox"
-                  className="cms-toggle-input"
-                  checked={postSettings.publishToInkHouse}
-                  onChange={(e) => setPostSettings({ ...postSettings, publishToInkHouse: e.target.checked })}
-                />
+                <input type="checkbox" className="cms-toggle-input" checked={postSettings.publishToInkHouse} onChange={(e) => setPostSettings({ ...postSettings, publishToInkHouse: e.target.checked })} />
                 <span className="cms-toggle-slider"></span>
                 <span className="cms-toggle-text">Publish to InkHouse</span>
               </label>
-              <p className="cms-setting-description">Cross-post to inkhouse.haripriya.org</p>
+            </div>
+            <div className="cms-setting-item">
+              <button type="button" className="cms-focus-clear" onClick={resetForm}>Clear All</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Status Message */}
-      {submitStatus && (
-        <div className={`cms-status-message ${submitStatus.type}`}>
-          {submitStatus.message}
-        </div>
-      )}
-
-      {/* InkHouse Error with Retry Button */}
+      {/* InkHouse Error */}
       {inkHouseError && lastSubmittedPost && (
         <div className="cms-inkhouse-error">
           <div className="cms-inkhouse-error-message">
             <span className="cms-inkhouse-error-icon">!</span>
             <span>InkHouse publish failed: {inkHouseError}</span>
           </div>
-          <button
-            type="button"
-            className="cms-inkhouse-retry-button"
-            onClick={handleRetryInkHouse}
-            disabled={isRetryingInkHouse}
-          >
+          <button type="button" className="cms-inkhouse-retry-button" onClick={handleRetryInkHouse} disabled={isRetryingInkHouse}>
             {isRetryingInkHouse ? 'Retrying...' : 'Retry InkHouse'}
           </button>
         </div>
       )}
 
-      {showPreview ? (
-        /* Preview Mode */
+      {/* Preview Overlay */}
+      {showPreview && (
         <div className="cms-preview-overlay" onClick={() => setShowPreview(false)}>
           <div className="cms-preview-container" onClick={(e) => e.stopPropagation()}>
             <div className="cms-preview-header">
               <h3>Preview</h3>
-              <button className="cms-preview-close" onClick={() => setShowPreview(false)}>&times;</button>
+              <button type="button" className="cms-preview-close" onClick={() => setShowPreview(false)}>&times;</button>
             </div>
             <div className="cms-preview-content">
               <article className="cms-preview-article">
@@ -764,63 +742,48 @@ function CMSPostEditorInner() {
                 </div>
                 <h1 className="cms-preview-title">{title || 'Untitled Post'}</h1>
                 {description && <p className="cms-preview-description">{description}</p>}
-                <div
-                  className="cms-preview-body"
-                  dangerouslySetInnerHTML={{ __html: processContentForPreview(content) }}
-                />
+                <div className="cms-preview-body" dangerouslySetInnerHTML={{ __html: processContentForPreview(content) }} />
               </article>
             </div>
           </div>
         </div>
-      ) : (
-        /* Edit Mode */
-        <form onSubmit={handleSubmit}>
-          {/* Metadata */}
-          <div className="cms-metadata-grid">
-            <div className="cms-metadata-full">
-              <input
-                type="text"
-                className="cms-editor-input cms-title-input"
-                placeholder="Post Title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-            </div>
-            <div className="cms-metadata-full">
-              <textarea
-                className="cms-editor-input"
-                placeholder="Description (for SEO and previews)"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={2}
-              />
-            </div>
-            <div className="cms-metadata-row">
-              <div className="cms-image-input-container">
-                <input
-                  type="text"
-                  className="cms-editor-input cms-image-url-input"
-                  placeholder="Image URL"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                />
-                <div className="cms-image-upload-section">
-                  <input
-                    type="file"
-                    id="image-upload"
-                    className="cms-file-input"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    disabled={isUploadingImage}
-                  />
-                  <label htmlFor="image-upload" className={`cms-upload-button ${isUploadingImage ? 'uploading' : ''}`}>
-                    <span className="cms-upload-icon">📷</span>
-                    <span className="cms-upload-text">{isUploadingImage ? 'Uploading...' : 'Upload'}</span>
-                  </label>
-                </div>
-              </div>
+      )}
+
+      {/* Writing area */}
+      <div className="cms-focus-body">
+        <input
+          type="text"
+          className="cms-focus-title"
+          placeholder="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+
+        <button
+          type="button"
+          className="cms-focus-meta-toggle"
+          onClick={() => setShowMeta(!showMeta)}
+        >
+          <span className="cms-focus-meta-summary">
+            {category}
+            {description ? ` · ${description.slice(0, 50)}${description.length > 50 ? '...' : ''}` : ''}
+            {imageUrl ? ' · 🖼' : ''}
+          </span>
+          <span className="cms-focus-meta-arrow">{showMeta ? '▲' : '▼'}</span>
+        </button>
+
+        {showMeta && (
+          <div className="cms-focus-meta">
+            <textarea
+              className="cms-focus-description"
+              placeholder="Description (for SEO and previews)"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={2}
+            />
+            <div className="cms-focus-meta-row">
               <select
-                className="cms-editor-input cms-category-select"
+                className="cms-focus-category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               >
@@ -831,82 +794,89 @@ function CMSPostEditorInner() {
                 <option value="Experience">Experience</option>
                 <option value="Motives">Motives</option>
               </select>
-            </div>
-          </div>
-
-          {/* Editor with Custom Toolbar */}
-          {mounted ? (
-            <>
-              <div id="toolbar">
-                <span className="ql-formats">
-                  <select className="ql-header" defaultValue="">
-                    <option value="1">Heading 1</option>
-                    <option value="2">Heading 2</option>
-                    <option value="3">Heading 3</option>
-                    <option value="">Normal</option>
-                  </select>
-                </span>
-                <span className="ql-formats">
-                  <button className="ql-bold" />
-                  <button className="ql-italic" />
-                  <button className="ql-underline" />
-                  <button className="ql-strike" />
-                </span>
-                <span className="ql-formats">
-                  <button className="ql-list" value="ordered" />
-                  <button className="ql-list" value="bullet" />
-                </span>
-                <span className="ql-formats">
-                  <button className="ql-blockquote" />
-                  <button className="ql-code-block" />
-                </span>
-                <span className="ql-formats">
-                  <button className="ql-link" />
-                  <button className="ql-image" />
-                </span>
-                <span className="ql-formats">
-                  <button className="cms-hr-button" type="button" onClick={insertHr} title="Insert Horizontal Rule">HR</button>
-                  <button className="cms-toggle-button" type="button" onClick={insertToggle} title="Insert Toggle Block">▼+</button>
-                  <button className="cms-end-toggle-button" type="button" onClick={insertEndToggle} title="End Toggle Block">/▼</button>
-                </span>
-                <span className="ql-formats">
-                  <button className="ql-clean" />
-                </span>
-              </div>
-              <div className="cms-editor-quill">
-                <ReactQuill
-                  forwardedRef={quillRef}
-                  theme="snow"
-                  value={content}
-                  onChange={setContent}
-                  modules={quillModules}
-                  placeholder="Write your post content here..."
+              <div className="cms-focus-image-upload">
+                <input
+                  type="text"
+                  className="cms-focus-image-url"
+                  placeholder="Image URL"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
                 />
+                <input
+                  type="file"
+                  id="focus-image-upload"
+                  className="cms-file-input"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  disabled={isUploadingImage}
+                />
+                <label htmlFor="focus-image-upload" className="cms-focus-upload-label">
+                  <ImagePlus size={14} />
+                  {isUploadingImage ? 'Uploading...' : 'Upload'}
+                </label>
               </div>
-            </>
-          ) : (
-            <div className="quill-loading">Loading editor...</div>
-          )}
-
-          {/* Action Buttons */}
-          <div className="cms-editor-buttons-row">
-            <button
-              type="button"
-              className="cms-editor-button cms-editor-button-secondary"
-              onClick={resetForm}
-            >
-              Clear All
-            </button>
-            <button
-              type="submit"
-              className="cms-editor-button"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (editingPostId ? 'Updating...' : 'Publishing...') : (editingPostId ? 'Update Post' : 'Publish Post')}
-            </button>
+            </div>
+            {imageUrl && (
+              <div className="cms-focus-image-preview">
+                <img src={imageUrl} alt="Feature" />
+                <button type="button" onClick={() => setImageUrl('')} className="cms-focus-image-remove">&times;</button>
+              </div>
+            )}
           </div>
-        </form>
-      )}
+        )}
+
+        {/* Toolbar + Editor */}
+        {mounted ? (
+          <>
+            <div id="toolbar-focus">
+              <span className="ql-formats">
+                <button type="button" className="ql-header" value="1">H1</button>
+                <button type="button" className="ql-header" value="2">H2</button>
+                <button type="button" className="ql-header" value="3">H3</button>
+                <button type="button" className="cms-header-normal" onClick={() => { if (quillRef.current) { const editor = quillRef.current.getEditor(); editor.format('header', false); } }}>P</button>
+              </span>
+              <span className="ql-formats">
+                <button type="button" className="ql-bold" />
+                <button type="button" className="ql-italic" />
+                <button type="button" className="ql-underline" />
+                <button type="button" className="ql-strike" />
+              </span>
+              <span className="ql-formats">
+                <button type="button" className="ql-list" value="ordered" />
+                <button type="button" className="ql-list" value="bullet" />
+              </span>
+              <span className="ql-formats">
+                <button type="button" className="ql-blockquote" />
+                <button type="button" className="ql-code-block" />
+              </span>
+              <span className="ql-formats">
+                <button type="button" className="ql-link" />
+                <button type="button" className="ql-image" />
+              </span>
+              <span className="ql-formats">
+                <button className="cms-hr-button" type="button" onClick={insertHr} title="Insert Horizontal Rule">HR</button>
+                <button className="cms-toggle-button" type="button" onClick={insertToggle} title="Insert Toggle Block">▼+</button>
+                <button className="cms-end-toggle-button" type="button" onClick={insertEndToggle} title="End Toggle Block">/▼</button>
+              </span>
+              <span className="ql-formats">
+                <button type="button" className="ql-clean" />
+              </span>
+            </div>
+            <div className="cms-focus-editor">
+              <ReactQuill
+                forwardedRef={quillRef}
+                theme="snow"
+                value={content}
+                onChange={setContent}
+                modules={quillModules}
+                placeholder="Start writing..."
+              />
+            </div>
+          </>
+        ) : (
+          <div className="quill-loading">Loading editor...</div>
+        )}
+      </div>
     </div>
   )
 }
