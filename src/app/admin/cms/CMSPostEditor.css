@@ -203,6 +203,15 @@
     display: none;
   }
 
+/* Focus mode: visually-hidden file input — more reliable than display:none for label triggers */
+.cms-focus-file-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
   .cms-upload-button {
     display: flex;
     align-items: center;

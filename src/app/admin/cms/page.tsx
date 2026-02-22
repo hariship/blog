@@ -89,8 +89,7 @@ function CMSPostEditorInner() {
   // Check authentication and set mounted state
   useEffect(() => {
     const token = localStorage.getItem('adminToken')
-    const expiry = localStorage.getItem('adminTokenExpiry')
-    if (token && expiry && new Date(expiry) > new Date()) {
+    if (token) {
       setIsAuthenticated(true)
     }
 
@@ -214,9 +213,6 @@ function CMSPostEditorInner() {
 
       if (response.ok && data.token) {
         localStorage.setItem('adminToken', data.token)
-        const expiry = new Date()
-        expiry.setHours(expiry.getHours() + 24)
-        localStorage.setItem('adminTokenExpiry', expiry.toISOString())
         setIsAuthenticated(true)
       } else {
         setLoginError(data.error || 'Invalid PIN')
@@ -228,7 +224,6 @@ function CMSPostEditorInner() {
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken')
-    localStorage.removeItem('adminTokenExpiry')
     setIsAuthenticated(false)
   }
 
@@ -486,6 +481,11 @@ function CMSPostEditorInner() {
       })
 
       const data = await response.json()
+
+      if (response.status === 401) {
+        handleLogout()
+        return
+      }
 
       if (response.ok) {
         let successMessage = editingPostId ? 'Post updated successfully!' : 'Post created successfully!'
@@ -805,7 +805,7 @@ function CMSPostEditorInner() {
                 <input
                   type="file"
                   id="focus-image-upload"
-                  className="cms-file-input"
+                  className="cms-focus-file-input"
                   accept="image/*"
                   onChange={handleImageUpload}
                   disabled={isUploadingImage}

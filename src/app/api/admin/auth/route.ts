@@ -33,11 +33,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid password' }, { status: 401 })
     }
 
-    // Generate JWT token
+    // Generate JWT token — no expiry, cleared only on explicit logout
     const token = jwt.sign(
       { adminId: admin.id },
-      JWT_SECRET,
-      { expiresIn: '2h' }
+      JWT_SECRET
     )
 
     return NextResponse.json({ success: true, token })
