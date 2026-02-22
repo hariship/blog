@@ -72,6 +72,7 @@ function CMSPostEditorInner() {
   const [inkHouseError, setInkHouseError] = useState<string | null>(null)
   const [isRetryingInkHouse, setIsRetryingInkHouse] = useState<boolean>(false)
   const [showMeta, setShowMeta] = useState<boolean>(false)
+  const [watermarkDate, setWatermarkDate] = useState<string>('')
   const [lastSubmittedPost, setLastSubmittedPost] = useState<{
     postId: number
     title: string
@@ -227,7 +228,12 @@ function CMSPostEditorInner() {
     setIsAuthenticated(false)
   }
 
-  const compressImage = (file: File, maxSizeKB: number = 300): Promise<File> => {
+  const compressImage = (
+    file: File,
+    maxSizeKB: number = 300,
+    borderPx: number = 0,
+    watermarkText: string = ''
+  ): Promise<File> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
       reader.readAsDataURL(file)
@@ -253,6 +259,26 @@ function CMSPostEditorInner() {
 
           const ctx = canvas.getContext('2d')
           ctx?.drawImage(img, 0, 0, width, height)
+
+          if (ctx) {
+            // White border
+            if (borderPx > 0) {
+              ctx.strokeStyle = '#ffffff'
+              ctx.lineWidth = borderPx * 2
+              ctx.strokeRect(0, 0, width, height)
+            }
+
+            // Watermark text bottom-right
+            if (watermarkText) {
+              const fontSize = Math.max(12, Math.round(width * 0.025))
+              ctx.font = `${fontSize}px sans-serif`
+              ctx.fillStyle = 'rgba(255,255,255,0.75)'
+              ctx.textAlign = 'right'
+              ctx.textBaseline = 'bottom'
+              const padding = borderPx + Math.round(fontSize * 0.5)
+              ctx.fillText(watermarkText, width - padding, height - padding)
+            }
+          }
 
           let quality = 0.8
           const tryCompress = () => {
@@ -300,7 +326,7 @@ function CMSPostEditorInner() {
     setSubmitStatus(null)
 
     try {
-      const compressedFile = await compressImage(file, 300)
+      const compressedFile = await compressImage(file, 300, 12, watermarkDate)
       const formData = new FormData()
       formData.append('image', compressedFile)
 
@@ -814,6 +840,13 @@ function CMSPostEditorInner() {
                   <ImagePlus size={14} />
                   {isUploadingImage ? 'Uploading...' : 'Upload'}
                 </label>
+                <input
+                  type="text"
+                  className="cms-focus-watermark-date"
+                  placeholder="22 Feb 2026"
+                  value={watermarkDate}
+                  onChange={(e) => setWatermarkDate(e.target.value)}
+                />
               </div>
             </div>
             {imageUrl && (

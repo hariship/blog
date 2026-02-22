@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import Image from 'next/image'
 import { Navbar } from '@/components/layout'
 import { ThemeToggle, SoundToggle } from '@/components/common'
@@ -36,7 +36,6 @@ export default function HomePage() {
   const [viewMode, setViewMode] = useState<ViewMode>('list')
   const postsPerPage = 10
 
-  const router = useRouter()
   const { likesData, updateLikesData } = useLikes()
   const { playButtonSound, playKeypadBeep } = useSounds()
   const { isAdmin, adminToken, mounted: adminMounted } = useAdmin()
@@ -86,9 +85,8 @@ export default function HomePage() {
     fetchPosts()
   }, [currentPage, selectedCategory, searchQuery])
 
-  const handlePostClick = (normalizedTitle: string) => {
+  const handlePostClick = () => {
     playButtonSound()
-    router.push(`/post/${normalizedTitle}`)
   }
 
   const isPostRead = (title: string): boolean => {
@@ -198,10 +196,12 @@ export default function HomePage() {
   const renderListView = () => (
     <div className="view-list">
       {posts.map((post) => (
-        <div
+        <Link
           key={post.id}
+          href={`/post/${post.normalized_title}`}
           className="list-item"
-          onClick={() => handlePostClick(post.normalized_title)}
+          onClick={handlePostClick}
+          style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
         >
           <div className="list-item-content">
             {post.enclosure && (
@@ -246,7 +246,7 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   )
@@ -254,10 +254,12 @@ export default function HomePage() {
   const renderGridView = () => (
     <div className="view-grid">
       {posts.map((post) => (
-        <div
+        <Link
           key={post.id}
+          href={`/post/${post.normalized_title}`}
           className="grid-card"
-          onClick={() => handlePostClick(post.normalized_title)}
+          onClick={handlePostClick}
+          style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
         >
           {post.enclosure && (
             <div className="grid-card-image">
@@ -296,7 +298,7 @@ export default function HomePage() {
               </span>
             </div>
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   )
@@ -304,10 +306,12 @@ export default function HomePage() {
   const renderCompactView = () => (
     <div className="view-compact">
       {posts.map((post) => (
-        <div
+        <Link
           key={post.id}
+          href={`/post/${post.normalized_title}`}
           className="compact-item"
-          onClick={() => handlePostClick(post.normalized_title)}
+          onClick={handlePostClick}
+          style={{ textDecoration: 'none', color: 'inherit', display: 'flex' }}
         >
           <span className="compact-date">{formatDate(post.pub_date)}</span>
           <span className="compact-title">{post.title}</span>
@@ -330,7 +334,7 @@ export default function HomePage() {
               </svg>
             )}
           </span>
-        </div>
+        </Link>
       ))}
     </div>
   )
@@ -340,9 +344,11 @@ export default function HomePage() {
     return (
       <div className="view-magazine">
         {featured && (
-          <div
+          <Link
+            href={`/post/${featured.normalized_title}`}
             className="magazine-featured"
-            onClick={() => handlePostClick(featured.normalized_title)}
+            onClick={handlePostClick}
+            style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
           >
             {featured.enclosure && (
               <div className="magazine-featured-image">
@@ -382,14 +388,16 @@ export default function HomePage() {
                 </span>
               </div>
             </div>
-          </div>
+          </Link>
         )}
         <div className="magazine-secondary">
           {rest.map((post) => (
-            <div
+            <Link
               key={post.id}
+              href={`/post/${post.normalized_title}`}
               className="magazine-item"
-              onClick={() => handlePostClick(post.normalized_title)}
+              onClick={handlePostClick}
+              style={{ textDecoration: 'none', color: 'inherit', display: 'flex' }}
             >
               {post.enclosure && (
                 <Image
@@ -422,7 +430,7 @@ export default function HomePage() {
                   </span>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
