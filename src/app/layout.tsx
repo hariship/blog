@@ -64,6 +64,20 @@ export default function RootLayout({
         <Providers>
           {children}
         </Providers>
+        <footer style={{
+          textAlign: 'center',
+          padding: '1.5rem',
+          fontSize: '0.85rem',
+          opacity: 0.6,
+          borderTop: '1px solid var(--color-border, #333)',
+          marginTop: '2rem',
+        }}>
+          <a href="https://blr.indiewebclub.org/webring/previous.html">← Previous</a>
+          {' · '}
+          <a href="https://blr.indiewebclub.org/">IndieWebClub Bangalore</a>
+          {' · '}
+          <a href="https://blr.indiewebclub.org/webring/next.html">Next →</a>
+        </footer>
       </body>
     </html>
   );
