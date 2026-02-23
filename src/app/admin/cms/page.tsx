@@ -85,6 +85,7 @@ function CMSPostEditorInner() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const quillRef = useRef<any>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const searchParams = useSearchParams()
 
   // Check authentication and set mounted state
@@ -619,6 +620,32 @@ function CMSPostEditorInner() {
     }
   }
 
+  const handleInsertImage = () => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = 'image/*'
+    input.onchange = async () => {
+      const file = input.files?.[0]
+      if (!file || !quillRef.current) return
+      try {
+        const compressedFile = await compressImage(file, 300, 0, '')
+        const formData = new FormData()
+        formData.append('image', compressedFile)
+        const response = await fetch('/api/upload-image', { method: 'POST', body: formData })
+        const data = await response.json()
+        if (data.success && data.url) {
+          const editor = quillRef.current.getEditor()
+          const range = editor.getSelection() || { index: editor.getLength() }
+          editor.insertEmbed(range.index, 'image', data.url)
+          editor.setSelection(range.index + 1, 0)
+        }
+      } catch (err) {
+        console.error('Image insert failed:', err)
+      }
+    }
+    input.click()
+  }
+
   if (!mounted) {
     return null
   }
@@ -829,17 +856,22 @@ function CMSPostEditorInner() {
                   onChange={(e) => setImageUrl(e.target.value)}
                 />
                 <input
+                  ref={fileInputRef}
                   type="file"
-                  id="focus-image-upload"
                   className="cms-focus-file-input"
                   accept="image/*"
                   onChange={handleImageUpload}
                   disabled={isUploadingImage}
                 />
-                <label htmlFor="focus-image-upload" className="cms-focus-upload-label">
+                <button
+                  type="button"
+                  className="cms-focus-upload-label"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploadingImage}
+                >
                   <ImagePlus size={14} />
                   {isUploadingImage ? 'Uploading...' : 'Upload'}
-                </label>
+                </button>
                 <input
                   type="text"
                   className="cms-focus-watermark-date"
@@ -884,7 +916,7 @@ function CMSPostEditorInner() {
               </span>
               <span className="ql-formats">
                 <button type="button" className="ql-link" />
-                <button type="button" className="ql-image" />
+                <button type="button" className="ql-image" onClick={handleInsertImage} />
               </span>
               <span className="ql-formats">
                 <button className="cms-hr-button" type="button" onClick={insertHr} title="Insert Horizontal Rule">HR</button>
