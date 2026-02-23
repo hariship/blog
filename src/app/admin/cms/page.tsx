@@ -85,7 +85,9 @@ function CMSPostEditorInner() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const quillRef = useRef<any>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const quillImageInputRef = useRef<HTMLInputElement>(null)
+  const uploadInputRef = useRef<HTMLInputElement>(null)
+  const savedQuillSelection = useRef<{ index: number; length: number } | null>(null)
   const searchParams = useSearchParams()
 
   // Check authentication and set mounted state
@@ -269,15 +271,45 @@ function CMSPostEditorInner() {
               ctx.strokeRect(0, 0, width, height)
             }
 
-            // Watermark text bottom-right
-            if (watermarkText) {
-              const fontSize = Math.max(12, Math.round(width * 0.025))
-              ctx.font = `${fontSize}px sans-serif`
-              ctx.fillStyle = 'rgba(255,255,255,0.75)'
-              ctx.textAlign = 'right'
-              ctx.textBaseline = 'bottom'
-              const padding = borderPx + Math.round(fontSize * 0.5)
-              ctx.fillText(watermarkText, width - padding, height - padding)
+            // Watermark — LCARS two-tone split (Option 4)
+            {
+              const leftLabel = 'Hari'
+              const rightLabel = watermarkText
+              const fontSize = Math.max(10, Math.round(width * 0.018))
+              ctx.font = `bold ${fontSize}px sans-serif`
+              const padX = Math.round(fontSize * 0.65)
+              const padY = Math.round(fontSize * 0.42)
+              const h = fontSize + padY * 2
+
+              const leftW = ctx.measureText(leftLabel).width + padX * 2
+              const rightW = ctx.measureText(rightLabel).width + padX * 2
+              const totalW = leftW + rightW
+              const margin = borderPx + Math.round(fontSize * 0.5)
+              const x = width - margin - totalW
+              const y = height - margin - h
+
+              // Left section — black, sharp edges
+              ctx.fillStyle = 'rgba(10, 10, 10, 0.85)'
+              ctx.fillRect(x, y, leftW, h)
+
+              // Right section — LCARS orange, sharp edges
+              ctx.fillStyle = 'rgba(210, 120, 20, 0.82)'
+              ctx.fillRect(x + leftW, y, rightW, h)
+
+              // Thin divider line between sections
+              ctx.strokeStyle = 'rgba(255,255,255,0.25)'
+              ctx.lineWidth = 1
+              ctx.beginPath()
+              ctx.moveTo(x + leftW, y)
+              ctx.lineTo(x + leftW, y + h)
+              ctx.stroke()
+
+              // Text — white on both sections
+              ctx.fillStyle = 'rgba(255,255,255,0.92)'
+              ctx.textAlign = 'center'
+              ctx.textBaseline = 'middle'
+              ctx.fillText(leftLabel, x + leftW / 2, y + h / 2)
+              ctx.fillText(rightLabel, x + leftW + rightW / 2, y + h / 2)
             }
           }
 
@@ -327,7 +359,8 @@ function CMSPostEditorInner() {
     setSubmitStatus(null)
 
     try {
-      const compressedFile = await compressImage(file, 300, 12, watermarkDate)
+      const dateLabel = watermarkDate || new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+      const compressedFile = await compressImage(file, 300, 12, dateLabel)
       const formData = new FormData()
       formData.append('image', compressedFile)
 
@@ -577,7 +610,10 @@ function CMSPostEditorInner() {
 
   const quillModules = useMemo(() => ({
     toolbar: {
-      container: '#toolbar-focus'
+      container: '#toolbar-focus',
+      handlers: {
+        image: () => {} // handled by our own onClick on the ql-image button
+      }
     }
   }), [])
 
@@ -620,30 +656,27 @@ function CMSPostEditorInner() {
     }
   }
 
-  const handleInsertImage = () => {
-    const input = document.createElement('input')
-    input.type = 'file'
-    input.accept = 'image/*'
-    input.onchange = async () => {
-      const file = input.files?.[0]
-      if (!file || !quillRef.current) return
-      try {
-        const compressedFile = await compressImage(file, 300, 0, '')
-        const formData = new FormData()
-        formData.append('image', compressedFile)
-        const response = await fetch('/api/upload-image', { method: 'POST', body: formData })
-        const data = await response.json()
-        if (data.success && data.url) {
-          const editor = quillRef.current.getEditor()
-          const range = editor.getSelection() || { index: editor.getLength() }
-          editor.insertEmbed(range.index, 'image', data.url)
-          editor.setSelection(range.index + 1, 0)
-        }
-      } catch (err) {
-        console.error('Image insert failed:', err)
+  const handleInsertImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !quillRef.current) return
+    try {
+      const compressedFile = await compressImage(file, 300, 0, '')
+      const formData = new FormData()
+      formData.append('image', compressedFile)
+      const response = await fetch('/api/upload-image', { method: 'POST', body: formData })
+      const data = await response.json()
+      if (data.success && data.url) {
+        const editor = quillRef.current.getEditor()
+        const insertIndex = savedQuillSelection.current?.index ?? editor.getLength()
+        editor.focus()
+        editor.insertEmbed(insertIndex, 'image', data.url)
+        editor.setSelection(insertIndex + 1, 0)
+        savedQuillSelection.current = null
       }
+    } catch (err) {
+      console.error('Image insert failed:', err)
     }
-    input.click()
+    e.target.value = ''
   }
 
   if (!mounted) {
@@ -802,6 +835,7 @@ function CMSPostEditorInner() {
         </div>
       )}
 
+
       {/* Writing area */}
       <div className="cms-focus-body">
         <input
@@ -856,18 +890,17 @@ function CMSPostEditorInner() {
                   onChange={(e) => setImageUrl(e.target.value)}
                 />
                 <input
-                  ref={fileInputRef}
+                  ref={uploadInputRef}
                   type="file"
-                  className="cms-focus-file-input"
                   accept="image/*"
                   onChange={handleImageUpload}
-                  disabled={isUploadingImage}
+                  style={{ display: 'none' }}
                 />
                 <button
                   type="button"
                   className="cms-focus-upload-label"
-                  onClick={() => fileInputRef.current?.click()}
                   disabled={isUploadingImage}
+                  onClick={() => uploadInputRef.current?.click()}
                 >
                   <ImagePlus size={14} />
                   {isUploadingImage ? 'Uploading...' : 'Upload'}
@@ -889,6 +922,15 @@ function CMSPostEditorInner() {
             )}
           </div>
         )}
+
+        {/* Hidden file input for ql-image — must be outside Quill toolbar to avoid Quill's preventDefault blocking the picker */}
+        <input
+          ref={quillImageInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleInsertImage}
+          style={{ display: 'none' }}
+        />
 
         {/* Toolbar + Editor */}
         {mounted ? (
@@ -916,7 +958,12 @@ function CMSPostEditorInner() {
               </span>
               <span className="ql-formats">
                 <button type="button" className="ql-link" />
-                <button type="button" className="ql-image" onClick={handleInsertImage} />
+                <button type="button" className="ql-image" onClick={() => {
+                  if (quillRef.current) {
+                    savedQuillSelection.current = quillRef.current.getEditor().getSelection()
+                  }
+                  quillImageInputRef.current?.click()
+                }} />
               </span>
               <span className="ql-formats">
                 <button className="cms-hr-button" type="button" onClick={insertHr} title="Insert Horizontal Rule">HR</button>
