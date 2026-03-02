@@ -1,4 +1,5 @@
-import { createServerClient } from '@/lib/supabase'
+import { db } from '@/lib/db'
+import { adminUsers } from '@/lib/db/schema'
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
@@ -6,8 +7,6 @@ import jwt from 'jsonwebtoken'
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-jwt-key'
 
 export async function POST(request: NextRequest) {
-  const supabase = createServerClient()
-
   try {
     const { password } = await request.json()
 
@@ -16,15 +15,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Get admin user
-    const { data: admin, error } = await supabase
-      .from('admin_users')
-      .select('id, password_hash')
+    const rows = await db
+      .select({ id: adminUsers.id, password_hash: adminUsers.password_hash })
+      .from(adminUsers)
       .limit(1)
-      .single()
 
-    if (error || !admin) {
+    if (rows.length === 0) {
       return NextResponse.json({ error: 'Authentication failed' }, { status: 401 })
     }
+
+    const admin = rows[0]
 
     // Compare password
     const isValid = await bcrypt.compare(password, admin.password_hash)

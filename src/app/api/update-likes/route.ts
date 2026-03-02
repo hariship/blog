@@ -1,9 +1,9 @@
-import { createServerClient } from '@/lib/supabase'
+import { db } from '@/lib/db'
+import { posts, likes } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
-  const supabase = createServerClient()
-
   try {
     const { postTitle, increment } = await request.json()
 
@@ -12,51 +12,38 @@ export async function POST(request: NextRequest) {
     }
 
     // Get the post ID from normalized title
-    const { data: post, error: postError } = await supabase
-      .from('posts')
-      .select('id')
-      .eq('normalized_title', postTitle)
-      .single()
+    const postRows = await db
+      .select({ id: posts.id })
+      .from(posts)
+      .where(eq(posts.normalized_title, postTitle))
+      .limit(1)
 
-    if (postError || !post) {
+    if (postRows.length === 0) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 })
     }
 
+    const postId = postRows[0].id
+
     // Get current likes count
-    const { data: likesData, error: likesError } = await supabase
-      .from('likes')
-      .select('likes_count')
-      .eq('post_id', post.id)
-      .single()
+    const likesRows = await db
+      .select({ likes_count: likes.likes_count })
+      .from(likes)
+      .where(eq(likes.post_id, postId))
+      .limit(1)
 
-    if (likesError && likesError.code !== 'PGRST116') {
-      console.error('Error fetching likes:', likesError)
-      return NextResponse.json({ error: likesError.message }, { status: 500 })
-    }
-
-    const currentCount = likesData?.likes_count || 0
+    const currentCount = likesRows[0]?.likes_count || 0
     const newCount = increment ? currentCount + 1 : Math.max(0, currentCount - 1)
 
     // Update or insert likes
-    if (likesData) {
-      const { error: updateError } = await supabase
-        .from('likes')
-        .update({ likes_count: newCount })
-        .eq('post_id', post.id)
-
-      if (updateError) {
-        console.error('Error updating likes:', updateError)
-        return NextResponse.json({ error: updateError.message }, { status: 500 })
-      }
+    if (likesRows.length > 0) {
+      await db
+        .update(likes)
+        .set({ likes_count: newCount })
+        .where(eq(likes.post_id, postId))
     } else {
-      const { error: insertError } = await supabase
-        .from('likes')
-        .insert({ post_id: post.id, likes_count: newCount })
-
-      if (insertError) {
-        console.error('Error inserting likes:', insertError)
-        return NextResponse.json({ error: insertError.message }, { status: 500 })
-      }
+      await db
+        .insert(likes)
+        .values({ post_id: postId, likes_count: newCount })
     }
 
     return NextResponse.json({ success: true, likesCount: newCount })

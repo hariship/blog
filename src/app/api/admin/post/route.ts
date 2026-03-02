@@ -1,4 +1,6 @@
-import { createServerClient } from '@/lib/supabase'
+import { db } from '@/lib/db'
+import { posts, likes } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
 
@@ -30,8 +32,6 @@ function verifyToken(authHeader: string | null): boolean {
 }
 
 export async function POST(request: NextRequest) {
-  const supabase = createServerClient()
-
   // Verify authentication
   const authHeader = request.headers.get('authorization')
   if (!verifyToken(authHeader)) {
@@ -50,9 +50,9 @@ export async function POST(request: NextRequest) {
 
     // If an ID is provided, update by ID directly (allows title changes during editing)
     if (id) {
-      const { error: updateError } = await supabase
-        .from('posts')
-        .update({
+      await db
+        .update(posts)
+        .set({
           title,
           normalized_title,
           description,
@@ -61,28 +61,23 @@ export async function POST(request: NextRequest) {
           image_url,
           enclosure
         })
-        .eq('id', id)
-
-      if (updateError) {
-        console.error('Error updating post:', updateError)
-        return NextResponse.json({ error: updateError.message }, { status: 500 })
-      }
+        .where(eq(posts.id, id))
 
       return NextResponse.json({ success: true, message: 'Post updated', id })
     }
 
     // Check if post already exists by normalized title
-    const { data: existingPost } = await supabase
-      .from('posts')
-      .select('id')
-      .eq('normalized_title', normalized_title)
-      .single()
+    const existingRows = await db
+      .select({ id: posts.id })
+      .from(posts)
+      .where(eq(posts.normalized_title, normalized_title))
+      .limit(1)
 
-    if (existingPost) {
+    if (existingRows.length > 0) {
       // Update existing post
-      const { error: updateError } = await supabase
-        .from('posts')
-        .update({
+      await db
+        .update(posts)
+        .set({
           title,
           description,
           content,
@@ -90,19 +85,14 @@ export async function POST(request: NextRequest) {
           image_url,
           enclosure
         })
-        .eq('id', existingPost.id)
+        .where(eq(posts.id, existingRows[0].id))
 
-      if (updateError) {
-        console.error('Error updating post:', updateError)
-        return NextResponse.json({ error: updateError.message }, { status: 500 })
-      }
-
-      return NextResponse.json({ success: true, message: 'Post updated', id: existingPost.id })
+      return NextResponse.json({ success: true, message: 'Post updated', id: existingRows[0].id })
     } else {
       // Create new post
-      const { data: newPost, error: insertError } = await supabase
-        .from('posts')
-        .insert({
+      const [newPost] = await db
+        .insert(posts)
+        .values({
           title,
           normalized_title,
           description,
@@ -110,18 +100,12 @@ export async function POST(request: NextRequest) {
           category,
           image_url,
           enclosure,
-          pub_date: new Date().toISOString()
+          pub_date: new Date()
         })
-        .select('id')
-        .single()
-
-      if (insertError) {
-        console.error('Error creating post:', insertError)
-        return NextResponse.json({ error: insertError.message }, { status: 500 })
-      }
+        .returning({ id: posts.id })
 
       // Create likes entry for new post
-      await supabase.from('likes').insert({ post_id: newPost.id, likes_count: 0 })
+      await db.insert(likes).values({ post_id: newPost.id, likes_count: 0 })
 
       return NextResponse.json({ success: true, message: 'Post created', id: newPost.id })
     }

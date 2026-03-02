@@ -1,24 +1,29 @@
-import { createServerClient } from '@/lib/supabase'
+import { db } from '@/lib/db'
+import { posts } from '@/lib/db/schema'
+import { desc } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
 
 export async function GET() {
-  const supabase = createServerClient()
   const domain = process.env.NEXT_PUBLIC_DOMAIN || 'https://blog.haripriya.org'
 
   try {
-    const { data: posts, error } = await supabase
-      .from('posts')
-      .select('title, normalized_title, description, image_url, pub_date, content, category, enclosure')
-      .order('pub_date', { ascending: false })
+    const rows = await db
+      .select({
+        title: posts.title,
+        normalized_title: posts.normalized_title,
+        description: posts.description,
+        image_url: posts.image_url,
+        pub_date: posts.pub_date,
+        content: posts.content,
+        category: posts.category,
+        enclosure: posts.enclosure,
+      })
+      .from(posts)
+      .orderBy(desc(posts.pub_date))
       .limit(50)
 
-    if (error) {
-      console.error('Error fetching posts for RSS:', error)
-      return new NextResponse('Error generating RSS feed', { status: 500 })
-    }
-
-    const rssItems = posts?.map(post => {
-      const pubDate = new Date(post.pub_date).toUTCString()
+    const rssItems = rows.map(post => {
+      const pubDate = new Date(post.pub_date!).toUTCString()
       const link = `${domain}/post/${post.normalized_title}`
 
       return `

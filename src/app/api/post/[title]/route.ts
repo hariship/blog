@@ -1,33 +1,51 @@
-import { createServerClient } from '@/lib/supabase'
+import { db } from '@/lib/db'
+import { posts, likes } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ title: string }> }
 ) {
-  const supabase = createServerClient()
   const { title } = await params
 
   try {
-    const { data: post, error } = await supabase
-      .from('posts')
-      .select('*, likes(likes_count)')
-      .eq('normalized_title', title)
-      .single()
+    const rows = await db
+      .select({
+        id: posts.id,
+        title: posts.title,
+        normalized_title: posts.normalized_title,
+        description: posts.description,
+        content: posts.content,
+        category: posts.category,
+        image_url: posts.image_url,
+        enclosure: posts.enclosure,
+        pub_date: posts.pub_date,
+        inkhouse_published: posts.inkhouse_published,
+        likes_count: likes.likes_count,
+      })
+      .from(posts)
+      .leftJoin(likes, eq(posts.id, likes.post_id))
+      .where(eq(posts.normalized_title, title))
+      .limit(1)
 
-    if (error) {
-      if (error.code === 'PGRST116') {
-        return NextResponse.json({ error: 'Post not found' }, { status: 404 })
-      }
-      console.error('Error fetching post:', error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    if (rows.length === 0) {
+      return NextResponse.json({ error: 'Post not found' }, { status: 404 })
     }
 
-    // Transform to include likesCount at top level
+    const row = rows[0]
     const transformedPost = {
-      ...post,
-      likesCount: post.likes?.[0]?.likes_count || 0,
-      likes: undefined
+      id: row.id,
+      title: row.title,
+      normalized_title: row.normalized_title,
+      description: row.description,
+      content: row.content,
+      category: row.category,
+      image_url: row.image_url,
+      enclosure: row.enclosure,
+      pub_date: row.pub_date,
+      inkhouse_published: row.inkhouse_published,
+      likesCount: row.likes_count || 0,
     }
 
     return NextResponse.json(transformedPost)

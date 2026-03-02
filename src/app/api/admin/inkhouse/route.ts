@@ -1,4 +1,6 @@
-import { createServerClient } from '@/lib/supabase'
+import { db } from '@/lib/db'
+import { posts } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
 
@@ -30,8 +32,6 @@ interface InkHousePayload {
 }
 
 export async function POST(request: NextRequest) {
-  const supabase = createServerClient()
-
   const authHeader = request.headers.get('authorization')
   if (!verifyToken(authHeader)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -86,12 +86,12 @@ export async function POST(request: NextRequest) {
 
     // Update the post's inkhouse_published status in database
     if (postId) {
-      const { error: updateError } = await supabase
-        .from('posts')
-        .update({ inkhouse_published: true })
-        .eq('id', postId)
-
-      if (updateError) {
+      try {
+        await db
+          .update(posts)
+          .set({ inkhouse_published: true })
+          .where(eq(posts.id, postId))
+      } catch (updateError) {
         console.error('Failed to update inkhouse_published status:', updateError)
         // Don't fail the request - InkHouse publish succeeded
       }

@@ -1,9 +1,9 @@
-import { createServerClient } from '@/lib/supabase'
+import { db } from '@/lib/db'
+import { subscribers } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
-  const supabase = createServerClient()
-
   try {
     const { email, name, categories, frequency } = await request.json()
 
@@ -12,47 +12,37 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if subscriber exists
-    const { data: existingSubscriber } = await supabase
-      .from('subscribers')
-      .select('id, status')
-      .eq('email', email)
-      .single()
+    const existingRows = await db
+      .select({ id: subscribers.id, status: subscribers.status })
+      .from(subscribers)
+      .where(eq(subscribers.email, email))
+      .limit(1)
 
-    if (existingSubscriber) {
+    if (existingRows.length > 0) {
       // Update existing subscriber
-      const { error: updateError } = await supabase
-        .from('subscribers')
-        .update({
+      await db
+        .update(subscribers)
+        .set({
           name,
           categories,
           frequency,
           status: 'active',
-          updated_at: new Date().toISOString()
+          updated_at: new Date()
         })
-        .eq('id', existingSubscriber.id)
-
-      if (updateError) {
-        console.error('Error updating subscriber:', updateError)
-        return NextResponse.json({ error: updateError.message }, { status: 500 })
-      }
+        .where(eq(subscribers.id, existingRows[0].id))
 
       return NextResponse.json({ success: true, message: 'Subscription updated' })
     } else {
       // Create new subscriber
-      const { error: insertError } = await supabase
-        .from('subscribers')
-        .insert({
+      await db
+        .insert(subscribers)
+        .values({
           email,
           name,
           categories,
           frequency,
           status: 'active'
         })
-
-      if (insertError) {
-        console.error('Error creating subscriber:', insertError)
-        return NextResponse.json({ error: insertError.message }, { status: 500 })
-      }
 
       return NextResponse.json({ success: true, message: 'Subscribed successfully' })
     }

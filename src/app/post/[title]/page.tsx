@@ -1,5 +1,7 @@
 import { Metadata } from 'next'
-import { supabase } from '@/lib/supabase'
+import { db } from '@/lib/db'
+import { posts, likes } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 import PostClient from './PostClient'
 
 interface Props {
@@ -29,25 +31,37 @@ const normalizeTitle = (title: string): string => {
 async function getPost(title: string): Promise<PostData | null> {
   const normalized = normalizeTitle(title)
 
-  const { data: post, error } = await supabase
-    .from('posts')
-    .select('*, likes(likes_count)')
-    .eq('normalized_title', normalized)
-    .single()
+  const rows = await db
+    .select({
+      id: posts.id,
+      content: posts.content,
+      title: posts.title,
+      pub_date: posts.pub_date,
+      category: posts.category,
+      enclosure: posts.enclosure,
+      description: posts.description,
+      inkhouse_published: posts.inkhouse_published,
+      likes_count: likes.likes_count,
+    })
+    .from(posts)
+    .leftJoin(likes, eq(posts.id, likes.post_id))
+    .where(eq(posts.normalized_title, normalized))
+    .limit(1)
 
-  if (error || !post) {
+  if (rows.length === 0) {
     return null
   }
 
+  const post = rows[0]
   return {
     id: post.id,
     content: post.content,
     title: post.title,
-    pub_date: post.pub_date,
-    category: post.category,
+    pub_date: post.pub_date?.toISOString() || '',
+    category: post.category || '',
     enclosure: post.enclosure || '',
-    likesCount: post.likes?.[0]?.likes_count || 0,
-    description: post.description,
+    likesCount: post.likes_count || 0,
+    description: post.description ?? undefined,
     inkhouse_published: post.inkhouse_published || false
   }
 }

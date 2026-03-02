@@ -1,4 +1,6 @@
-import { createServerClient } from '@/lib/supabase'
+import { db } from '@/lib/db'
+import { posts, likes } from '@/lib/db/schema'
+import { eq, ilike, or, desc, count, sql } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
 
 // Use Edge runtime for faster cold starts
@@ -8,7 +10,6 @@ export const runtime = 'edge'
 export const revalidate = 60
 
 export async function GET(request: NextRequest) {
-  const supabase = createServerClient()
   const { searchParams } = new URL(request.url)
 
   const page = parseInt(searchParams.get('page') || '1')
@@ -19,41 +20,75 @@ export async function GET(request: NextRequest) {
   const offset = (page - 1) * limit
 
   try {
-    let query = supabase
-      .from('posts')
-      .select('*, likes(likes_count)', { count: 'exact' })
-      .order('pub_date', { ascending: false })
-      .range(offset, offset + limit - 1)
-
+    // Build where conditions
+    const conditions = []
     if (category && category !== 'all') {
-      query = query.eq('category', category)
+      conditions.push(eq(posts.category, category))
     }
-
     if (search) {
-      query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%`)
+      conditions.push(
+        or(
+          ilike(posts.title, `%${search}%`),
+          ilike(posts.description, `%${search}%`)
+        )!
+      )
     }
 
-    const { data: posts, error, count } = await query
+    const where = conditions.length > 0
+      ? conditions.length === 1 ? conditions[0] : sql`${conditions[0]} AND ${conditions[1]}`
+      : undefined
 
-    if (error) {
-      console.error('Error fetching posts:', error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
-    }
+    // Fetch posts with likes
+    const rows = await db
+      .select({
+        id: posts.id,
+        title: posts.title,
+        normalized_title: posts.normalized_title,
+        description: posts.description,
+        content: posts.content,
+        category: posts.category,
+        image_url: posts.image_url,
+        enclosure: posts.enclosure,
+        pub_date: posts.pub_date,
+        inkhouse_published: posts.inkhouse_published,
+        likes_count: likes.likes_count,
+      })
+      .from(posts)
+      .leftJoin(likes, eq(posts.id, likes.post_id))
+      .where(where)
+      .orderBy(desc(posts.pub_date))
+      .limit(limit)
+      .offset(offset)
 
-    // Transform posts to include likesCount at top level
-    const transformedPosts = posts?.map(post => ({
-      ...post,
-      likesCount: post.likes?.[0]?.likes_count || 0,
-      likes: undefined,
-      inkhouse_published: post.inkhouse_published || false
+    // Get total count
+    const [countResult] = await db
+      .select({ total: count() })
+      .from(posts)
+      .where(where)
+
+    const totalItems = countResult?.total || 0
+
+    // Transform posts to match existing API shape
+    const transformedPosts = rows.map(row => ({
+      id: row.id,
+      title: row.title,
+      normalized_title: row.normalized_title,
+      description: row.description,
+      content: row.content,
+      category: row.category,
+      image_url: row.image_url,
+      enclosure: row.enclosure,
+      pub_date: row.pub_date,
+      inkhouse_published: row.inkhouse_published || false,
+      likesCount: row.likes_count || 0,
     }))
 
     const response = NextResponse.json({
       posts: transformedPosts,
       pagination: {
         currentPage: page,
-        totalPages: Math.ceil((count || 0) / limit),
-        totalItems: count || 0,
+        totalPages: Math.ceil(totalItems / limit),
+        totalItems,
         itemsPerPage: limit
       }
     })
