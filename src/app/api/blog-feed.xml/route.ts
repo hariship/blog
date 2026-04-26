@@ -4,7 +4,7 @@ import { desc } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
 
 export async function GET() {
-  const domain = process.env.NEXT_PUBLIC_DOMAIN || 'https://blog.haripriya.org'
+  const domain = (process.env.NEXT_PUBLIC_DOMAIN || 'https://blog.haripriya.org').trim()
 
   try {
     const rows = await db

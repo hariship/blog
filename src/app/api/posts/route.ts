@@ -3,11 +3,8 @@ import { posts, likes } from '@/lib/db/schema'
 import { eq, ilike, or, desc, count, sql } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
 
-// Use Edge runtime for faster cold starts
-export const runtime = 'edge'
-
-// Cache for 60 seconds
-export const revalidate = 60
+// Cache for 5 minutes, allow stale for 1 hour while revalidating
+export const revalidate = 300
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -38,14 +35,13 @@ export async function GET(request: NextRequest) {
       ? conditions.length === 1 ? conditions[0] : sql`${conditions[0]} AND ${conditions[1]}`
       : undefined
 
-    // Fetch posts with likes
+    // Fetch posts with likes (no `content` — list view doesn't render full body)
     const rows = await db
       .select({
         id: posts.id,
         title: posts.title,
         normalized_title: posts.normalized_title,
         description: posts.description,
-        content: posts.content,
         category: posts.category,
         image_url: posts.image_url,
         enclosure: posts.enclosure,
@@ -68,13 +64,12 @@ export async function GET(request: NextRequest) {
 
     const totalItems = countResult?.total || 0
 
-    // Transform posts to match existing API shape
+    // Transform posts to match existing API shape (content excluded — fetch full post via /api/post/[title])
     const transformedPosts = rows.map(row => ({
       id: row.id,
       title: row.title,
       normalized_title: row.normalized_title,
       description: row.description,
-      content: row.content,
       category: row.category,
       image_url: row.image_url,
       enclosure: row.enclosure,
@@ -93,8 +88,7 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    // Cache for 60 seconds, stale-while-revalidate for 5 minutes
-    response.headers.set('Cache-Control', 's-maxage=60, stale-while-revalidate=300')
+    response.headers.set('Cache-Control', 's-maxage=300, stale-while-revalidate=3600')
     return response
   } catch (error) {
     console.error('Error in posts API:', error)
