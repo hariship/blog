@@ -216,7 +216,11 @@ function CMSPostEditorInner() {
       const data = await response.json()
 
       if (response.ok && data.token) {
+        // AdminContext (used on post pages for the Edit button) requires
+        // both adminToken AND adminTokenExpiry; set the expiry to 24h.
+        const expiry = new Date(Date.now() + 24 * 60 * 60 * 1000)
         localStorage.setItem('adminToken', data.token)
+        localStorage.setItem('adminTokenExpiry', expiry.toISOString())
         setIsAuthenticated(true)
       } else {
         setLoginError(data.error || 'Invalid PIN')
@@ -228,6 +232,7 @@ function CMSPostEditorInner() {
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken')
+    localStorage.removeItem('adminTokenExpiry')
     setIsAuthenticated(false)
   }
 
@@ -332,6 +337,36 @@ function CMSPostEditorInner() {
     })
   }
 
+  const uploadToCloudinaryDirect = async (file: File): Promise<{ url: string }> => {
+    const token = localStorage.getItem('adminToken')
+    if (!token) throw new Error('Not authenticated')
+
+    const sigRes = await fetch('/api/admin/cloudinary-sign', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    if (!sigRes.ok) throw new Error('Failed to get upload signature')
+    const { signature, timestamp, api_key, cloud_name, folder } = await sigRes.json()
+
+    const fd = new FormData()
+    fd.append('file', file)
+    fd.append('api_key', api_key)
+    fd.append('timestamp', String(timestamp))
+    fd.append('signature', signature)
+    fd.append('folder', folder)
+
+    const cdnRes = await fetch(`https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`, {
+      method: 'POST',
+      body: fd,
+    })
+    if (!cdnRes.ok) {
+      const errBody = await cdnRes.text()
+      throw new Error(`Cloudinary upload failed: ${errBody}`)
+    }
+    const data = await cdnRes.json()
+    return { url: data.secure_url }
+  }
+
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) return
@@ -346,34 +381,13 @@ function CMSPostEditorInner() {
 
     try {
       const dateLabel = watermarkDate || new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
-      const t0 = performance.now()
-      console.log('[upload] start, original size KB:', (file.size / 1024).toFixed(0))
       const compressedFile = await compressImage(file, 300, 12, dateLabel)
-      const t1 = performance.now()
-      console.log(`[upload] compressed in ${(t1 - t0).toFixed(0)}ms → ${(compressedFile.size / 1024).toFixed(0)} KB`)
-      const formData = new FormData()
-      formData.append('image', compressedFile)
-
-      const response = await fetch('/api/upload-image', {
-        method: 'POST',
-        body: formData,
+      const { url } = await uploadToCloudinaryDirect(compressedFile)
+      setImageUrl(url)
+      setSubmitStatus({
+        type: 'success',
+        message: `Image compressed to ${(compressedFile.size / 1024).toFixed(0)}KB and uploaded!`
       })
-      const t2 = performance.now()
-      console.log(`[upload] fetch returned in ${(t2 - t1).toFixed(0)}ms (browser → api → Cloudinary → back)`)
-
-      const data = await response.json()
-      const t3 = performance.now()
-      console.log(`[upload] total ${(t3 - t0).toFixed(0)}ms`)
-
-      if (data.success && data.url) {
-        setImageUrl(data.url)
-        setSubmitStatus({
-          type: 'success',
-          message: `Image compressed to ${(compressedFile.size / 1024).toFixed(0)}KB and uploaded!`
-        })
-      } else {
-        throw new Error(data.error || data.message || 'Upload failed')
-      }
     } catch (error: unknown) {
       const err = error as Error
       setSubmitStatus({ type: 'error', message: err.message || 'Failed to upload image' })
@@ -657,26 +671,14 @@ function CMSPostEditorInner() {
     const file = e.target.files?.[0]
     if (!file || !quillRef.current) return
     try {
-      const t0 = performance.now()
-      console.log('[insert] start, original size KB:', (file.size / 1024).toFixed(0))
       const compressedFile = await compressImage(file, 300, 0, '')
-      const t1 = performance.now()
-      console.log(`[insert] compressed in ${(t1 - t0).toFixed(0)}ms → ${(compressedFile.size / 1024).toFixed(0)} KB`)
-      const formData = new FormData()
-      formData.append('image', compressedFile)
-      const response = await fetch('/api/upload-image', { method: 'POST', body: formData })
-      const t2 = performance.now()
-      console.log(`[insert] fetch returned in ${(t2 - t1).toFixed(0)}ms`)
-      const data = await response.json()
-      console.log(`[insert] total ${(performance.now() - t0).toFixed(0)}ms`)
-      if (data.success && data.url) {
-        const editor = quillRef.current.getEditor()
-        const insertIndex = savedQuillSelection.current?.index ?? editor.getLength()
-        editor.focus()
-        editor.insertEmbed(insertIndex, 'image', data.url)
-        editor.setSelection(insertIndex + 1, 0)
-        savedQuillSelection.current = null
-      }
+      const { url } = await uploadToCloudinaryDirect(compressedFile)
+      const editor = quillRef.current.getEditor()
+      const insertIndex = savedQuillSelection.current?.index ?? editor.getLength()
+      editor.focus()
+      editor.insertEmbed(insertIndex, 'image', url)
+      editor.setSelection(insertIndex + 1, 0)
+      savedQuillSelection.current = null
     } catch (err) {
       console.error('Image insert failed:', err)
     }

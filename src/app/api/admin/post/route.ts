@@ -2,7 +2,17 @@ import { db } from '@/lib/db'
 import { posts, likes } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import jwt from 'jsonwebtoken'
+
+function invalidateBlogCaches(normalizedTitle?: string) {
+  revalidatePath('/')
+  revalidatePath('/api/posts')
+  revalidatePath('/api/categories')
+  revalidatePath('/api/rss')
+  revalidatePath('/api/blog-feed.xml')
+  if (normalizedTitle) revalidatePath(`/post/${normalizedTitle}`)
+}
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-jwt-key'
 
@@ -63,6 +73,7 @@ export async function POST(request: NextRequest) {
         })
         .where(eq(posts.id, id))
 
+      invalidateBlogCaches(normalized_title)
       return NextResponse.json({ success: true, message: 'Post updated', id })
     }
 
@@ -87,6 +98,7 @@ export async function POST(request: NextRequest) {
         })
         .where(eq(posts.id, existingRows[0].id))
 
+      invalidateBlogCaches(normalized_title)
       return NextResponse.json({ success: true, message: 'Post updated', id: existingRows[0].id })
     } else {
       // Create new post
@@ -107,6 +119,7 @@ export async function POST(request: NextRequest) {
       // Create likes entry for new post
       await db.insert(likes).values({ post_id: newPost.id, likes_count: 0 })
 
+      invalidateBlogCaches(normalized_title)
       return NextResponse.json({ success: true, message: 'Post created', id: newPost.id })
     }
   } catch (error) {
