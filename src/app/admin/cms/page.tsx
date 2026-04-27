@@ -3,7 +3,7 @@
 import React, { Suspense, useState, useRef, useEffect, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 import { useSearchParams } from 'next/navigation'
-import { Eye, EyeOff, Settings, Save, ImagePlus } from 'lucide-react'
+import { Eye, EyeOff, Settings, Save, ImagePlus, Image as ImageIcon } from 'lucide-react'
 import { ThemeToggle } from '@/components/common'
 import './CMSPostEditor.css'
 
@@ -609,12 +609,15 @@ function CMSPostEditorInner() {
   }
 
   const quillModules = useMemo(() => ({
+    // No `image` handler registered — the image button below uses className
+    // `cms-image-btn` (NOT `ql-image`) so Quill ignores it and our React
+    // onClick fires cleanly. Reason: Quill 2.x's toolbar.js calls
+    // `quill.focus()` BEFORE running the registered handler. focus() can
+    // throw "addRange: range not in document" when there's no prior selection,
+    // which halts the listener and leaves our handler unreachable.
     toolbar: {
       container: '#toolbar-focus',
-      handlers: {
-        image: () => {} // handled by our own onClick on the ql-image button
-      }
-    }
+    },
   }), [])
 
   const insertHr = () => {
@@ -889,22 +892,21 @@ function CMSPostEditorInner() {
                   value={imageUrl}
                   onChange={(e) => setImageUrl(e.target.value)}
                 />
-                <input
-                  ref={uploadInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  style={{ display: 'none' }}
-                />
-                <button
-                  type="button"
+                <label
                   className="cms-focus-upload-label"
-                  disabled={isUploadingImage}
-                  onClick={() => uploadInputRef.current?.click()}
+                  style={{ cursor: isUploadingImage ? 'wait' : 'pointer' }}
                 >
                   <ImagePlus size={14} />
                   {isUploadingImage ? 'Uploading...' : 'Upload'}
-                </button>
+                  <input
+                    ref={uploadInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={isUploadingImage}
+                    style={{ position: 'absolute', width: 1, height: 1, opacity: 0, overflow: 'hidden' }}
+                  />
+                </label>
                 <input
                   type="text"
                   className="cms-focus-watermark-date"
@@ -922,15 +924,6 @@ function CMSPostEditorInner() {
             )}
           </div>
         )}
-
-        {/* Hidden file input for ql-image — must be outside Quill toolbar to avoid Quill's preventDefault blocking the picker */}
-        <input
-          ref={quillImageInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleInsertImage}
-          style={{ display: 'none' }}
-        />
 
         {/* Toolbar + Editor */}
         {mounted ? (
@@ -958,12 +951,27 @@ function CMSPostEditorInner() {
               </span>
               <span className="ql-formats">
                 <button type="button" className="ql-link" />
-                <button type="button" className="ql-image" onClick={() => {
-                  if (quillRef.current) {
-                    savedQuillSelection.current = quillRef.current.getEditor().getSelection()
-                  }
-                  quillImageInputRef.current?.click()
-                }} />
+                <label
+                  className="cms-image-btn"
+                  title="Insert image"
+                  style={{ cursor: 'pointer' }}
+                  onMouseDown={() => {
+                    if (quillRef.current) {
+                      try {
+                        savedQuillSelection.current = quillRef.current.getEditor().getSelection()
+                      } catch { /* no selection; insert at end */ }
+                    }
+                  }}
+                >
+                  <ImageIcon size={14} />
+                  <input
+                    ref={quillImageInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleInsertImage}
+                    style={{ position: 'absolute', width: 1, height: 1, opacity: 0, overflow: 'hidden' }}
+                  />
+                </label>
               </span>
               <span className="ql-formats">
                 <button className="cms-hr-button" type="button" onClick={insertHr} title="Insert Horizontal Rule">HR</button>

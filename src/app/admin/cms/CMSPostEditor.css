@@ -1849,6 +1849,28 @@
   color: var(--color-text-secondary) !important;
 }
 
+/* Custom image picker — <label> wrapping a hidden file input.
+   Match Quill's default toolbar button sizing (28x24 with 3px padding)
+   so it lines up with neighboring buttons. */
+.cms-focus-body #toolbar-focus .ql-formats .cms-image-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 24px;
+  padding: 3px 5px;
+  margin: 0;
+  position: relative;
+  vertical-align: middle;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: none;
+}
+
+.cms-focus-body #toolbar-focus .ql-formats .cms-image-btn:hover {
+  color: var(--color-text-primary);
+}
+
 .cms-focus-body #toolbar-focus .ql-formats button .ql-stroke {
   stroke: var(--color-text-secondary) !important;
 }
