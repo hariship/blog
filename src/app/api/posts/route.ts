@@ -3,8 +3,12 @@ import { posts, likes } from '@/lib/db/schema'
 import { eq, ilike, or, desc, count, sql } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
 
-// Cache for 5 minutes, allow stale for 1 hour while revalidating
-export const revalidate = 300
+// Force every request to hit origin — payload is small (~5KB after dropping
+// `content`), and CDN caching of this dynamic route was serving stale data
+// after publishes (revalidatePath doesn't reliably reach Vercel's Edge cache
+// for dynamic routes that read request.url).
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -88,7 +92,7 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    response.headers.set('Cache-Control', 's-maxage=300, stale-while-revalidate=3600')
+    response.headers.set('Cache-Control', 'no-store, max-age=0')
     return response
   } catch (error) {
     console.error('Error in posts API:', error)
