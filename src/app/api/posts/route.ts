@@ -2,26 +2,14 @@ import { db } from '@/lib/db'
 import { posts, likes } from '@/lib/db/schema'
 import { eq, ilike, or, desc, count, sql } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
+import { unstable_cache } from 'next/cache'
 
-// Force every request to hit origin — payload is small (~5KB after dropping
-// `content`), and CDN caching of this dynamic route was serving stale data
-// after publishes (revalidatePath doesn't reliably reach Vercel's Edge cache
-// for dynamic routes that read request.url).
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+// Cache the data layer per (page, limit, category, search) tuple. Tagged
+// 'posts' so admin writes can invalidate every variant via revalidateTag.
+const fetchPostsList = unstable_cache(
+  async (page: number, limit: number, category: string | null, search: string | null) => {
+    const offset = (page - 1) * limit
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url)
-
-  const page = parseInt(searchParams.get('page') || '1')
-  const limit = parseInt(searchParams.get('limit') || '10')
-  const category = searchParams.get('category')
-  const search = searchParams.get('search')
-
-  const offset = (page - 1) * limit
-
-  try {
-    // Build where conditions
     const conditions = []
     if (category && category !== 'all') {
       conditions.push(eq(posts.category, category))
@@ -34,12 +22,10 @@ export async function GET(request: NextRequest) {
         )!
       )
     }
-
     const where = conditions.length > 0
       ? conditions.length === 1 ? conditions[0] : sql`${conditions[0]} AND ${conditions[1]}`
       : undefined
 
-    // Fetch posts with likes (no `content` — list view doesn't render full body)
     const rows = await db
       .select({
         id: posts.id,
@@ -60,15 +46,27 @@ export async function GET(request: NextRequest) {
       .limit(limit)
       .offset(offset)
 
-    // Get total count
     const [countResult] = await db
       .select({ total: count() })
       .from(posts)
       .where(where)
 
-    const totalItems = countResult?.total || 0
+    return { rows, totalItems: countResult?.total || 0 }
+  },
+  ['posts-list'],
+  { tags: ['posts'], revalidate: 3600 }
+)
 
-    // Transform posts to match existing API shape (content excluded — fetch full post via /api/post/[title])
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url)
+  const page = parseInt(searchParams.get('page') || '1')
+  const limit = parseInt(searchParams.get('limit') || '10')
+  const category = searchParams.get('category')
+  const search = searchParams.get('search')
+
+  try {
+    const { rows, totalItems } = await fetchPostsList(page, limit, category, search)
+
     const transformedPosts = rows.map(row => ({
       id: row.id,
       title: row.title,
@@ -92,7 +90,7 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    response.headers.set('Cache-Control', 'no-store, max-age=0')
+    response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400')
     return response
   } catch (error) {
     console.error('Error in posts API:', error)

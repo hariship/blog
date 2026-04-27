@@ -2,13 +2,16 @@ import { db } from '@/lib/db'
 import { posts, likes } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import jwt from 'jsonwebtoken'
 
 function invalidateBlogCaches(normalizedTitle?: string) {
+  // Tag-based invalidation: clears every variant of /api/posts and
+  // /api/categories that uses the 'posts' tag in unstable_cache.
+  revalidateTag('posts')
+  // Path-based invalidation for pages and RSS endpoints not yet wrapped
+  // in unstable_cache.
   revalidatePath('/')
-  revalidatePath('/api/posts')
-  revalidatePath('/api/categories')
   revalidatePath('/api/rss')
   revalidatePath('/api/blog-feed.xml')
   if (normalizedTitle) revalidatePath(`/post/${normalizedTitle}`)
