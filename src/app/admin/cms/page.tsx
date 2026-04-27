@@ -313,32 +313,18 @@ function CMSPostEditorInner() {
             }
           }
 
-          let quality = 0.8
-          const tryCompress = () => {
-            canvas.toBlob(
-              (blob) => {
-                if (!blob) {
-                  reject(new Error('Compression failed'))
-                  return
-                }
-
-                const sizeKB = blob.size / 1024
-                if (sizeKB <= maxSizeKB || quality <= 0.5) {
-                  const compressedFile = new File([blob], file.name, {
-                    type: 'image/jpeg',
-                    lastModified: Date.now(),
-                  })
-                  resolve(compressedFile)
-                } else {
-                  quality -= 0.1
-                  tryCompress()
-                }
-              },
-              'image/jpeg',
-              quality
-            )
-          }
-          tryCompress()
+          // Single-pass JPEG encode at 0.72 — fast and ~always lands close
+          // to the 300 KB target for 1200px photos. Cloudinary's delivery
+          // pipeline does its own auto-quality on serve, so a slight overshoot
+          // on the source file isn't user-visible. If the result exceeds the
+          // target by a wide margin, retry once at 0.55 — bounds the cost.
+          const encode = (q: number) => new Promise<Blob>((res, rej) => {
+            canvas.toBlob(b => b ? res(b) : rej(new Error('Compression failed')), 'image/jpeg', q)
+          })
+          encode(0.72).then(async (blob) => {
+            const finalBlob = blob.size / 1024 > maxSizeKB * 1.5 ? await encode(0.55) : blob
+            resolve(new File([finalBlob], file.name, { type: 'image/jpeg', lastModified: Date.now() }))
+          }).catch(reject)
         }
         img.onerror = () => reject(new Error('Failed to load image'))
       }
@@ -360,7 +346,11 @@ function CMSPostEditorInner() {
 
     try {
       const dateLabel = watermarkDate || new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+      const t0 = performance.now()
+      console.log('[upload] start, original size KB:', (file.size / 1024).toFixed(0))
       const compressedFile = await compressImage(file, 300, 12, dateLabel)
+      const t1 = performance.now()
+      console.log(`[upload] compressed in ${(t1 - t0).toFixed(0)}ms → ${(compressedFile.size / 1024).toFixed(0)} KB`)
       const formData = new FormData()
       formData.append('image', compressedFile)
 
@@ -368,8 +358,12 @@ function CMSPostEditorInner() {
         method: 'POST',
         body: formData,
       })
+      const t2 = performance.now()
+      console.log(`[upload] fetch returned in ${(t2 - t1).toFixed(0)}ms (browser → api → Cloudinary → back)`)
 
       const data = await response.json()
+      const t3 = performance.now()
+      console.log(`[upload] total ${(t3 - t0).toFixed(0)}ms`)
 
       if (data.success && data.url) {
         setImageUrl(data.url)
@@ -663,11 +657,18 @@ function CMSPostEditorInner() {
     const file = e.target.files?.[0]
     if (!file || !quillRef.current) return
     try {
+      const t0 = performance.now()
+      console.log('[insert] start, original size KB:', (file.size / 1024).toFixed(0))
       const compressedFile = await compressImage(file, 300, 0, '')
+      const t1 = performance.now()
+      console.log(`[insert] compressed in ${(t1 - t0).toFixed(0)}ms → ${(compressedFile.size / 1024).toFixed(0)} KB`)
       const formData = new FormData()
       formData.append('image', compressedFile)
       const response = await fetch('/api/upload-image', { method: 'POST', body: formData })
+      const t2 = performance.now()
+      console.log(`[insert] fetch returned in ${(t2 - t1).toFixed(0)}ms`)
       const data = await response.json()
+      console.log(`[insert] total ${(performance.now() - t0).toFixed(0)}ms`)
       if (data.success && data.url) {
         const editor = quillRef.current.getEditor()
         const insertIndex = savedQuillSelection.current?.index ?? editor.getLength()
