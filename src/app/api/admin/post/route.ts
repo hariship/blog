@@ -2,14 +2,15 @@ import { db } from '@/lib/db'
 import { posts, likes } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
-import { revalidatePath, updateTag } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import jwt from 'jsonwebtoken'
 
 function invalidateBlogCaches(normalizedTitle?: string) {
   // Tag-based invalidation: clears every variant of /api/posts and
-  // /api/categories tagged 'posts' in unstable_cache. Next.js 16 prefers
-  // updateTag (single arg) over revalidateTag which now requires a profile.
-  updateTag('posts')
+  // /api/categories tagged 'posts' in unstable_cache. In Next.js 16,
+  // updateTag is Server-Action-only — Route Handlers must use revalidateTag.
+  // The 'max' profile expires the entry immediately.
+  revalidateTag('posts', 'max')
   // Path-based invalidation for pages and RSS endpoints not yet wrapped
   // in unstable_cache.
   revalidatePath('/')
