@@ -2,6 +2,7 @@ import { db } from '@/lib/db'
 import { posts } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidateTag } from 'next/cache'
 import jwt from 'jsonwebtoken'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-jwt-key'
@@ -91,6 +92,10 @@ export async function POST(request: NextRequest) {
           .update(posts)
           .set({ inkhouse_published: true })
           .where(eq(posts.id, postId))
+        // Bust the unstable_cache entry for /api/posts so the home list
+        // picks up the new badge state immediately. Without this, the
+        // CDN+data cache held the row for up to an hour.
+        revalidateTag('posts', 'max')
       } catch (updateError) {
         console.error('Failed to update inkhouse_published status:', updateError)
         // Don't fail the request - InkHouse publish succeeded

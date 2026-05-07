@@ -825,12 +825,12 @@ hr {
   align-items: center;
   gap: 4px;
   padding: 6px 12px;
-  background-color: #d4edda;
-  color: #155724;
+  background-color: var(--color-success-light);
+  color: var(--color-success);
   font-size: 12px;
   font-weight: 600;
   border-radius: var(--radius-md);
-  border: 1px solid #c3e6cb;
+  border: 1px solid var(--color-success-light);
 }
 
 .inkhouse-badge::before {
@@ -897,13 +897,13 @@ hr {
 }
 
 .inkhouse-message.success {
-  background-color: #d4edda;
-  color: #155724;
+  background-color: var(--color-success-light);
+  color: var(--color-success);
 }
 
 .inkhouse-message.error {
-  background-color: #f8d7da;
-  color: #721c24;
+  background-color: var(--color-error-light);
+  color: var(--color-error);
 }
 
 [data-theme="dark"] .inkhouse-message.success {
@@ -1140,4 +1140,109 @@ hr {
 .back-button:hover {
   border-color: var(--color-border-medium);
   background: var(--color-bg-secondary);
+}
+
+/* ============================================================
+ * Mobile fixes for post header — Edit + Publish-to-InkHouse +
+ * theme toggles + back/home buttons all in one row overflows
+ * narrow phones. Allow wrapping; shrink admin buttons.
+ * ============================================================ */
+@media (max-width: 640px) {
+  .post-header {
+    flex-wrap: wrap;
+    row-gap: var(--spacing-sm);
+  }
+
+  .admin-inkhouse-controls {
+    /* Take full width and sit on its own row below the nav + theme controls */
+    flex-basis: 100%;
+    order: 3;
+    justify-content: flex-start;
+    gap: var(--spacing-xs);
+  }
+
+  .admin-edit-btn,
+  .inkhouse-publish-btn {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+
+  .inkhouse-badge {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+
+  .inkhouse-message {
+    flex-basis: 100%;
+    font-size: 11px;
+  }
+
+  .post-theme-toggle {
+    gap: var(--spacing-xs);
+  }
+}
+
+/* Very narrow phones — hide the long Edit/Publish text and keep symbols */
+@media (max-width: 380px) {
+  .admin-inkhouse-controls {
+    gap: 4px;
+  }
+
+  .admin-edit-btn,
+  .inkhouse-publish-btn {
+    padding: 4px 8px;
+  }
+}
+
+/* ============================================================
+ * Comments section — distinct panel that invites engagement
+ * without shouting. Slightly warmer bg, asymmetric LCARS corner,
+ * and a small intro heading.
+ * ============================================================ */
+.comments-section {
+  margin-top: var(--spacing-2xl);
+  padding: var(--spacing-xl) var(--spacing-lg);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-light);
+  border-radius: 24px 4px 4px 4px;
+  position: relative;
+}
+
+.comments-section-head {
+  margin-bottom: var(--spacing-md);
+}
+
+.comments-section-title {
+  font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: none;
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+/* Toggle button inside the panel — slightly lighter than the panel bg
+ * so it stands out as an action, but still toned. */
+.comments-section .comments-toggle {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-medium);
+  margin-bottom: 0;
+}
+
+.comments-section .comments-toggle:hover {
+  background: var(--color-bg-tertiary);
+}
+
+.comments-widget-container {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border-light);
+}
+
+@media (max-width: 640px) {
+  .comments-section {
+    padding: var(--spacing-lg) var(--spacing-md);
+    border-radius: 16px 4px 4px 4px;
+  }
 }

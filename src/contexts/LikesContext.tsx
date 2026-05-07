@@ -4,6 +4,7 @@ import React, { createContext, useState, useEffect, useContext, ReactNode } from
 
 interface PostData {
   title: string
+  normalized_title?: string
   likesCount: number
   isLiked: boolean
   [key: string]: unknown
@@ -12,12 +13,22 @@ interface PostData {
 interface LikesContextType {
   likesData: PostData[]
   isLoading: boolean
-  updateLikesData: (postTitle: string, newLikesCount: number, isLiked: boolean) => void
+  // Mark a post as read/unread. Identified by its normalized_title (stable
+  // across title edits). Title kept as a second arg for the on-screen state
+  // map only.
+  updateLikesData: (
+    normalizedTitle: string,
+    title: string,
+    newLikesCount: number,
+    isLiked: boolean
+  ) => void
 }
 
 interface LikesProviderProps {
   children: ReactNode
 }
+
+const STORAGE_KEY = 'readPosts'
 
 export const LikesContext = createContext<LikesContextType | undefined>(undefined)
 
@@ -26,11 +37,12 @@ export const LikesProvider: React.FC<LikesProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [mounted, setMounted] = useState(false)
 
-  // Load read status from localStorage
+  // Read state is stored as a Set of normalized_title strings.
+  // We migrate older title-keyed data on first load.
   const getReadStatusFromStorage = (): Set<string> => {
     if (typeof window === 'undefined') return new Set()
     try {
-      const stored = localStorage.getItem('readPosts')
+      const stored = localStorage.getItem(STORAGE_KEY)
       return stored ? new Set(JSON.parse(stored)) : new Set()
     } catch (error) {
       console.error('Error loading read status from localStorage:', error)
@@ -38,11 +50,10 @@ export const LikesProvider: React.FC<LikesProviderProps> = ({ children }) => {
     }
   }
 
-  // Save read status to localStorage
   const saveReadStatusToStorage = (readPosts: Set<string>): void => {
     if (typeof window === 'undefined') return
     try {
-      localStorage.setItem('readPosts', JSON.stringify(Array.from(readPosts)))
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readPosts)))
     } catch (error) {
       console.error('Error saving read status to localStorage:', error)
     }
@@ -51,18 +62,38 @@ export const LikesProvider: React.FC<LikesProviderProps> = ({ children }) => {
   const fetchRSSFeed = async (): Promise<PostData[]> => {
     try {
       const response: Response = await fetch('/api/rss')
-
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
-
       const rssData: PostData[] = await response.json()
 
-      // Merge with localStorage read status
-      const readPosts = getReadStatusFromStorage()
+      const stored = getReadStatusFromStorage()
+
+      // One-time migration: if the stored set contains items that don't match
+      // any normalized_title but DO match a title, rewrite to normalized_title.
+      // This rescues read state from before the keying change.
+      const titleToNormalized = new Map<string, string>()
+      for (const post of rssData) {
+        if (post.title && post.normalized_title) {
+          titleToNormalized.set(post.title, post.normalized_title)
+        }
+      }
+      let migrated = false
+      const upgraded = new Set<string>()
+      for (const key of stored) {
+        if (titleToNormalized.has(key) && !rssData.some(p => p.normalized_title === key)) {
+          // key is a stale title — convert
+          upgraded.add(titleToNormalized.get(key) as string)
+          migrated = true
+        } else {
+          upgraded.add(key)
+        }
+      }
+      if (migrated) saveReadStatusToStorage(upgraded)
+
       return rssData.map(post => ({
         ...post,
-        isLiked: readPosts.has(post.title)
+        isLiked: post.normalized_title ? upgraded.has(post.normalized_title) : false
       }))
     } catch (error) {
       console.warn('Could not fetch RSS feed for likes:', error)
@@ -86,26 +117,34 @@ export const LikesProvider: React.FC<LikesProviderProps> = ({ children }) => {
     loadLikesData()
   }, [])
 
-  const updateLikesData = (postTitle: string, newLikesCount: number, isLiked: boolean): void => {
+  const updateLikesData = (
+    normalizedTitle: string,
+    title: string,
+    newLikesCount: number,
+    isLiked: boolean
+  ): void => {
     if (!mounted) return
+    if (!normalizedTitle) return
 
-    // Update localStorage
     const readPosts = getReadStatusFromStorage()
     if (isLiked) {
-      readPosts.add(postTitle)
+      readPosts.add(normalizedTitle)
     } else {
-      readPosts.delete(postTitle)
+      readPosts.delete(normalizedTitle)
     }
     saveReadStatusToStorage(readPosts)
 
-    // Update state
-    setLikesData((prevLikesData: PostData[]) =>
-      prevLikesData.map((post: PostData) =>
-        post.title === postTitle
-          ? { ...post, likesCount: newLikesCount, isLiked }
-          : post
-      )
-    )
+    setLikesData((prev) => {
+      const idx = prev.findIndex((p) => p.normalized_title === normalizedTitle)
+      if (idx === -1) {
+        // Post wasn't in the cached list — append a stub so subsequent
+        // reads find it. RSS will refresh on next mount.
+        return [...prev, { title, normalized_title: normalizedTitle, likesCount: newLikesCount, isLiked }]
+      }
+      const next = prev.slice()
+      next[idx] = { ...next[idx], likesCount: newLikesCount, isLiked }
+      return next
+    })
   }
 
   return (

@@ -185,33 +185,31 @@ export default function HomePage() {
     playButtonSound()
   }
 
-  const isPostRead = (title: string): boolean => {
-    const postData = likesData.find(like => like.title === title)
+  // Read state is keyed by normalized_title (stable across title edits).
+  const isPostRead = (normalizedTitle: string): boolean => {
+    if (!normalizedTitle) return false
+    const postData = likesData.find(like => like.normalized_title === normalizedTitle)
     return postData?.isLiked || false
   }
 
-  const handleReadToggle = async (title: string) => {
-    const currentStatus = isPostRead(title)
+  const handleReadToggle = async (post: PostWithLikes) => {
+    const slug = post.normalized_title
+    if (!slug) return
+    const currentStatus = isPostRead(slug)
     const newStatus = !currentStatus
-    const postData = likesData.find(like => like.title === title)
-    const currentLikes = postData?.likesCount || 0
+    const currentLikes = post.likesCount || 0
     const newLikesCount = newStatus ? currentLikes + 1 : Math.max(0, currentLikes - 1)
 
-    // Update locally first
-    updateLikesData(title, newLikesCount, newStatus)
+    updateLikesData(slug, post.title, newLikesCount, newStatus)
 
-    // Update on server - find post to get normalized_title
-    const post = posts.find(p => p.title === title)
-    if (post) {
-      try {
-        await fetch('/api/update-likes', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ postTitle: post.normalized_title, increment: newStatus }),
-        })
-      } catch (error) {
-        console.error('Failed to update read status:', error)
-      }
+    try {
+      await fetch('/api/update-likes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postTitle: slug, increment: newStatus }),
+      })
+    } catch (error) {
+      console.error('Failed to update read status:', error)
     }
   }
 
@@ -327,10 +325,10 @@ export default function HomePage() {
                 {renderInkHouseControl(post)}
                 <span
                   className="favorite-icon read-icon"
-                  onClick={(e) => { e.stopPropagation(); playButtonSound(); handleReadToggle(post.title); }}
-                  title={isPostRead(post.title) ? "Mark as unread" : "Mark as read"}
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); playButtonSound(); handleReadToggle(post); }}
+                  title={isPostRead(post.normalized_title) ? "Mark as unread" : "Mark as read"}
                 >
-                  {isPostRead(post.title) ? (
+                  {isPostRead(post.normalized_title) ? (
                     <svg className="heart-icon liked" viewBox="0 0 16 16" height="1.2em" width="1.2em" fill="currentColor">
                       <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
                     </svg>
@@ -380,10 +378,10 @@ export default function HomePage() {
               {renderInkHouseControl(post)}
               <span
                 className="favorite-icon read-icon"
-                onClick={(e) => { e.stopPropagation(); playButtonSound(); handleReadToggle(post.title); }}
-                title={isPostRead(post.title) ? "Mark as unread" : "Mark as read"}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); playButtonSound(); handleReadToggle(post); }}
+                title={isPostRead(post.normalized_title) ? "Mark as unread" : "Mark as read"}
               >
-                {isPostRead(post.title) ? (
+                {isPostRead(post.normalized_title) ? (
                   <svg className="heart-icon liked" viewBox="0 0 16 16" height="1.2em" width="1.2em" fill="currentColor">
                     <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
                   </svg>
@@ -418,10 +416,10 @@ export default function HomePage() {
           {renderInkHouseControl(post)}
           <span
             className="compact-read-icon favorite-icon read-icon"
-            onClick={(e) => { e.stopPropagation(); playButtonSound(); handleReadToggle(post.title); }}
-            title={isPostRead(post.title) ? "Mark as unread" : "Mark as read"}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); playButtonSound(); handleReadToggle(post); }}
+            title={isPostRead(post.normalized_title) ? "Mark as unread" : "Mark as read"}
           >
-            {isPostRead(post.title) ? (
+            {isPostRead(post.normalized_title) ? (
               <svg className="heart-icon liked" viewBox="0 0 16 16" height="1em" width="1em" fill="currentColor">
                 <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
               </svg>
@@ -512,10 +510,10 @@ export default function HomePage() {
                   <span className="magazine-item-date">{formatDate(post.pub_date)}</span>
                   <span
                     className="magazine-read-icon favorite-icon read-icon"
-                    onClick={(e) => { e.stopPropagation(); playButtonSound(); handleReadToggle(post.title); }}
-                    title={isPostRead(post.title) ? "Mark as unread" : "Mark as read"}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); playButtonSound(); handleReadToggle(post); }}
+                    title={isPostRead(post.normalized_title) ? "Mark as unread" : "Mark as read"}
                   >
-                    {isPostRead(post.title) ? (
+                    {isPostRead(post.normalized_title) ? (
                       <svg className="heart-icon liked" viewBox="0 0 16 16" height="0.9em" width="0.9em" fill="currentColor">
                         <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
                       </svg>
@@ -813,7 +811,7 @@ export default function HomePage() {
               <div className="mobile-widget">
                 <h4 className="mobile-widget-title">About</h4>
                 <p className="mobile-about-text">
-                  Welcome to my corner of the internet. I write about life, tech, and everything in between.
+                  I am Haripriya. Welcome to my corner of the internet. I write about life, tech, and everything in between.
                 </p>
                 <div className="mobile-about-links">
                   <CoffeeLink text="Buy me a coffee" />
@@ -831,7 +829,7 @@ export default function HomePage() {
               </h3>
               <div className="sidebar-about">
                 <p className="sidebar-about-text">
-                  Welcome to my corner of the internet. I write about life, tech, and everything in between. Thanks for stopping by!
+                  I am Haripriya. Welcome to my corner of the internet. I write about life, tech, and everything in between. Thanks for stopping by!
                 </p>
                 <div className="sidebar-about-links">
                   {/* TODO: re-enable once a /now entry is written.

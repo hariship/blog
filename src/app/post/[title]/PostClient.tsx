@@ -70,12 +70,13 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
   const normalized = normalizeTitle(title || '')
   const isJournal = normalized === 'life-lately-20-2025'
 
-  const getReadStatusFromStorage = (postTitle: string): boolean => {
+  // Read state is keyed by normalized_title (stable across title edits).
+  const getReadStatusFromStorage = (slug: string): boolean => {
     try {
       const stored = localStorage.getItem('readPosts')
       if (stored) {
         const readPosts = JSON.parse(stored)
-        return readPosts.includes(postTitle)
+        return readPosts.includes(slug)
       }
       return false
     } catch {
@@ -102,8 +103,9 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
         setPostContent(content || 'No content available')
         setPostImage(enclosure || '')
 
-        const isReadInStorage = getReadStatusFromStorage(title)
-        const postLikesData = likesData.find(like => like.title === title)
+        const slug = post.normalized_title || normalizeTitle(title || '')
+        const isReadInStorage = getReadStatusFromStorage(slug)
+        const postLikesData = likesData.find(like => like.normalized_title === slug)
         if (postLikesData) {
           setLikesCount(postLikesData.likesCount)
           setIsLiked(postLikesData.isLiked)
@@ -144,14 +146,19 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
   }, [title, initialPost])
 
   useEffect(() => {
-    if (postTitle && likesData.length > 0) {
-      const postLikesData = likesData.find(like => like.title === postTitle)
+    if (normalized && likesData.length > 0) {
+      const postLikesData = likesData.find(like => like.normalized_title === normalized)
       if (postLikesData) {
         setIsLiked(postLikesData.isLiked)
         setLikesCount(postLikesData.likesCount)
+      } else {
+        // Fall back to direct localStorage check so newly-marked posts
+        // that aren't in the cached RSS dataset still reflect.
+        setIsLiked(getReadStatusFromStorage(normalized))
       }
     }
-  }, [likesData, postTitle])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [likesData, normalized])
 
   // Update page title
   useEffect(() => {
@@ -182,7 +189,7 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
     const newIsLiked = !isLiked
     const updatedLikesCount = newIsLiked ? likesCount + 1 : likesCount - 1
 
-    updateLikesData(postTitle, updatedLikesCount, newIsLiked)
+    updateLikesData(normalized, postTitle, updatedLikesCount, newIsLiked)
     setIsLiked(newIsLiked)
     setLikesCount(updatedLikesCount)
 
@@ -200,7 +207,7 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
       }
     } catch (error) {
       console.error('Failed to update likes:', error)
-      updateLikesData(postTitle, previousLikesCount, previousIsLiked)
+      updateLikesData(normalized, postTitle, previousLikesCount, previousIsLiked)
       setIsLiked(previousIsLiked)
       setLikesCount(previousLikesCount)
     }
@@ -456,7 +463,10 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
               </div>
             </nav>
           )}
-          <div className="comments-section">
+          <section className="comments-section" aria-label="Discussion">
+            <div className="comments-section-head">
+              <h2 className="comments-section-title">Discussion</h2>
+            </div>
             <button
               className="comments-toggle"
               onClick={() => {
@@ -468,7 +478,7 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
                 {showComments ? '▼' : '▶'}
               </div>
               <span className="comments-toggle-text">
-                Comments
+                {showComments ? 'Hide comments' : 'Show comments'}
               </span>
             </button>
             {showComments && (
@@ -476,7 +486,7 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
                 <CommentsWidget pageSlug={`/${normalizeTitle(title || '')}`} />
               </div>
             )}
-          </div>
+          </section>
         </>
       )}
     </div>

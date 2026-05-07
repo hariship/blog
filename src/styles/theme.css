@@ -1,61 +1,63 @@
 /* CSS Variables for Light and Dark Theme */
 
 :root {
-  /* Light Theme Colors */
-  --color-primary: #35495e;
-  --color-primary-light: #4a6741;
-  --color-secondary: #329066;
-  --color-accent: #ff6b6b;
-  
-  /* Background Colors */
-  --color-bg-primary: #ffffff;
-  --color-bg-secondary: #f8f9fa;
-  --color-bg-tertiary: #e9ecef;
-  --color-bg-card: #ffffff;
-  --color-bg-hover: #f8f9fa;
-  --color-bg-overlay: rgba(255, 255, 255, 0.95);
-  
+  /* Light Theme Colors — toned down: warmer slate primary, muted accents,
+   * cream backgrounds instead of pure white. Pairs with --color-accent-warm
+   * earth tones already in use. */
+  --color-primary: #5b6b75;
+  --color-primary-light: #7a8a92;
+  --color-secondary: #6b8c75;
+  --color-accent: #b87b75;
+
+  /* Background Colors — slight warm cream instead of clinical white */
+  --color-bg-primary: #fbfaf7;
+  --color-bg-secondary: #f3f0e8;
+  --color-bg-tertiary: #e8e3d6;
+  --color-bg-card: #fdfcf9;
+  --color-bg-hover: #f3f0e8;
+  --color-bg-overlay: rgba(251, 250, 247, 0.95);
+
   /* Text Colors */
-  --color-text-primary: #2c3e50;
-  --color-text-secondary: #6c757d;
-  --color-text-muted: #868e96;
-  --color-text-inverse: #ffffff;
-  
+  --color-text-primary: #3a3835;
+  --color-text-secondary: #6c6863;
+  --color-text-muted: #948f86;
+  --color-text-inverse: #fdfcf9;
+
   /* Border Colors */
-  --color-border-light: #e9ecef;
-  --color-border-medium: #dee2e6;
-  --color-border-dark: #adb5bd;
-  
+  --color-border-light: #e6e2d6;
+  --color-border-medium: #d6d1c2;
+  --color-border-dark: #ada89c;
+
   /* Interactive Colors */
   --color-link: #6b7280;
-  --color-link-hover: #374151;
+  --color-link-hover: #3f4a52;
   --color-button-primary: #6b7280;
-  --color-button-primary-hover: #374151;
-  --color-button-secondary: #64748b;
-  --color-button-secondary-hover: #475569;
-  --color-icon-primary: #374151;
-  --color-icon-secondary: #6b7280;
+  --color-button-primary-hover: #3f4a52;
+  --color-button-secondary: #6b7d75;
+  --color-button-secondary-hover: #485950;
+  --color-icon-primary: #4a4845;
+  --color-icon-secondary: #6c6863;
 
   /* Warm/Earthy Accent Colors */
   --color-accent-warm: #8b6f47;
   --color-accent-warm-hover: #a08357;
+
+  /* Status Colors — muted to match the cream backgrounds */
+  --color-success: #5d8a5f;
+  --color-success-light: #e0eadb;
+  --color-error: #b85b58;
+  --color-error-light: #f3dcd7;
+  --color-warning: #c9a249;
+  --color-warning-light: #f5ecd0;
+  --color-info: #5d8a9c;
+  --color-info-light: #dbeaef;
   
-  /* Status Colors */
-  --color-success: #28a745;
-  --color-success-light: #d4edda;
-  --color-error: #dc3545;
-  --color-error-light: #f8d7da;
-  --color-warning: #ffc107;
-  --color-warning-light: #fff3cd;
-  --color-info: #17a2b8;
-  --color-info-light: #d1ecf1;
-  
-  /* Shadow */
-  --shadow-small: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
-  --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.15);
-  --shadow-large: 0 8px 16px rgba(0, 0, 0, 0.2);
-  --shadow-heavy: 0 8px 24px rgba(0, 0, 0, 0.2);
+  /* Shadow — warm-tinted to match the cream backgrounds (less cold than pure black) */
+  --shadow-small: 0 1px 2px rgba(74, 72, 65, 0.05);
+  --shadow-light: 0 2px 4px rgba(74, 72, 65, 0.08);
+  --shadow-medium: 0 4px 8px rgba(74, 72, 65, 0.12);
+  --shadow-large: 0 8px 16px rgba(74, 72, 65, 0.15);
+  --shadow-heavy: 0 8px 24px rgba(74, 72, 65, 0.18);
   
   /* Gradients */
   --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
