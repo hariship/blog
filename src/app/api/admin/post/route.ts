@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import jwt from 'jsonwebtoken'
+import { sendNewsletterToSubscribers, type SendResult } from '@/lib/newsletter'
 
 function invalidateBlogCaches(normalizedTitle?: string) {
   // Tag-based invalidation: clears every variant of /api/posts and
@@ -55,13 +56,24 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { id, title, description, content, category, image_url, enclosure } = body
+    const {
+      id,
+      title,
+      description,
+      content,
+      category,
+      image_url,
+      enclosure,
+      sendNewsletter,
+      publishImmediately,
+    } = body
 
     if (!title || !content) {
       return NextResponse.json({ error: 'Title and content are required' }, { status: 400 })
     }
 
     const normalized_title = normalizeTitle(title)
+    const shouldSendNewsletter = Boolean(sendNewsletter) && publishImmediately !== false
 
     // If an ID is provided, update by ID directly. Only regenerate
     // normalized_title when the title actually changed — otherwise we'd
@@ -136,7 +148,30 @@ export async function POST(request: NextRequest) {
       await db.insert(likes).values({ post_id: newPost.id, likes_count: 0 })
 
       invalidateBlogCaches(normalized_title)
-      return NextResponse.json({ success: true, message: 'Post created', id: newPost.id })
+
+      // Newsletter — only on first publish (NEW post + sendNewsletter toggle on).
+      // Failures don't fail the publish: the post is already saved.
+      let newsletter: SendResult | null = null
+      if (shouldSendNewsletter) {
+        try {
+          newsletter = await sendNewsletterToSubscribers({
+            title,
+            description,
+            normalized_title,
+            enclosure,
+            category,
+          })
+        } catch (mailErr) {
+          console.error('Newsletter send failed:', mailErr)
+        }
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: 'Post created',
+        id: newPost.id,
+        ...(newsletter && { newsletter }),
+      })
     }
   } catch (error) {
     console.error('Error in admin post API:', error)
