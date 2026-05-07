@@ -160,6 +160,7 @@ export async function POST(request: NextRequest) {
             normalized_title,
             enclosure,
             category,
+            content,
           })
         } catch (mailErr) {
           console.error('Newsletter send failed:', mailErr)
