@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -27,7 +27,19 @@ const formatDate = (dateString: string): string => {
   }
 }
 
+// Default export wraps the content in Suspense — required because
+// HomePageContent uses useSearchParams(), and Next 16 refuses to prerender
+// a page that calls it without a boundary above. Fallback is null because
+// the AccessingOverlay loader handles soft-nav visuals already.
 export default function HomePage() {
+  return (
+    <Suspense fallback={null}>
+      <HomePageContent />
+    </Suspense>
+  )
+}
+
+function HomePageContent() {
   const router = useRouter()
   const urlParams = useSearchParams()
 
