@@ -844,7 +844,9 @@ button.theme-toggle:hover svg {
 .rss-feed-main {
   min-width: 0;
   background-color: var(--color-bg-card);
-  border-radius: var(--radius-lg);
+  /* Asymmetric LCARS corners: big curve at top-left, sharp elsewhere.
+   * Reads as the iconic half-stadium shape from TNG control panels. */
+  border-radius: 28px 4px 4px 4px;
   box-shadow: var(--shadow-medium);
   padding: 0;
 }
@@ -977,10 +979,10 @@ button.theme-toggle:hover svg {
   }
 }
 
-/* Sidebar widgets */
+/* Sidebar widgets — asymmetric LCARS corners on the upper-left */
 .sidebar-widget {
   background: var(--color-bg-card);
-  border-radius: var(--radius-lg);
+  border-radius: 20px 4px 4px 4px;
   padding: var(--spacing-lg);
   margin-bottom: var(--spacing-md);
   border: 1px solid var(--color-border-light);
@@ -2329,3 +2331,516 @@ button.theme-toggle:hover svg {
   }
 }
 
+
+/* ============================================================
+ * LCARS / TNG flavor — shape & data-readout marks (no color change)
+ * Adds: log entry IDs, sidebar section codes, elbow brackets.
+ * Uses existing border + muted text variables only.
+ * ============================================================ */
+
+/* Log entry IDs — small mono prefix above each list-view title */
+.list-item-log-id {
+  display: block;
+  font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  opacity: 0.85;
+  line-height: 1;
+}
+
+/* Sidebar widget section codes — "01" before "About" etc. */
+.sidebar-widget-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.widget-code {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  padding: 2px 6px;
+  border: 1px solid var(--color-border-light);
+  border-radius: 2px;
+  line-height: 1;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+/* LCARS elbow bracket — outline only, no fill.
+ * Renders as a "└" shape via two pseudo-elements on a positioned host.
+ * Used on the main content panel (top-left) and each sidebar widget.
+ */
+/* (Outline elbow accents removed — the asymmetric corners on .rss-feed-main
+ * and .sidebar-widget now carry the LCARS shape signature directly.) */
+
+/* Random log icon button — sits inside the .controls-group with the other
+ * 36x36 ghost buttons (theme/sound/RSS/subscribe). Matches their treatment.
+ */
+.controls-group .random-log-button,
+.random-log-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  font-size: 18px;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
+}
+
+.controls-group .random-log-button:hover,
+.random-log-button:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+  transform: none;
+  box-shadow: none;
+}
+
+.random-log-button svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+[data-theme="dark"] .random-log-button {
+  color: var(--lcars-slate, #6b7c93);
+}
+
+[data-theme="dark"] .random-log-button:hover {
+  color: var(--color-text-primary);
+}
+
+/* Empty state for zero search/filter results — TNG-style "computer reply".
+ * Mono caps, low contrast, with a quiet CLEAR QUERY action.
+ */
+.feed-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-2xl) var(--spacing-lg);
+  margin: var(--spacing-lg) 0;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-secondary);
+  position: relative;
+}
+
+/* Small LCARS elbow on the empty-state card */
+.feed-empty-state::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 32px;
+  height: 14px;
+  border-top: 2px solid var(--color-border-medium);
+  border-left: 2px solid var(--color-border-medium);
+  border-top-left-radius: 10px;
+  pointer-events: none;
+}
+
+.feed-empty-code {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  padding: 2px 6px;
+  border: 1px solid var(--color-border-light);
+  border-radius: 2px;
+  line-height: 1;
+  margin-bottom: var(--spacing-xs);
+}
+
+.feed-empty-title {
+  font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.feed-empty-text {
+  font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.feed-empty-clear {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.feed-empty-clear:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-text-secondary);
+  background: var(--color-bg-card);
+}
+
+.feed-empty-clear-arrow {
+  font-size: 0.875rem;
+}
+
+/* ============================================================
+ * Keyboard shortcuts overlay (?) — TNG-style command panel.
+ * Click outside or press Esc to close.
+ * ============================================================ */
+.shortcuts-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: var(--spacing-md);
+}
+
+.shortcuts-panel {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-medium);
+  /* Same asymmetric LCARS curve as the main panel. */
+  border-radius: 28px 4px 4px 4px;
+  box-shadow: var(--shadow-large);
+  padding: var(--spacing-xl) var(--spacing-lg);
+}
+
+.shortcuts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.shortcuts-code {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  padding: 2px 6px;
+  border: 1px solid var(--color-border-light);
+  border-radius: 2px;
+  line-height: 1;
+}
+
+.shortcuts-close {
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0 var(--spacing-sm);
+  transition: color var(--transition-fast);
+}
+
+.shortcuts-close:hover {
+  color: var(--color-text-primary);
+}
+
+.shortcuts-title {
+  font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+.shortcuts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+.shortcuts-row {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.shortcuts-row:last-child {
+  border-bottom: 0;
+}
+
+.shortcuts-key {
+  margin: 0;
+}
+
+.shortcuts-key kbd {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-medium);
+  border-radius: 4px;
+  padding: 3px 9px;
+  min-width: 36px;
+  text-align: center;
+  box-shadow: inset 0 -1px 0 var(--color-border-light);
+}
+
+.shortcuts-desc {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.shortcuts-footnote {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* ============================================================
+ * Footer status strip — quiet TNG-style system signature.
+ * Sits at the bottom of the home page below the layout grid.
+ * ============================================================ */
+.feed-footer-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg) var(--spacing-md);
+  margin-top: var(--spacing-xl);
+  font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.feed-footer-segment {
+  white-space: nowrap;
+}
+
+.feed-footer-divider {
+  color: var(--color-text-muted);
+  opacity: 0.5;
+}
+
+.feed-footer-help {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+}
+
+.feed-footer-help:hover {
+  color: var(--color-text-primary);
+  text-decoration-color: var(--color-text-secondary);
+}
+
+/* Help (?) button — same compact ghost-button shape as the others in
+ * .controls-group. Sits alongside Sound / Theme / RSS / Subscribe / Random.
+ */
+.controls-group .help-button,
+.help-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  font-size: 18px;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
+}
+
+.controls-group .help-button:hover,
+.help-button:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+.help-button svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+[data-theme="dark"] .help-button {
+  color: var(--lcars-slate, #6b7c93);
+}
+
+[data-theme="dark"] .help-button:hover {
+  color: var(--color-text-primary);
+}
+
+/* ============================================================
+ * Mobile fixes for the new TNG additions:
+ * - Controls-group: 6 icons + view switcher overflows on phones.
+ *   Allow wrap, shrink icons, reduce gap.
+ * - Footer status strip: tighten on small screens.
+ * - Asymmetric panel corners: smaller curve so the page edge fits.
+ * ============================================================ */
+@media (max-width: 768px) {
+  /* Allow controls to wrap to a second line if needed */
+  .controls-group {
+    gap: 2px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  /* Shrink every icon button to 32x32 to reclaim row space */
+  .controls-group .theme-toggle,
+  .controls-group .sound-toggle,
+  .controls-group .subscribe-button,
+  .controls-group .subscribe-icon-btn,
+  .controls-group .rss-feed-icon-button,
+  .controls-group .random-log-button,
+  .controls-group .help-button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .controls-group .theme-toggle svg,
+  .controls-group .sound-toggle svg,
+  .controls-group .subscribe-button svg,
+  .controls-group .subscribe-icon-btn svg,
+  .controls-group .rss-feed-icon svg,
+  .controls-group .random-log-button svg,
+  .controls-group .help-button svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  /* Footer strip: smaller, looser wrap, drop the help text on phones
+   * (the help button is now visible in the controls-group). */
+  .feed-footer-strip {
+    font-size: 0.625rem;
+    gap: 6px;
+    padding: var(--spacing-md) var(--spacing-sm);
+  }
+
+  .feed-footer-help {
+    display: none;
+  }
+
+  /* Soften the LCARS curves on phones so they don't crop the corner */
+  .rss-feed-main {
+    border-radius: 18px 4px 4px 4px;
+  }
+
+  .sidebar-widget {
+    border-radius: 14px 4px 4px 4px;
+  }
+}
+
+/* Very narrow phones: hide the least-essential icons (subscribe + RSS)
+ * since they're also reachable from the sidebar / footer. */
+@media (max-width: 380px) {
+  .controls-group .subscribe-button,
+  .controls-group .subscribe-icon-btn,
+  .controls-group .rss-feed-icon-button {
+    display: none;
+  }
+}
+
+/* Shortcuts overlay — interactive rows for tap (mobile) AND keyboard (desktop) */
+.shortcuts-subtitle {
+  margin: 0 0 var(--spacing-md) 0;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.shortcuts-row-action {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) 0;
+  border: 0;
+  border-bottom: 1px solid var(--color-border-light);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.shortcuts-row-action:hover {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+.shortcuts-row-action:focus-visible {
+  outline: 2px solid var(--color-text-secondary);
+  outline-offset: 2px;
+}
+
+.shortcuts-row-static {
+  cursor: default;
+}

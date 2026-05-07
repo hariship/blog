@@ -3,14 +3,29 @@
 import React, { Suspense, useState, useRef, useEffect, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 import { useSearchParams } from 'next/navigation'
-import { Eye, EyeOff, Settings, Save, ImagePlus, Image as ImageIcon } from 'lucide-react'
+import { Eye, EyeOff, Settings, Save, ImagePlus, Image as ImageIcon, Clock } from 'lucide-react'
 import { ThemeToggle } from '@/components/common'
 import './CMSPostEditor.css'
 
-// Dynamically import ReactQuill to avoid SSR issues
+// Dynamically import ReactQuill to avoid SSR issues. Also register a custom
+// HR blot — Quill 2.x ships no <hr> blot by default and strips unknown tags
+// during paste, which is why insertEmbed('hr') and pasting raw <hr> both
+// silently fail. Registering it here makes <hr> a first-class block embed.
 const ReactQuill = dynamic(
   async () => {
     const { default: RQ } = await import('react-quill-new')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { Quill } = await import('react-quill-new') as any
+    if (Quill && !Quill.imports?.['formats/hr']) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const BlockEmbed = (Quill.import('blots/block/embed') as any)
+      class HrBlot extends BlockEmbed {}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(HrBlot as any).blotName = 'hr'
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(HrBlot as any).tagName = 'hr'
+      Quill.register('formats/hr', HrBlot)
+    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return function QuillWrapper({ forwardedRef, ...props }: any) {
       return <RQ ref={forwardedRef} {...props} />
@@ -446,6 +461,38 @@ function CMSPostEditorInner() {
     localStorage.removeItem('cms-edit-post')
   }
 
+  // Load the /now page row into edit mode. If no row exists yet, seed the
+  // form with title 'Now' so the next Publish creates it (normalized to 'now').
+  const handleEditNow = async () => {
+    try {
+      const response = await fetch('/api/post/now')
+      if (response.ok) {
+        const post = await response.json()
+        setEditingPostId(post.id)
+        setTitle(post.title || 'Now')
+        setDescription(post.description || '')
+        setImageUrl(post.image_url || post.enclosure || '')
+        setContent(post.content || '')
+        setCategory(post.category || 'meta')
+        setSubmitStatus({ type: 'success', message: 'Loaded /now page for editing' })
+      } else if (response.status === 404) {
+        setEditingPostId(null)
+        setTitle('Now')
+        setDescription('')
+        setImageUrl('')
+        setContent('')
+        setCategory('meta')
+        setSubmitStatus({ type: 'success', message: 'Creating /now page — publish to save' })
+      } else {
+        throw new Error('Failed to load /now')
+      }
+      setTimeout(() => setSubmitStatus(null), 4000)
+    } catch (error) {
+      console.error(error)
+      setSubmitStatus({ type: 'error', message: 'Could not load /now page' })
+    }
+  }
+
   const publishToInkHouse = async (postData: {
     postId: number
     title: string
@@ -597,23 +644,47 @@ function CMSPostEditorInner() {
     }
   }
 
+  const TOGGLE_END_SENTINEL = '__BLOG_END_TOGGLE__'
+
   const processContentForPreview = (htmlContent: string): string => {
     if (!htmlContent) return htmlContent
 
-    let processed = htmlContent
+    // Whitespace inside Quill output can be either real whitespace OR the
+    // literal HTML entity `&nbsp;` — Quill preserves user-typed spaces as
+    // non-breaking entities. Treat both forms equivalently.
+    const WS = '(?:\\s|&nbsp;|&#160;|&#xa0;)'
+
+    // Step 1 — normalize every form of [END TOGGLE] to a sentinel.
+    let processed = htmlContent.replace(
+      new RegExp(`\\[?${WS}*END${WS}+TOGGLE${WS}*\\]?`, 'gi'),
+      TOGGLE_END_SENTINEL
+    )
     processed = processed.replace(
-      /<p><strong[^>]*>\[TOGGLE\]\s*([^<]+)<\/strong><\/p>([\s\S]*?)(?:<strong[^>]*>\[END TOGGLE\]<\/strong>|(?=<p><strong[^>]*>\[TOGGLE\])|$)/gi,
+      new RegExp(`<(?:strong|b|em|i)[^>]*>\\s*${TOGGLE_END_SENTINEL}\\s*<\\/(?:strong|b|em|i)>`, 'gi'),
+      TOGGLE_END_SENTINEL
+    )
+    processed = processed.replace(
+      new RegExp(`<p[^>]*>(?:\\s|<br[^>]*>|&nbsp;)*${TOGGLE_END_SENTINEL}(?:\\s|<br[^>]*>|&nbsp;)*<\\/p>`, 'gi'),
+      TOGGLE_END_SENTINEL
+    )
+
+    // Step 2 — same WS-aware matching for the [TOGGLE] start marker.
+    processed = processed.replace(
+      new RegExp(
+        `<p[^>]*><strong[^>]*>\\[TOGGLE\\]${WS}*([^<]+)<\\/strong><\\/p>([\\s\\S]*?)(?:${TOGGLE_END_SENTINEL}|(?=<p[^>]*><strong[^>]*>\\[TOGGLE\\])|$)`,
+        'gi'
+      ),
       (match, toggleTitle, toggleContent) => {
-        let cleanContent = toggleContent.trim() || ''
-        cleanContent = cleanContent.replace(/<strong[^>]*>\[END TOGGLE\]<\/strong>/gi, '')
+        // Title may have leading &nbsp; — strip them along with normal whitespace.
+        const cleanTitle = toggleTitle.replace(/&nbsp;|&#160;|&#xa0;/g, ' ').trim()
         return `<details class="cms-toggle-details">
-          <summary class="cms-toggle-summary">${toggleTitle.trim()}</summary>
-          <div class="cms-toggle-content">${cleanContent}</div>
+          <summary class="cms-toggle-summary">${cleanTitle}</summary>
+          <div class="cms-toggle-content">${(toggleContent || '').trim()}</div>
         </details>`
       }
     )
-    processed = processed.replace(/<strong[^>]*>\[END TOGGLE\]<\/strong>/gi, '')
-    return processed
+
+    return processed.split(TOGGLE_END_SENTINEL).join('')
   }
 
   const quillModules = useMemo(() => ({
@@ -628,43 +699,49 @@ function CMSPostEditorInner() {
     },
   }), [])
 
+  // Quill 2.x's toolbar handlers steal focus before our React onClick fires,
+  // so editor.getSelection() can return null. We capture the selection on
+  // mousedown into savedQuillSelection.current, then prefer that here.
+  const resolveInsertionIndex = (editor: { getSelection: () => { index: number } | null; getLength: () => number }): number => {
+    const live = editor.getSelection()
+    if (live) return live.index
+    if (savedQuillSelection.current) return savedQuillSelection.current.index
+    // Last resort: insert at end (excluding the trailing newline Quill keeps)
+    return Math.max(0, editor.getLength() - 1)
+  }
+
   const insertHr = () => {
-    if (quillRef.current) {
-      const editor = quillRef.current.getEditor()
-      editor.focus()
-      const range = editor.getSelection()
-      if (range) {
-        editor.insertEmbed(range.index, 'hr', true, 'user')
-        editor.setSelection(range.index + 1, 0)
-      }
-    }
+    if (!quillRef.current) return
+    const editor = quillRef.current.getEditor()
+    editor.focus()
+    const index = resolveInsertionIndex(editor)
+    // 'hr' is registered as a block embed (see HrBlot in the dynamic import).
+    // insertEmbed creates one block; we move the cursor past it.
+    editor.insertEmbed(index, 'hr', true, 'user')
+    editor.setSelection(index + 1, 0)
+    savedQuillSelection.current = null
   }
 
   const insertToggle = () => {
-    if (quillRef.current) {
-      const editor = quillRef.current.getEditor()
-      editor.focus()
-      const range = editor.getSelection()
-      if (range) {
-        const currentIndex = range.index
-        editor.insertText(currentIndex, '\n[TOGGLE] Toggle title\n', { bold: true })
-        editor.insertText(currentIndex + 22, 'Add your content here...\n')
-        editor.insertText(currentIndex + 46, '[END TOGGLE]\n\n', { bold: true })
-        editor.setSelection(currentIndex + 9, 12)
-      }
-    }
+    if (!quillRef.current) return
+    const editor = quillRef.current.getEditor()
+    editor.focus()
+    const index = resolveInsertionIndex(editor)
+    editor.insertText(index, '\n[TOGGLE] Toggle title\n', { bold: true })
+    editor.insertText(index + 22, 'Add your content here...\n')
+    editor.insertText(index + 46, '[END TOGGLE]\n\n', { bold: true })
+    editor.setSelection(index + 9, 12)
+    savedQuillSelection.current = null
   }
 
   const insertEndToggle = () => {
-    if (quillRef.current) {
-      const editor = quillRef.current.getEditor()
-      editor.focus()
-      const range = editor.getSelection()
-      if (range) {
-        editor.insertText(range.index, '\n[END TOGGLE]\n\n', { bold: true })
-        editor.setSelection(range.index + 14, 0)
-      }
-    }
+    if (!quillRef.current) return
+    const editor = quillRef.current.getEditor()
+    editor.focus()
+    const index = resolveInsertionIndex(editor)
+    editor.insertText(index, '\n[END TOGGLE]\n\n', { bold: true })
+    editor.setSelection(index + 14, 0)
+    savedQuillSelection.current = null
   }
 
   const handleInsertImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -735,6 +812,9 @@ function CMSPostEditorInner() {
         </div>
         <div className="cms-focus-header-right">
           <span className="cms-focus-wordcount">{wordCount} {wordCount === 1 ? 'word' : 'words'}</span>
+          <button type="button" className="cms-focus-btn" onClick={handleEditNow} title="Edit /now page">
+            <Clock size={15} />
+          </button>
           <button type="button" className="cms-focus-btn" onClick={handleSave} disabled={isSaving} title="Save draft">
             <Save size={15} />
           </button>
@@ -931,7 +1011,26 @@ function CMSPostEditorInner() {
         {/* Toolbar + Editor */}
         {mounted ? (
           <>
-            <div id="toolbar-focus">
+            <div
+              id="toolbar-focus"
+              onMouseDownCapture={() => {
+                // Quill's toolbar handlers crash with "Cannot read properties
+                // of null (reading 'index')" when no selection exists yet
+                // (e.g. user opens CMS and clicks a toolbar button before
+                // putting the cursor in the editor). Seed a safe selection
+                // BEFORE the handler runs to avoid the crash.
+                if (!quillRef.current) return
+                try {
+                  const editor = quillRef.current.getEditor()
+                  if (!editor.getSelection()) {
+                    const len = editor.getLength()
+                    editor.setSelection(Math.max(0, len - 1), 0)
+                  }
+                } catch {
+                  /* defensive — ignore if Quill isn't ready */
+                }
+              }}
+            >
               <span className="ql-formats">
                 <button type="button" className="ql-header" value="1">H1</button>
                 <button type="button" className="ql-header" value="2">H2</button>
@@ -977,9 +1076,39 @@ function CMSPostEditorInner() {
                 </label>
               </span>
               <span className="ql-formats">
-                <button className="cms-hr-button" type="button" onClick={insertHr} title="Insert Horizontal Rule">HR</button>
-                <button className="cms-toggle-button" type="button" onClick={insertToggle} title="Insert Toggle Block">▼+</button>
-                <button className="cms-end-toggle-button" type="button" onClick={insertEndToggle} title="End Toggle Block">/▼</button>
+                <button
+                  className="cms-hr-button"
+                  type="button"
+                  onMouseDown={() => {
+                    if (quillRef.current) {
+                      try { savedQuillSelection.current = quillRef.current.getEditor().getSelection() } catch { /* none */ }
+                    }
+                  }}
+                  onClick={insertHr}
+                  title="Insert Horizontal Rule"
+                >HR</button>
+                <button
+                  className="cms-toggle-button"
+                  type="button"
+                  onMouseDown={() => {
+                    if (quillRef.current) {
+                      try { savedQuillSelection.current = quillRef.current.getEditor().getSelection() } catch { /* none */ }
+                    }
+                  }}
+                  onClick={insertToggle}
+                  title="Insert Toggle Block"
+                >▼+</button>
+                <button
+                  className="cms-end-toggle-button"
+                  type="button"
+                  onMouseDown={() => {
+                    if (quillRef.current) {
+                      try { savedQuillSelection.current = quillRef.current.getEditor().getSelection() } catch { /* none */ }
+                    }
+                  }}
+                  onClick={insertEndToggle}
+                  title="End Toggle Block"
+                >/▼</button>
               </span>
               <span className="ql-formats">
                 <button type="button" className="ql-clean" />

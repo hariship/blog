@@ -931,3 +931,167 @@ hr {
     padding: 4px 8px;
   }
 }
+/* Log entry ID — small mono kicker above the post title */
+.post-log-id {
+  display: block;
+  font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-xs);
+  text-transform: uppercase;
+  opacity: 0.85;
+  line-height: 1;
+}
+
+/* ============================================================
+ * Adjacent log entry navigation (prev / next at bottom of post)
+ * ============================================================ */
+.post-log-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+  margin: var(--spacing-xl) 0 var(--spacing-lg);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.post-log-nav-prev,
+.post-log-nav-next {
+  min-width: 0;
+}
+
+.post-log-nav-next {
+  text-align: right;
+}
+
+.post-log-nav-link {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  color: var(--color-text-secondary);
+  transition: border-color var(--transition-fast), color var(--transition-fast), background var(--transition-fast);
+  max-width: 100%;
+}
+
+.post-log-nav-link:hover {
+  border-color: var(--color-border-medium);
+  color: var(--color-text-primary);
+  background: var(--color-bg-secondary);
+}
+
+.post-log-nav-link-right {
+  align-items: flex-end;
+}
+
+.post-log-nav-id {
+  font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  opacity: 0.85;
+}
+
+.post-log-nav-title {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  max-width: 100%;
+}
+
+.post-log-nav-arrow {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-bottom: 2px;
+}
+
+/* Mobile: drop the card chrome, stack as thin one-line text rows.
+ * Each row = arrow + LOG·ID + truncated title, separated by hairlines.
+ */
+@media (max-width: 768px) {
+  .post-log-nav {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding-top: var(--spacing-sm);
+  }
+
+  .post-log-nav-next {
+    text-align: left;
+  }
+
+  .post-log-nav-link,
+  .post-log-nav-link-right {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) 0;
+    border: 0;
+    border-radius: 0;
+    border-bottom: 1px solid var(--color-border-light);
+    background: transparent;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .post-log-nav-prev .post-log-nav-link {
+    border-top: 1px solid var(--color-border-light);
+  }
+
+  .post-log-nav-link:hover {
+    border-color: var(--color-border-light);
+    background: transparent;
+  }
+
+  .post-log-nav-link:hover .post-log-nav-title {
+    color: var(--color-text-primary);
+  }
+
+  .post-log-nav-id {
+    flex-shrink: 0;
+  }
+
+  .post-log-nav-title {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--color-text-secondary);
+  }
+
+  .post-log-nav-arrow {
+    flex-shrink: 0;
+    margin-bottom: 0;
+  }
+}
+
+/* Loader shell — when the post page Suspense fallback renders, fill the
+ * post-container area with a centered AccessingOverlay panel instead of a
+ * tiny spinner. Visually consistent with the rest of the site.
+ */
+.post-container-loading {
+  background: transparent;
+  box-shadow: none;
+  border: 0;
+  padding: 0;
+  min-height: 320px;
+}
+
+.post-container-loading .accessing-root {
+  min-height: 320px;
+}

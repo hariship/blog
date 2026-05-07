@@ -1,6 +1,29 @@
 @import '../styles/theme.css';
 @import '../styles/blogextras-dark-theme.css';
 
+/* ================================================================
+ * Cross-document View Transitions (Chrome/Edge 126+, Safari 18+).
+ * Tells the browser to crossfade same-origin navigations natively.
+ * Falls back to instant nav on browsers that don't support it.
+ * ================================================================ */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.22s;
+  animation-timing-function: ease-out;
+}
+
+/* Honour reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -35,4 +58,74 @@ a {
 
 a:hover {
   color: var(--color-link-hover);
+}
+
+/* ================================================================
+ * Instant tooltips for navbar/header icon controls.
+ * Reads from the existing `title` attribute on each button so no
+ * TSX changes are needed. Native browser tooltips still fire after
+ * their long delay; ours appears immediately on hover.
+ * ================================================================ */
+.sound-toggle,
+.theme-toggle,
+.rss-feed-icon-button,
+.subscribe-icon-btn,
+.buy-me-coffee-button,
+.random-log-button,
+.help-button {
+  position: relative;
+}
+
+.sound-toggle[title]::after,
+.theme-toggle[title]::after,
+.rss-feed-icon-button[title]::after,
+.subscribe-icon-btn[title]::after,
+.buy-me-coffee-button[title]::after,
+.random-log-button[title]::after,
+.help-button[title]::after {
+  content: attr(title);
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  padding: 5px 9px;
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-medium);
+  border-radius: 4px;
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease, visibility 0.15s ease, transform 0.15s ease;
+  z-index: 1000;
+  box-shadow: var(--shadow-light);
+}
+
+.sound-toggle[title]:hover::after,
+.theme-toggle[title]:hover::after,
+.rss-feed-icon-button[title]:hover::after,
+.subscribe-icon-btn[title]:hover::after,
+.buy-me-coffee-button[title]:hover::after,
+.random-log-button[title]:hover::after,
+.help-button[title]:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Mobile: hover doesn't apply; native title tap-and-hold still works */
+@media (hover: none) {
+  .sound-toggle[title]::after,
+  .theme-toggle[title]::after,
+  .rss-feed-icon-button[title]::after,
+  .subscribe-icon-btn[title]::after,
+  .buy-me-coffee-button[title]::after,
+  .random-log-button[title]::after,
+  .help-button[title]::after {
+    display: none;
+  }
 }

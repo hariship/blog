@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import parse from 'html-react-parser'
 import { IoIosArrowBack } from 'react-icons/io'
@@ -9,12 +10,13 @@ import { useSounds } from '@/contexts/SoundContext'
 import { useAdmin } from '@/contexts/AdminContext'
 import { CommentsWidget } from '@/components/widgets'
 import { ThemeToggle, SoundToggle } from '@/components/common'
-import type { PostData } from './page'
+import type { PostData, AdjacentPost } from './page'
 import './Post.css'
 
 interface PostClientProps {
   title: string
   initialPost?: PostData | null
+  adjacent?: { prev: AdjacentPost | null; next: AdjacentPost | null }
 }
 
 const normalizeTitle = (title: string): string => {
@@ -44,7 +46,7 @@ const formatDate = (dateString: string): string => {
   }
 }
 
-export default function PostClient({ title, initialPost }: PostClientProps) {
+export default function PostClient({ title, initialPost, adjacent }: PostClientProps) {
   const [postContent, setPostContent] = useState<string>(initialPost?.content || '')
   const [postTitle, setPostTitle] = useState<string>(initialPost?.title || '')
   const [postDate, setPostDate] = useState<string>(initialPost?.pub_date || '')
@@ -55,7 +57,7 @@ export default function PostClient({ title, initialPost }: PostClientProps) {
   const [likesCount, setLikesCount] = useState<number>(initialPost?.likesCount || 0)
   const [isLiked, setIsLiked] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(!initialPost)
-  const [showComments, setShowComments] = useState<boolean>(false)
+  const [showComments, setShowComments] = useState<boolean>(true)
   const [postId, setPostId] = useState<number | null>(initialPost?.id || null)
   const [inkHousePublished, setInkHousePublished] = useState<boolean>(initialPost?.inkhouse_published || false)
   const [isPublishingToInkHouse, setIsPublishingToInkHouse] = useState<boolean>(false)
@@ -192,26 +194,49 @@ export default function PostClient({ title, initialPost }: PostClientProps) {
     }
   }
 
+  const TOGGLE_END_SENTINEL = '__BLOG_END_TOGGLE__'
+
   const processToggleBlocks = (htmlContent: string): string => {
     if (!htmlContent) return htmlContent
 
     // Replace non-breaking spaces with regular spaces for proper word wrapping
     let processed = htmlContent.replace(/&nbsp;/g, ' ')
 
+    // Step 1 — normalize every form of [END TOGGLE] to a sentinel.
+    // Brackets are optional (Quill can drop them mid-edit) and whitespace
+    // between END and TOGGLE may be regular space or non-breaking space.
+    // Order matters: replace the text first, then collapse any wrappers
+    // that are now wrapping just the sentinel.
+    processed = processed.replace(/\[?\s*END[\s ]+TOGGLE\s*\]?/gi, TOGGLE_END_SENTINEL)
+    // Collapse <strong>SENTINEL</strong> or <b>SENTINEL</b>
     processed = processed.replace(
-      /<p><strong[^>]*>\[TOGGLE\]\s*([^<]+)<\/strong><\/p>([\s\S]*?)(?:<strong[^>]*>\[END TOGGLE\]<\/strong>|(?=<p><strong[^>]*>\[TOGGLE\])|$)/gi,
-      (match, title, content) => {
-        let cleanContent = content.trim() || ''
-        cleanContent = cleanContent.replace(/<strong[^>]*>\[END TOGGLE\]<\/strong>/gi, '')
+      new RegExp(`<(?:strong|b|em|i)[^>]*>\\s*${TOGGLE_END_SENTINEL}\\s*<\\/(?:strong|b|em|i)>`, 'gi'),
+      TOGGLE_END_SENTINEL
+    )
+    // Collapse <p>SENTINEL</p> (with optional whitespace + nested empty inline tags)
+    processed = processed.replace(
+      new RegExp(`<p[^>]*>(?:\\s|<br[^>]*>|&nbsp;)*${TOGGLE_END_SENTINEL}(?:\\s|<br[^>]*>|&nbsp;)*<\\/p>`, 'gi'),
+      TOGGLE_END_SENTINEL
+    )
 
+    // Step 2 — wrap each TOGGLE block, terminating at the sentinel or the
+    // next TOGGLE start, or end of string.
+    processed = processed.replace(
+      new RegExp(
+        `<p[^>]*><strong[^>]*>\\[TOGGLE\\]\\s*([^<]+)<\\/strong><\\/p>([\\s\\S]*?)(?:${TOGGLE_END_SENTINEL}|(?=<p[^>]*><strong[^>]*>\\[TOGGLE\\])|$)`,
+        'gi'
+      ),
+      (match, title, content) => {
         return `<details class="post-toggle-details">
           <summary class="post-toggle-summary">${title.trim()}</summary>
-          <div class="post-toggle-content">${cleanContent}</div>
+          <div class="post-toggle-content">${(content || '').trim()}</div>
         </details>`
       }
     )
 
-    processed = processed.replace(/<strong[^>]*>\[END TOGGLE\]<\/strong>/gi, '')
+    // Step 3 — drop any leftover sentinels (END TOGGLE markers without a
+    // matching TOGGLE start get removed entirely).
+    processed = processed.split(TOGGLE_END_SENTINEL).join('')
 
     return processed
   }
@@ -317,6 +342,9 @@ export default function PostClient({ title, initialPost }: PostClientProps) {
               <ThemeToggle />
             </div>
           </div>
+          {postId && (
+            <span className="post-log-id">LOG&middot;{String(postId).padStart(3, '0')}</span>
+          )}
           <h1 className="post-title">{parse(postTitle)}</h1>
           <div className="post-meta">
             <span className="author-name">Hari</span> &bull;
@@ -377,6 +405,28 @@ export default function PostClient({ title, initialPost }: PostClientProps) {
           <br/>
           <br/>
           <hr/>
+          {(adjacent?.prev || adjacent?.next) && (
+            <nav className="post-log-nav" aria-label="Adjacent log entries">
+              <div className="post-log-nav-prev">
+                {adjacent?.prev && (
+                  <Link href={`/post/${adjacent.prev.normalized_title}`} className="post-log-nav-link">
+                    <span className="post-log-nav-arrow">&larr;</span>
+                    <span className="post-log-nav-id">LOG&middot;{String(adjacent.prev.id).padStart(3, '0')}</span>
+                    <span className="post-log-nav-title">{adjacent.prev.title}</span>
+                  </Link>
+                )}
+              </div>
+              <div className="post-log-nav-next">
+                {adjacent?.next && (
+                  <Link href={`/post/${adjacent.next.normalized_title}`} className="post-log-nav-link post-log-nav-link-right">
+                    <span className="post-log-nav-id">LOG&middot;{String(adjacent.next.id).padStart(3, '0')}</span>
+                    <span className="post-log-nav-title">{adjacent.next.title}</span>
+                    <span className="post-log-nav-arrow">&rarr;</span>
+                  </Link>
+                )}
+              </div>
+            </nav>
+          )}
           <div className="comments-section">
             <button
               className="comments-toggle"

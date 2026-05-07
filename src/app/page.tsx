@@ -1,12 +1,14 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Navbar } from '@/components/layout'
 import { ThemeToggle, SoundToggle } from '@/components/common'
 import { RSSFeedButton, Subscribe, CoffeeLink } from '@/components/widgets'
+import { Shuffle, HelpCircle } from 'lucide-react'
 import ViewSwitcher, { ViewMode } from '@/components/ViewSwitcher'
+import AccessingOverlay from '@/components/AccessingOverlay'
 import { useLikes } from '@/contexts/LikesContext'
 import { useSounds } from '@/contexts/SoundContext'
 import { useAdmin } from '@/contexts/AdminContext'
@@ -41,6 +43,70 @@ export default function HomePage() {
   const { isAdmin, adminToken, mounted: adminMounted } = useAdmin()
   const [publishingPostId, setPublishingPostId] = useState<number | null>(null)
   const [inkHouseError, setInkHouseError] = useState<string | null>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
+  const [showShortcuts, setShowShortcuts] = useState<boolean>(false)
+  const [accessingMessage, setAccessingMessage] = useState<string | null>(null)
+
+  // Centralised hard-nav helper. Shows the loader, then navigates. The overlay
+  // stays visible until the browser unmounts the page on the new request.
+  const accessAndGo = (url: string, message: string) => {
+    setAccessingMessage(message)
+    // tiny tick so React commits the overlay before we hand off to the browser
+    setTimeout(() => { window.location.href = url }, 16)
+  }
+
+  // Keyboard shortcuts on home:
+  //   '/'  → focus search
+  //   'r'  → random log
+  //   'n'  → newest log (most recent by pub_date)
+  //   '?'  → open shortcuts overlay
+  //   Esc  → close overlay
+  // Skipped when the user is typing in an input/textarea/select/contentEditable.
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      // Esc always closes the overlay (even from inside an input)
+      if (e.key === 'Escape' && showShortcuts) {
+        setShowShortcuts(false)
+        return
+      }
+      const triggers = ['/', 'r', 'R', 'n', 'N', 's', 'S', '?']
+      if (!triggers.includes(e.key)) return
+      // Don't trigger on modified keypresses (Cmd-R / Ctrl-R = browser reload)
+      if (e.metaKey || e.ctrlKey || e.altKey) return
+      const target = e.target as HTMLElement | null
+      if (!target) return
+      const tag = target.tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
+      if (target.isContentEditable) return
+
+      if (e.key === '/') {
+        e.preventDefault()
+        searchInputRef.current?.focus()
+      } else if (e.key === '?') {
+        e.preventDefault()
+        setShowShortcuts((open) => !open)
+      } else if (e.key === 'n' || e.key === 'N') {
+        e.preventDefault()
+        setShowShortcuts(false)
+        accessAndGo('/api/latest-post', 'ACCESSING NEWEST LOG')
+      } else if (e.key === 's' || e.key === 'S') {
+        // 's' or 'S' — open the Subscribe modal by clicking its button.
+        // Subscribe is a self-contained component; clicking its DOM trigger is
+        // the simplest hand-off without lifting state.
+        e.preventDefault()
+        setShowShortcuts(false)
+        const subscribeBtn = document.querySelector<HTMLButtonElement>('.subscribe-icon-btn')
+        subscribeBtn?.click()
+      } else {
+        // 'r' or 'R' — navigate to a random log via the redirect endpoint
+        e.preventDefault()
+        setShowShortcuts(false)
+        accessAndGo('/api/random-post', 'ACCESSING RANDOM LOG')
+      }
+    }
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
+  }, [showShortcuts])
 
   // Fetch categories
   useEffect(() => {
@@ -216,6 +282,7 @@ export default function HomePage() {
               </div>
             )}
             <div className="list-item-text">
+              <span className="list-item-log-id">LOG&middot;{String(post.id).padStart(3, '0')}</span>
               <div className="list-item-header">
                 <h3 className="list-item-title">{post.title}</h3>
                 {post.category && (
@@ -437,7 +504,41 @@ export default function HomePage() {
     )
   }
 
+  const renderEmptyState = () => (
+    <div className="feed-empty-state" role="status">
+      <span className="feed-empty-code">QUERY&middot;NULL</span>
+      <p className="feed-empty-title">NO RECORDS LOCATED</p>
+      {searchQuery ? (
+        <p className="feed-empty-text">
+          NO ENTRIES MATCH &ldquo;{searchQuery}&rdquo;
+        </p>
+      ) : (
+        <p className="feed-empty-text">
+          DATABASE RETURNED 0 ENTRIES FOR THIS FILTER.
+        </p>
+      )}
+      {(searchQuery || selectedCategory) && (
+        <button
+          type="button"
+          className="feed-empty-clear"
+          onClick={() => {
+            playButtonSound()
+            setSearchQuery('')
+            setSelectedCategory('')
+            setCurrentPage(1)
+          }}
+        >
+          <span className="feed-empty-clear-arrow">&larr;</span>
+          <span>CLEAR QUERY</span>
+        </button>
+      )}
+    </div>
+  )
+
   const renderFeedContent = () => {
+    if (posts.length === 0) {
+      return renderEmptyState()
+    }
     switch (viewMode) {
       case 'grid':
         return renderGridView()
@@ -453,6 +554,89 @@ export default function HomePage() {
   return (
     <>
       <Navbar />
+      {accessingMessage && <AccessingOverlay fullscreen message={accessingMessage} />}
+      {showShortcuts && (
+        <div
+          className="shortcuts-overlay"
+          onClick={() => setShowShortcuts(false)}
+          role="dialog"
+          aria-label="Keyboard shortcuts and quick actions"
+        >
+          <div
+            className="shortcuts-panel"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="shortcuts-header">
+              <span className="shortcuts-code">CMD&middot;HELP</span>
+              <button
+                type="button"
+                className="shortcuts-close"
+                onClick={() => setShowShortcuts(false)}
+                aria-label="Close shortcuts"
+              >
+                &times;
+              </button>
+            </div>
+            <h2 className="shortcuts-title">SHORTCUTS &middot; QUICK ACTIONS</h2>
+            <p className="shortcuts-subtitle">Tap a row, or press the key on a keyboard.</p>
+            <div className="shortcuts-list">
+              <button
+                type="button"
+                className="shortcuts-row shortcuts-row-action"
+                onClick={() => {
+                  setShowShortcuts(false)
+                  searchInputRef.current?.focus()
+                }}
+              >
+                <span className="shortcuts-key"><kbd>/</kbd></span>
+                <span className="shortcuts-desc">Focus search</span>
+              </button>
+              <button
+                type="button"
+                className="shortcuts-row shortcuts-row-action"
+                onClick={() => {
+                  setShowShortcuts(false)
+                  accessAndGo('/api/latest-post', 'ACCESSING NEWEST LOG')
+                }}
+              >
+                <span className="shortcuts-key"><kbd>n</kbd></span>
+                <span className="shortcuts-desc">Open the newest log</span>
+              </button>
+              <button
+                type="button"
+                className="shortcuts-row shortcuts-row-action"
+                onClick={() => {
+                  setShowShortcuts(false)
+                  accessAndGo('/api/random-post', 'ACCESSING RANDOM LOG')
+                }}
+              >
+                <span className="shortcuts-key"><kbd>r</kbd></span>
+                <span className="shortcuts-desc">Open a random log</span>
+              </button>
+              <button
+                type="button"
+                className="shortcuts-row shortcuts-row-action"
+                onClick={() => {
+                  setShowShortcuts(false)
+                  const subscribeBtn = document.querySelector<HTMLButtonElement>('.subscribe-icon-btn')
+                  subscribeBtn?.click()
+                }}
+              >
+                <span className="shortcuts-key"><kbd>s</kbd></span>
+                <span className="shortcuts-desc">Subscribe to newsletter</span>
+              </button>
+              <div className="shortcuts-row shortcuts-row-static">
+                <span className="shortcuts-key"><kbd>?</kbd></span>
+                <span className="shortcuts-desc">Toggle this panel</span>
+              </div>
+              <div className="shortcuts-row shortcuts-row-static">
+                <span className="shortcuts-key"><kbd>Esc</kbd></span>
+                <span className="shortcuts-desc">Close this panel</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="rss-feed">
         <div className="rss-feed-layout">
           <div className="rss-feed-main">
@@ -472,6 +656,32 @@ export default function HomePage() {
                   <ThemeToggle />
                   <RSSFeedButton />
                   <Subscribe />
+                  <a
+                    href="/api/random-post"
+                    rel="nofollow"
+                    className="random-log-button"
+                    title="Random log"
+                    aria-label="Open a random log entry"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      playButtonSound()
+                      accessAndGo('/api/random-post', 'ACCESSING RANDOM LOG')
+                    }}
+                  >
+                    <Shuffle size={18} />
+                  </a>
+                  <button
+                    type="button"
+                    className="help-button"
+                    title="Keyboard shortcuts (?)"
+                    aria-label="Show keyboard shortcuts"
+                    onClick={() => {
+                      playButtonSound()
+                      setShowShortcuts(true)
+                    }}
+                  >
+                    <HelpCircle size={18} />
+                  </button>
                 </div>
               </div>
             </div>
@@ -499,9 +709,10 @@ export default function HomePage() {
                 </div>
                 <div className="search-section">
                   <input
+                    ref={searchInputRef}
                     type="text"
                     className="search-input"
-                    placeholder="Search..."
+                    placeholder="Search...  (press /)"
                     value={searchQuery}
                     onChange={(e) => {
                       setSearchQuery(e.target.value)
@@ -584,12 +795,17 @@ export default function HomePage() {
           {/* Sidebar */}
           <aside className="rss-feed-sidebar">
             <div className="sidebar-widget">
-              <h3 className="sidebar-widget-title">About</h3>
+              <h3 className="sidebar-widget-title">
+                <span className="widget-code">01</span>
+                <span>About</span>
+              </h3>
               <div className="sidebar-about">
                 <p className="sidebar-about-text">
                   Welcome to my corner of the internet. I write about life, tech, and everything in between. Thanks for stopping by!
                 </p>
                 <div className="sidebar-about-links">
+                  {/* TODO: re-enable once a /now entry is written.
+                      <Link href="/now">What I&apos;m up to now →</Link> */}
                   <a href="https://apps.haripriya.org" target="_blank" rel="noopener noreferrer">
                     View My Apps →
                   </a>
@@ -599,7 +815,10 @@ export default function HomePage() {
             </div>
 
             <div className="sidebar-widget">
-              <h3 className="sidebar-widget-title">Blog Stats</h3>
+              <h3 className="sidebar-widget-title">
+                <span className="widget-code">02</span>
+                <span>Blog Stats</span>
+              </h3>
               <div className="sidebar-stats">
                 <div className="sidebar-stat-item">
                   <span className="sidebar-stat-value">{totalPosts || 79}</span>
@@ -613,7 +832,10 @@ export default function HomePage() {
             </div>
 
             <div className="sidebar-widget">
-              <h3 className="sidebar-widget-title">Categories</h3>
+              <h3 className="sidebar-widget-title">
+                <span className="widget-code">03</span>
+                <span>Categories</span>
+              </h3>
               <div className="sidebar-categories">
                 <button
                   className={`sidebar-category-btn ${selectedCategory === '' ? 'active' : ''}`}
@@ -642,6 +864,22 @@ export default function HomePage() {
             </div>
           </aside>
         </div>
+        <footer className="feed-footer-strip" aria-label="System status">
+          <span className="feed-footer-segment">{totalPosts || 0} ENTRIES</span>
+          <span className="feed-footer-divider">&middot;</span>
+          <span className="feed-footer-segment">{categories.length} CATEGORIES</span>
+          <span className="feed-footer-divider">&middot;</span>
+          <span className="feed-footer-segment">ACTIVE SINCE 2020</span>
+          <span className="feed-footer-divider">&middot;</span>
+          <button
+            type="button"
+            className="feed-footer-help"
+            onClick={() => setShowShortcuts(true)}
+            aria-label="Show keyboard shortcuts"
+          >
+            PRESS ? FOR HELP
+          </button>
+        </footer>
       </div>
     </>
   )

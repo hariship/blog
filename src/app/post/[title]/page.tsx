@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { db } from '@/lib/db'
 import { posts, likes } from '@/lib/db/schema'
-import { eq } from 'drizzle-orm'
+import { eq, ne, and, lt, gt, desc, asc } from 'drizzle-orm'
 import PostClient from './PostClient'
 
 interface Props {
@@ -18,6 +18,12 @@ export interface PostData {
   likesCount: number
   description?: string
   inkhouse_published?: boolean
+}
+
+export interface AdjacentPost {
+  id: number
+  title: string
+  normalized_title: string
 }
 
 const normalizeTitle = (title: string): string => {
@@ -66,6 +72,31 @@ async function getPost(title: string): Promise<PostData | null> {
   }
 }
 
+// Adjacent log entries by id (insertion order, matching the LOG·NNN scheme).
+// Excludes the /now row. Returns nulls at the ends.
+async function getAdjacentPosts(currentId: number): Promise<{ prev: AdjacentPost | null; next: AdjacentPost | null }> {
+  const select = { id: posts.id, title: posts.title, normalized_title: posts.normalized_title }
+
+  const [prevRow] = await db
+    .select(select)
+    .from(posts)
+    .where(and(lt(posts.id, currentId), ne(posts.normalized_title, 'now')))
+    .orderBy(desc(posts.id))
+    .limit(1)
+
+  const [nextRow] = await db
+    .select(select)
+    .from(posts)
+    .where(and(gt(posts.id, currentId), ne(posts.normalized_title, 'now')))
+    .orderBy(asc(posts.id))
+    .limit(1)
+
+  return {
+    prev: prevRow ? { id: prevRow.id, title: prevRow.title, normalized_title: prevRow.normalized_title } : null,
+    next: nextRow ? { id: nextRow.id, title: nextRow.title, normalized_title: nextRow.normalized_title } : null,
+  }
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { title } = await params
   const post = await getPost(title)
@@ -111,5 +142,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function PostPage({ params }: Props) {
   const { title } = await params
   const initialPost = await getPost(title)
-  return <PostClient title={title} initialPost={initialPost} />
+  const adjacent = initialPost
+    ? await getAdjacentPosts(initialPost.id)
+    : { prev: null, next: null }
+  return <PostClient title={title} initialPost={initialPost} adjacent={adjacent} />
 }

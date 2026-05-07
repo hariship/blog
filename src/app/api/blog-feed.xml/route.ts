@@ -1,6 +1,6 @@
 import { db } from '@/lib/db'
 import { posts } from '@/lib/db/schema'
-import { desc } from 'drizzle-orm'
+import { desc, ne } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
 
 export async function GET() {
@@ -19,6 +19,7 @@ export async function GET() {
         enclosure: posts.enclosure,
       })
       .from(posts)
+      .where(ne(posts.normalized_title, 'now'))
       .orderBy(desc(posts.pub_date))
       .limit(50)
 

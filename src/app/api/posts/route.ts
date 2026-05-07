@@ -1,6 +1,6 @@
 import { db } from '@/lib/db'
 import { posts, likes } from '@/lib/db/schema'
-import { eq, ilike, or, desc, count, sql } from 'drizzle-orm'
+import { eq, ne, and, ilike, or, desc, count, sql } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
 import { unstable_cache } from 'next/cache'
 
@@ -11,6 +11,8 @@ const fetchPostsList = unstable_cache(
     const offset = (page - 1) * limit
 
     const conditions = []
+    // Exclude the /now page row from the main feed and search.
+    conditions.push(ne(posts.normalized_title, 'now'))
     if (category && category !== 'all') {
       conditions.push(eq(posts.category, category))
     }
@@ -22,9 +24,7 @@ const fetchPostsList = unstable_cache(
         )!
       )
     }
-    const where = conditions.length > 0
-      ? conditions.length === 1 ? conditions[0] : sql`${conditions[0]} AND ${conditions[1]}`
-      : undefined
+    const where = and(...conditions)
 
     const rows = await db
       .select({
@@ -90,7 +90,10 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400')
+    // No CDN caching: revalidateTag clears unstable_cache (in-process) but
+    // does NOT purge Vercel's edge cache, so s-maxage here would serve stale
+    // titles/slugs after an admin edit. unstable_cache above is the cache layer.
+    response.headers.set('Cache-Control', 'no-store, max-age=0')
     return response
   } catch (error) {
     console.error('Error in posts API:', error)

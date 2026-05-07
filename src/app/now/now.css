@@ -1,0 +1,15 @@
+.now-container {
+  max-width: 640px;
+}
+
+.now-meta {
+  margin-bottom: var(--spacing-lg);
+}
+
+.now-content {
+  font-size: 1.0625rem;
+}
+
+.now-content p {
+  margin-bottom: var(--spacing-md);
+}

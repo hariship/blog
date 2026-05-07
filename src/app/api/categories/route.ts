@@ -1,6 +1,6 @@
 import { db } from '@/lib/db'
 import { posts } from '@/lib/db/schema'
-import { isNotNull, desc, max } from 'drizzle-orm'
+import { isNotNull, ne, and, desc, max } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
 import { unstable_cache } from 'next/cache'
 
@@ -9,7 +9,7 @@ const fetchCategories = unstable_cache(
     const rows = await db
       .select({ category: posts.category, latest: max(posts.pub_date) })
       .from(posts)
-      .where(isNotNull(posts.category))
+      .where(and(isNotNull(posts.category), ne(posts.normalized_title, 'now')))
       .groupBy(posts.category)
       .orderBy(desc(max(posts.pub_date)))
     return rows.map(r => r.category).filter(Boolean)
@@ -22,7 +22,7 @@ export async function GET() {
   try {
     const categories = await fetchCategories()
     const response = NextResponse.json(categories)
-    response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400')
+    response.headers.set('Cache-Control', 'no-store, max-age=0')
     return response
   } catch (error) {
     console.error('Error in categories API:', error)
