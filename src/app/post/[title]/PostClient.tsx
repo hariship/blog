@@ -63,6 +63,8 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
   const [inkHousePublished, setInkHousePublished] = useState<boolean>(initialPost?.inkhouse_published || false)
   const [isPublishingToInkHouse, setIsPublishingToInkHouse] = useState<boolean>(false)
   const [inkHouseMessage, setInkHouseMessage] = useState<string | null>(null)
+  const [isSendingNewsletter, setIsSendingNewsletter] = useState<boolean>(false)
+  const [newsletterMessage, setNewsletterMessage] = useState<string | null>(null)
 
   const router = useRouter()
   const { playButtonSound } = useSounds()
@@ -319,6 +321,45 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
     }
   }
 
+  const handleSendNewsletter = async () => {
+    if (!postId || !adminToken) return
+    // Manual confirm: irreversible, hits all active subscribers.
+    const confirmed = typeof window === 'undefined' ? true : window.confirm(
+      'Send this entry as a newsletter to all active subscribers? This cannot be undone.'
+    )
+    if (!confirmed) return
+
+    setIsSendingNewsletter(true)
+    setNewsletterMessage(null)
+
+    try {
+      const response = await fetch('/api/admin/send-newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`,
+        },
+        body: JSON.stringify({ postId }),
+      })
+      const data = await response.json()
+      if (response.ok) {
+        setNewsletterMessage(
+          `Sent to ${data.sent}/${data.attempted} subscribers${data.failed ? ` (${data.failed} failed)` : ''}`
+        )
+        setTimeout(() => setNewsletterMessage(null), 6000)
+      } else {
+        setNewsletterMessage(`Failed: ${data.error || 'Unknown error'}`)
+        setTimeout(() => setNewsletterMessage(null), 6000)
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Network error'
+      setNewsletterMessage(`Failed: ${message}`)
+      setTimeout(() => setNewsletterMessage(null), 6000)
+    } finally {
+      setIsSendingNewsletter(false)
+    }
+  }
+
   return (
     <div className={`post-container ${isJournal ? 'journal-post' : ''}`}>
       {loading ? (
@@ -369,6 +410,19 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
                 {inkHouseMessage && (
                   <span className={`inkhouse-message ${inkHouseMessage.startsWith('Failed') ? 'error' : 'success'}`}>
                     {inkHouseMessage}
+                  </span>
+                )}
+                <button
+                  onClick={handleSendNewsletter}
+                  disabled={isSendingNewsletter || !postId}
+                  className="admin-newsletter-btn"
+                  title="Send this entry as a newsletter to all active subscribers"
+                >
+                  {isSendingNewsletter ? 'Sending...' : 'Email subscribers'}
+                </button>
+                {newsletterMessage && (
+                  <span className={`inkhouse-message ${newsletterMessage.startsWith('Failed') ? 'error' : 'success'}`}>
+                    {newsletterMessage}
                   </span>
                 )}
               </div>
