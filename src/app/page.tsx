@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Navbar } from '@/components/layout'
 import { ThemeToggle, SoundToggle } from '@/components/common'
 import { RSSFeedButton, Subscribe, CoffeeLink } from '@/components/widgets'
@@ -27,11 +28,18 @@ const formatDate = (dateString: string): string => {
 }
 
 export default function HomePage() {
+  const router = useRouter()
+  const urlParams = useSearchParams()
+
   const [posts, setPosts] = useState<PostWithLikes[]>([])
   const [categories, setCategories] = useState<string[]>([])
-  const [selectedCategory, setSelectedCategory] = useState<string>('')
-  const [searchQuery, setSearchQuery] = useState<string>('')
-  const [currentPage, setCurrentPage] = useState<number>(1)
+  // Initialise from URL so router.back() from a post restores the filter state.
+  const [selectedCategory, setSelectedCategory] = useState<string>(() => urlParams.get('category') || '')
+  const [searchQuery, setSearchQuery] = useState<string>(() => urlParams.get('search') || '')
+  const [currentPage, setCurrentPage] = useState<number>(() => {
+    const p = parseInt(urlParams.get('page') || '1', 10)
+    return Number.isFinite(p) && p > 0 ? p : 1
+  })
   const [totalPages, setTotalPages] = useState<number>(1)
   const [totalPosts, setTotalPosts] = useState<number>(0)
   const [loading, setLoading] = useState<boolean>(true)
@@ -46,6 +54,23 @@ export default function HomePage() {
   const searchInputRef = useRef<HTMLInputElement>(null)
   const [showShortcuts, setShowShortcuts] = useState<boolean>(false)
   const [accessingMessage, setAccessingMessage] = useState<string | null>(null)
+
+  // Mirror filters into the URL with router.replace so the browser history
+  // entry for the home page captures the filter state. When the user clicks
+  // a post then hits Back, the home page mounts with the same params and
+  // the filter is restored.
+  useEffect(() => {
+    const params = new URLSearchParams()
+    if (selectedCategory) params.set('category', selectedCategory)
+    if (searchQuery) params.set('search', searchQuery)
+    if (currentPage > 1) params.set('page', String(currentPage))
+    const qs = params.toString()
+    const target = qs ? `/?${qs}` : '/'
+    const current = window.location.pathname + window.location.search
+    if (current !== target) {
+      router.replace(target, { scroll: false })
+    }
+  }, [selectedCategory, searchQuery, currentPage, router])
 
   // Centralised hard-nav helper. Shows the loader, then navigates. The overlay
   // stays visible until the browser unmounts the page on the new request.
@@ -81,12 +106,15 @@ export default function HomePage() {
 
       if (e.key === '/') {
         e.preventDefault()
+        playKeypadBeep()
         searchInputRef.current?.focus()
       } else if (e.key === '?') {
         e.preventDefault()
+        playButtonSound()
         setShowShortcuts((open) => !open)
       } else if (e.key === 'n' || e.key === 'N') {
         e.preventDefault()
+        playButtonSound()
         setShowShortcuts(false)
         accessAndGo('/api/latest-post', 'ACCESSING NEWEST LOG')
       } else if (e.key === 's' || e.key === 'S') {
@@ -94,12 +122,14 @@ export default function HomePage() {
         // Subscribe is a self-contained component; clicking its DOM trigger is
         // the simplest hand-off without lifting state.
         e.preventDefault()
+        playButtonSound()
         setShowShortcuts(false)
         const subscribeBtn = document.querySelector<HTMLButtonElement>('.subscribe-icon-btn')
         subscribeBtn?.click()
       } else {
         // 'r' or 'R' — navigate to a random log via the redirect endpoint
         e.preventDefault()
+        playButtonSound()
         setShowShortcuts(false)
         accessAndGo('/api/random-post', 'ACCESSING RANDOM LOG')
       }

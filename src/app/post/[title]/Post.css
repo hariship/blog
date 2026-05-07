@@ -1095,3 +1095,49 @@ hr {
 .post-container-loading .accessing-root {
   min-height: 320px;
 }
+
+/* Post header nav buttons — Back (history.back) + Home (router.push('/')) */
+.post-nav-buttons {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.home-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid var(--color-border-light);
+  border-radius: 6px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: color var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
+  padding: 0;
+}
+
+.home-button:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-medium);
+  background: var(--color-bg-secondary);
+}
+
+.home-button svg {
+  display: block;
+}
+
+/* Coerce the existing back-button (which may have been a div) into a real
+ * button so it lines up visually with .home-button. */
+.back-button {
+  background: transparent;
+  border: 1px solid var(--color-border-light);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
+}
+.back-button:hover {
+  border-color: var(--color-border-medium);
+  background: var(--color-bg-secondary);
+}

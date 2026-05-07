@@ -63,13 +63,24 @@ export async function POST(request: NextRequest) {
 
     const normalized_title = normalizeTitle(title)
 
-    // If an ID is provided, update by ID directly (allows title changes during editing)
+    // If an ID is provided, update by ID directly. Only regenerate
+    // normalized_title when the title actually changed — otherwise we'd
+    // break stable URLs every time the body or category is edited.
     if (id) {
+      const [existing] = await db
+        .select({ title: posts.title, normalized_title: posts.normalized_title })
+        .from(posts)
+        .where(eq(posts.id, id))
+        .limit(1)
+
+      const titleChanged = existing && existing.title.trim() !== title.trim()
+      const slugToUse = titleChanged ? normalized_title : (existing?.normalized_title ?? normalized_title)
+
       await db
         .update(posts)
         .set({
           title,
-          normalized_title,
+          normalized_title: slugToUse,
           description,
           content,
           category,
@@ -78,7 +89,7 @@ export async function POST(request: NextRequest) {
         })
         .where(eq(posts.id, id))
 
-      invalidateBlogCaches(normalized_title)
+      invalidateBlogCaches(slugToUse)
       return NextResponse.json({ success: true, message: 'Post updated', id })
     }
 

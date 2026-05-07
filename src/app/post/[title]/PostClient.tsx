@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import parse from 'html-react-parser'
 import { IoIosArrowBack } from 'react-icons/io'
+import { Home } from 'lucide-react'
 import { useLikes } from '@/contexts/LikesContext'
 import { useSounds } from '@/contexts/SoundContext'
 import { useAdmin } from '@/contexts/AdminContext'
@@ -159,7 +160,18 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
     }
   }, [postTitle])
 
+  // Back: prefer real browser history so any home-page filter/search/scroll
+  // state is restored. Fall back to /  for direct landings (no history).
   const handleGoBack = () => {
+    playButtonSound()
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      router.back()
+    } else {
+      router.push('/')
+    }
+  }
+
+  const handleGoHome = () => {
     playButtonSound()
     router.push('/')
   }
@@ -307,8 +319,25 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
       ) : (
         <>
           <div className="post-header">
-            <div className="back-button" onClick={handleGoBack}>
-              <IoIosArrowBack className="back-icon" />
+            <div className="post-nav-buttons">
+              <button
+                type="button"
+                className="back-button"
+                onClick={handleGoBack}
+                title="Back"
+                aria-label="Go back"
+              >
+                <IoIosArrowBack className="back-icon" />
+              </button>
+              <button
+                type="button"
+                className="home-button"
+                onClick={handleGoHome}
+                title="Home"
+                aria-label="Go to home"
+              >
+                <Home size={16} />
+              </button>
             </div>
             {isAdmin && adminMounted && (
               <div className="admin-inkhouse-controls">

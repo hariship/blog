@@ -1,10 +1,7 @@
 import AccessingOverlay from '@/components/AccessingOverlay'
-import './Post.css'
 
 export default function Loading() {
-  return (
-    <div className="post-container post-container-loading">
-      <AccessingOverlay message="ACCESSING LOG ENTRY" />
-    </div>
-  )
+  // Render fullscreen so position stays consistent with the click-handler
+  // overlay (random/latest). Only the message changes — no panel jump.
+  return <AccessingOverlay fullscreen message="ACCESSING LOG ENTRY" />
 }
