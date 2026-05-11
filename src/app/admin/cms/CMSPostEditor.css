@@ -1001,10 +1001,19 @@
   margin: 0;
   font-size: 14px;
   line-height: 1.4;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  min-width: 0;
 }
 
-.cms-preview-body .cms-toggle-content p {
+.cms-preview-body .cms-toggle-content p,
+.cms-preview-body .cms-toggle-content li,
+.cms-preview-body .cms-toggle-content span {
   margin: 0 0 var(--spacing-sm) 0;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .cms-preview-body .cms-toggle-content p:last-child {

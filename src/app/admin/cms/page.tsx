@@ -141,6 +141,10 @@ function CMSPostEditorInner() {
           setImageUrl(post.image_url || post.enclosure || '')
           setContent(post.content || '')
           setCategory(post.category || 'Life')
+          // Open the meta panel so feature image, description, and category
+          // are visible/editable on entry — otherwise they're hidden behind
+          // the collapsed meta toggle.
+          setShowMeta(true)
           setSubmitStatus({ type: 'success', message: 'Post loaded for editing' })
           setTimeout(() => setSubmitStatus(null), 3000)
           return
@@ -677,14 +681,30 @@ function CMSPostEditorInner() {
       (match, toggleTitle, toggleContent) => {
         // Title may have leading &nbsp; — strip them along with normal whitespace.
         const cleanTitle = toggleTitle.replace(/&nbsp;|&#160;|&#xa0;/g, ' ').trim()
+        // Quill emits typed spaces as &nbsp; (U+00A0). Inside a constrained
+        // toggle box, that makes the whole paragraph one unbreakable unit and
+        // text overflows the container. Convert back to normal spaces so the
+        // browser can wrap at word boundaries.
+        const cleanContent = (toggleContent || '')
+          .replace(/&nbsp;|&#160;|&#xa0;/g, ' ')
+          .replace(/ /g, ' ')
+          .trim()
         return `<details class="cms-toggle-details">
           <summary class="cms-toggle-summary">${cleanTitle}</summary>
-          <div class="cms-toggle-content">${(toggleContent || '').trim()}</div>
+          <div class="cms-toggle-content">${cleanContent}</div>
         </details>`
       }
     )
 
-    return processed.split(TOGGLE_END_SENTINEL).join('')
+    processed = processed.split(TOGGLE_END_SENTINEL).join('')
+
+    // Quill emits typed spaces as &nbsp; entity OR the literal U+00A0
+    // character. That makes long lines one unbreakable unit and they overflow
+    // narrow containers without wrapping. Convert everywhere so the browser
+    // can wrap normally.
+    return processed
+      .replace(/&nbsp;|&#160;|&#xa0;/g, ' ')
+      .replace(/ /g, ' ')
   }
 
   const quillModules = useMemo(() => ({

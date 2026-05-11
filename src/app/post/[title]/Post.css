@@ -766,6 +766,18 @@ hr {
   color: var(--color-text-primary);
   animation: fadeIn 0.3s ease-in-out;
   font-family: inherit;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  min-width: 0;
+}
+
+.post-toggle-content p,
+.post-toggle-content li,
+.post-toggle-content span {
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 @keyframes fadeIn {

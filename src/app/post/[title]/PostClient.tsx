@@ -220,8 +220,14 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
   const processToggleBlocks = (htmlContent: string): string => {
     if (!htmlContent) return htmlContent
 
-    // Replace non-breaking spaces with regular spaces for proper word wrapping
-    let processed = htmlContent.replace(/&nbsp;/g, ' ')
+    // Replace non-breaking spaces with regular spaces for proper word wrapping.
+    // Quill emits typed spaces as either &nbsp; entity or the literal U+00A0
+    // character. Either form makes the surrounding text one unbreakable unit
+    // and overflows narrow containers (toggle boxes especially). Convert all
+    // forms to plain space so the browser can wrap at word boundaries.
+    let processed = htmlContent
+      .replace(/&nbsp;|&#160;|&#xa0;/g, ' ')
+      .replace(/ /g, ' ')
 
     // Step 1 — normalize every form of [END TOGGLE] to a sentinel.
     // Brackets are optional (Quill can drop them mid-edit) and whitespace
@@ -248,9 +254,14 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
         'gi'
       ),
       (match, title, content) => {
+        const cleanTitle = title.replace(/&nbsp;|&#160;|&#xa0;/g, ' ').trim()
+        const cleanContent = (content || '')
+          .replace(/&nbsp;|&#160;|&#xa0;/g, ' ')
+          .replace(/\u00A0/g, ' ')
+          .trim()
         return `<details class="post-toggle-details">
-          <summary class="post-toggle-summary">${title.trim()}</summary>
-          <div class="post-toggle-content">${(content || '').trim()}</div>
+          <summary class="post-toggle-summary">${cleanTitle}</summary>
+          <div class="post-toggle-content">${cleanContent}</div>
         </details>`
       }
     )
