@@ -850,6 +850,9 @@ button.theme-toggle:hover svg {
 
 .rss-feed-main {
   min-width: 0;
+  /* Reserve full panel height during loading so the box doesn't snap
+   * from short → tall when /api/posts resolves. */
+  min-height: 85vh;
   background-color: var(--color-bg-card);
   /* Asymmetric LCARS corners: big curve at top-left, sharp elsewhere.
    * Reads as the iconic half-stadium shape from TNG control panels. */
@@ -1333,9 +1336,6 @@ button.theme-toggle:hover svg {
   padding: var(--spacing-md);
   padding-top: 0;
   margin: 0;
-  /* Reserve space while content loads so the panel doesn't snap from
-   * tiny → tall when /api/posts resolves. ~10 list-view cards' worth. */
-  min-height: 70vh;
 }
 
 .rss-feed-item {
