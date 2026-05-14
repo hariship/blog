@@ -61,9 +61,11 @@ export default function RootLayout({
         <meta name="theme-color" content="#121212" />
       </head>
       <body>
-        <Providers>
-          {children}
-        </Providers>
+        <div className="site-main">
+          <Providers>
+            {children}
+          </Providers>
+        </div>
         <footer style={{
           textAlign: 'center',
           padding: '1.5rem',

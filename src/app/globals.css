@@ -45,6 +45,18 @@ body {
   background-color: var(--color-bg-primary);
   color: var(--color-text-primary);
   transition: background-color 0.3s ease, color 0.3s ease;
+  /* Sticky-footer layout: the webring footer renders after the page
+   * content in layout.tsx. Without flex+min-height, an empty/loading
+   * page leaves the footer high on the screen. */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.site-main {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
 }
 
 code {

@@ -855,7 +855,10 @@ function HomePageContent() {
             )}
             <div className="rss-feed-list">
               {loading ? (
-                <div className="loader"></div>
+                // Skip the in-content spinner while the boot overlay is
+                // already covering the screen — otherwise two loaders fire
+                // simultaneously on first visit.
+                booting ? null : <div className="loader"></div>
               ) : (
                 <div className="feed-content">{renderFeedContent()}</div>
               )}
