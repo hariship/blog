@@ -1,43 +1,37 @@
 import { Metadata } from 'next'
 import { db } from '@/lib/db'
-import { posts } from '@/lib/db/schema'
-import { eq } from 'drizzle-orm'
-import NowClient from './NowClient'
+import { personalLogs } from '@/lib/db/schema'
+import { desc } from 'drizzle-orm'
+import NowClient, { type LogEntry } from './NowClient'
 
 export const dynamic = 'force-dynamic'
 
-interface NowPost {
-  title: string
-  content: string
-  pub_date: string
-}
-
-async function getNow(): Promise<NowPost | null> {
+async function getEntries(): Promise<LogEntry[]> {
   const rows = await db
     .select({
-      title: posts.title,
-      content: posts.content,
-      pub_date: posts.pub_date,
+      id: personalLogs.id,
+      body: personalLogs.body,
+      created_at: personalLogs.created_at,
+      updated_at: personalLogs.updated_at,
     })
-    .from(posts)
-    .where(eq(posts.normalized_title, 'now'))
-    .limit(1)
+    .from(personalLogs)
+    .orderBy(desc(personalLogs.created_at))
+    .limit(100)
 
-  if (rows.length === 0) return null
-  const row = rows[0]
-  return {
-    title: row.title,
-    content: row.content,
-    pub_date: row.pub_date?.toISOString() || '',
-  }
+  return rows.map(r => ({
+    id: r.id,
+    body: r.body,
+    created_at: r.created_at?.toISOString() || '',
+    updated_at: r.updated_at?.toISOString() || null,
+  }))
 }
 
 export const metadata: Metadata = {
-  title: 'Now',
-  description: 'What I am currently doing, reading, thinking about.',
+  title: "Personal Log",
+  description: "Hari's Personal Log — short entries as they happen.",
   openGraph: {
-    title: 'Now',
-    description: 'What I am currently doing, reading, thinking about.',
+    title: "Personal Log — Hari",
+    description: "Short entries as they happen.",
     url: 'https://blog.haripriya.org/now',
     type: 'article',
     siteName: "Hari's Blog",
@@ -45,6 +39,6 @@ export const metadata: Metadata = {
 }
 
 export default async function NowPage() {
-  const post = await getNow()
-  return <NowClient post={post} />
+  const entries = await getEntries()
+  return <NowClient entries={entries} />
 }

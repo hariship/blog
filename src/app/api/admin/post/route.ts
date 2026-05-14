@@ -97,7 +97,8 @@ export async function POST(request: NextRequest) {
           content,
           category,
           image_url,
-          enclosure
+          enclosure,
+          updated_at: new Date(),
         })
         .where(eq(posts.id, id))
 
@@ -122,7 +123,8 @@ export async function POST(request: NextRequest) {
           content,
           category,
           image_url,
-          enclosure
+          enclosure,
+          updated_at: new Date(),
         })
         .where(eq(posts.id, existingRows[0].id))
 

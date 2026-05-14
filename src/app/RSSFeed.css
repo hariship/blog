@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap');
+
 /* --- Star Trek LCARS Dark Theme Only --- */
 [data-theme="dark"] {
   /* Star Trek LCARS Color Palette - Subtle & Eye-friendly */
@@ -132,9 +134,10 @@
 [data-theme="dark"] .list-item-title,
 [data-theme="dark"] .grid-card-title,
 [data-theme="dark"] .compact-title {
-  font-family: 'Helvetica Neue', 'Arial', sans-serif !important;
-  font-weight: 400 !important;
-  letter-spacing: 0.5px !important;
+  font-family: 'Space Grotesk', 'Helvetica Neue', 'Arial', sans-serif !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.2px !important;
+  color: #979ca5 !important;
 }
 
 [data-theme="dark"] .list-item-category,
@@ -467,6 +470,7 @@ button.theme-toggle:hover svg {
 }
 
 .list-item-title {
+  font-family: 'Space Grotesk', 'Source Sans Pro', sans-serif;
   font-size: 20px;
   font-weight: 600;
   color: var(--color-text-primary);
@@ -2344,14 +2348,74 @@ button.theme-toggle:hover svg {
 /* Log entry IDs — small mono prefix above each list-view title */
 .list-item-log-id {
   display: block;
-  font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.6875rem;
-  letter-spacing: 0.08em;
+  font-family: 'Saira Condensed', 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
   color: var(--color-text-muted);
   margin-bottom: 4px;
   text-transform: uppercase;
   opacity: 0.85;
   line-height: 1;
+}
+
+.list-item-log-current {
+  color: var(--color-text-muted);
+  opacity: 0.95;
+}
+
+[data-theme="dark"] .list-item-log-current {
+  color: var(--lcars-blue);
+  opacity: 1;
+}
+
+[data-theme="dark"] .list-item {
+  position: relative;
+}
+
+[data-theme="dark"] .list-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  background: var(--lcars-blue);
+  border-radius: 2px 0 0 2px;
+  opacity: 0.55;
+  animation: rail-pulse 4s ease-in-out infinite;
+}
+
+[data-theme="dark"] .list-item:hover::before {
+  opacity: 1;
+  animation: none; /* freeze the pulse on hover */
+}
+
+[data-theme="dark"] .list-item-current::before {
+  background: var(--lcars-blue);
+  animation: rail-pulse-active 2.2s ease-in-out infinite;
+}
+
+@keyframes rail-pulse {
+  0%, 100% { opacity: 0.45; }
+  50%      { opacity: 0.85; }
+}
+
+@keyframes rail-pulse-active {
+  0%, 100% { opacity: 0.7;  }
+  50%      { opacity: 1;    }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  [data-theme="dark"] .list-item::before,
+  [data-theme="dark"] .list-item-current::before {
+    animation: none;
+    opacity: 0.6;
+  }
+  [data-theme="dark"] .list-item-current::before {
+    opacity: 1;
+  }
 }
 
 /* Sidebar widget section codes — "01" before "About" etc. */
@@ -2374,6 +2438,35 @@ button.theme-toggle:hover svg {
   line-height: 1;
   flex-shrink: 0;
   text-transform: uppercase;
+  margin-left: auto; /* push code pill to right of widget heading */
+}
+
+.widget-name {
+  font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .widget-name {
+  color: var(--lcars-blue);
+}
+
+/* "Prose" variant — Space Grotesk Title Case. Distinct retro-tech feel
+ * paired with the Saira Condensed code labels next to it. */
+.widget-name-prose {
+  font-family: 'Space Grotesk', 'Source Sans Pro', sans-serif;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .widget-name-prose {
+  color: var(--color-text-primary);
 }
 
 /* LCARS elbow bracket — outline only, no fill.

@@ -12,6 +12,7 @@ import { useAdmin } from '@/contexts/AdminContext'
 import { CommentsWidget } from '@/components/widgets'
 import { ThemeToggle, SoundToggle } from '@/components/common'
 import type { PostData, AdjacentPost } from './page'
+import AckToast from '@/components/AckToast'
 import './Post.css'
 
 interface PostClientProps {
@@ -54,6 +55,7 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
   const [postCategory, setPostCategory] = useState<string>(initialPost?.category || '')
   const [postImage, setPostImage] = useState<string>(initialPost?.enclosure || '')
   const [postDescription, setPostDescription] = useState<string>(initialPost?.description || '')
+  const [postUpdatedAt, setPostUpdatedAt] = useState<string>(initialPost?.updated_at || '')
   const { likesData, updateLikesData } = useLikes()
   const [likesCount, setLikesCount] = useState<number>(initialPost?.likesCount || 0)
   const [isLiked, setIsLiked] = useState<boolean>(false)
@@ -65,6 +67,8 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
   const [inkHouseMessage, setInkHouseMessage] = useState<string | null>(null)
   const [isSendingNewsletter, setIsSendingNewsletter] = useState<boolean>(false)
   const [newsletterMessage, setNewsletterMessage] = useState<string | null>(null)
+  // Computer-voice ack toast shown after a successful read-toggle.
+  const [ack, setAck] = useState<string | null>(null)
 
   const router = useRouter()
   const { playButtonSound } = useSounds()
@@ -132,6 +136,7 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
       setPostCategory(initialPost.category || '')
       setPostImage(initialPost.enclosure || '')
       setPostDescription(initialPost.description || '')
+      setPostUpdatedAt(initialPost.updated_at || '')
       setLikesCount(initialPost.likesCount || 0)
       setPostId(initialPost.id || null)
       setInkHousePublished(initialPost.inkhouse_published || false)
@@ -194,6 +199,7 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
     updateLikesData(normalized, postTitle, updatedLikesCount, newIsLiked)
     setIsLiked(newIsLiked)
     setLikesCount(updatedLikesCount)
+    setAck(newIsLiked ? 'Acknowledged.' : 'Marked unread.')
 
     try {
       const response = await fetch('/api/update-likes', {
@@ -212,6 +218,7 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
       updateLikesData(normalized, postTitle, previousLikesCount, previousIsLiked)
       setIsLiked(previousIsLiked)
       setLikesCount(previousLikesCount)
+      setAck(null)
     }
   }
 
@@ -373,6 +380,7 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
 
   return (
     <div className={`post-container ${isJournal ? 'journal-post' : ''}`}>
+      <AckToast message={ack} onDismiss={() => setAck(null)} />
       {loading ? (
         <div className="loader"></div>
       ) : (
@@ -443,9 +451,20 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
               <ThemeToggle />
             </div>
           </div>
-          {postId && (
-            <span className="post-log-id">LOG&middot;{String(postId).padStart(3, '0')}</span>
-          )}
+          {postId && (() => {
+            // SUPPLEMENTAL = post edited >24h after publish. Mirrors Picard's
+            // "Captain's log, supplemental..." for log addendums.
+            const pub = postDate ? new Date(postDate).getTime() : 0
+            const upd = postUpdatedAt ? new Date(postUpdatedAt).getTime() : 0
+            const isSupplemental = pub > 0 && upd > 0 && upd - pub > 86_400_000
+            return (
+              <span className="post-log-id">
+                LOG&middot;{String(postId).padStart(3, '0')}
+                {postCategory && <> &middot; {postCategory.toUpperCase()}</>}
+                {isSupplemental && <span className="post-log-supplemental"> &middot; SUPPLEMENTAL</span>}
+              </span>
+            )
+          })()}
           <h1 className="post-title">{parse(postTitle)}</h1>
           <div className="post-meta">
             <span className="author-name">Hari</span> &bull;

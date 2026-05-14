@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap');
 
 .post-container {
     background-color: var(--color-bg-card);
@@ -20,6 +21,13 @@
     color: var(--color-text-primary);
     margin-bottom: var(--spacing-sm);
     font-family: 'Merriweather', sans-serif;
+}
+
+[data-theme="dark"] .post-title {
+    font-family: 'Space Grotesk', 'Helvetica Neue', 'Arial', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    color: #979ca5;
 }
 
 .post-meta {
@@ -721,6 +729,13 @@ hr {
   border-color: var(--color-primary);
 }
 
+/* LCARS-amber rail on the left of an open toggle (dark mode only) — signals
+ * "panel expanded" the same way the lcars-blue rail signals "log entry" on
+ * home cards. Scoped to [open] so collapsed state stays clean. */
+[data-theme="dark"] .post-toggle-details[open] {
+  border-left: 3px solid var(--lcars-warm-amber);
+}
+
 .post-toggle-summary {
   font-size: 18px;
   font-weight: 600;
@@ -923,6 +938,45 @@ hr {
   color: #75d89c;
 }
 
+/* LCARS-button family (dark mode only) — unifies the three admin actions
+ * (Edit / InkHouse / Email Subscribers) into one outlined-pill family with
+ * role-coded accent colors. Light mode keeps the existing warm-brown /
+ * primary styling. */
+[data-theme="dark"] .admin-edit-btn,
+[data-theme="dark"] .inkhouse-publish-btn,
+[data-theme="dark"] .admin-newsletter-btn {
+  background-color: transparent;
+  border: 1px solid currentColor;
+  font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+[data-theme="dark"] .admin-edit-btn {
+  color: var(--lcars-blue);
+}
+[data-theme="dark"] .admin-edit-btn:hover {
+  background-color: var(--lcars-blue);
+  color: var(--color-bg-card);
+}
+
+[data-theme="dark"] .inkhouse-publish-btn {
+  color: var(--lcars-warm-amber);
+}
+[data-theme="dark"] .inkhouse-publish-btn:hover {
+  background-color: var(--lcars-warm-amber);
+  color: var(--color-bg-card);
+}
+
+[data-theme="dark"] .admin-newsletter-btn {
+  color: var(--lcars-sage);
+}
+[data-theme="dark"] .admin-newsletter-btn:hover {
+  background-color: var(--lcars-sage);
+  color: var(--color-bg-card);
+}
+
 [data-theme="dark"] .inkhouse-message.error {
   background-color: #3a1e1e;
   color: #d89c75;
@@ -954,6 +1008,16 @@ hr {
   text-transform: uppercase;
   opacity: 0.85;
   line-height: 1;
+}
+
+.post-log-supplemental {
+  color: var(--color-text-muted);
+  opacity: 0.95;
+}
+
+[data-theme="dark"] .post-log-supplemental {
+  color: var(--lcars-warm-amber);
+  opacity: 1;
 }
 
 /* ============================================================

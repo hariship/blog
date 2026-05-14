@@ -12,6 +12,8 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const pathname = usePathname()
 
+  const isActive = (href: string) => pathname === href
+
   return (
     <>
       <nav className="navbar">
@@ -22,10 +24,13 @@ const Navbar = () => {
 
         {/* Desktop Navigation (Centered) */}
         <ul className="nav-links">
-          <li><Link href="/">Home</Link></li>
-          <li><Link href="/personal-goals">Personal Goals</Link></li>
-          <li><a href="https://apps.haripriya.org" target="_blank" rel="noopener noreferrer">Apps</a></li>
-          <li className="navbar-coffee-item"><BuyMeCoffee /></li>
+          <li><Link href="/" className={isActive('/') ? 'active' : ''}>Home</Link></li>
+          <li><Link href="/now" className={isActive('/now') ? 'active' : ''}>Log</Link></li>
+          <li><Link href="/personal-goals" className={isActive('/personal-goals') ? 'active' : ''}>Goals</Link></li>
+          {/* Apps link hidden — restore by uncommenting this line.
+              <li><a href="https://apps.haripriya.org" target="_blank" rel="noopener noreferrer">Apps</a></li> */}
+          {/* Coffee button hidden — restore by uncommenting this line.
+              <li className="navbar-coffee-item"><BuyMeCoffee /></li> */}
         </ul>
       </nav>
 
@@ -48,13 +53,23 @@ const Navbar = () => {
           </li>
           <li>
             <Link
+              href="/now"
+              className={pathname === '/now' ? 'active' : ''}
+              onClick={() => setIsOpen(false)}
+            >
+              Log
+            </Link>
+          </li>
+          <li>
+            <Link
               href="/personal-goals"
               className={pathname === '/personal-goals' ? 'active' : ''}
               onClick={() => setIsOpen(false)}
             >
-              Personal Goals
+              Goals
             </Link>
           </li>
+          {/* Apps link in mobile drawer hidden — restore by uncommenting.
           <li>
             <a
               href="https://apps.haripriya.org"
@@ -65,6 +80,8 @@ const Navbar = () => {
               Apps
             </a>
           </li>
+          */}
+          {/* Coffee link in mobile drawer hidden — restore by uncommenting.
           <li className="sidebar-coffee-link">
             <Link
               href="/coffee"
@@ -74,6 +91,7 @@ const Navbar = () => {
               Buy me a coffee <BiCoffeeTogo className="sidebar-coffee-icon" />
             </Link>
           </li>
+          */}
         </ul>
       </div>
 

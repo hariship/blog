@@ -110,10 +110,68 @@
 @media (prefers-reduced-motion: reduce) {
   .accessing-dots::after,
   .accessing-bar,
-  .accessing-fullscreen {
+  .accessing-fullscreen,
+  .accessing-progress-fill {
     animation: none;
   }
   .accessing-dots::after {
     content: '...';
   }
+  .accessing-progress-fill {
+    width: 100%;
+  }
+}
+
+/* Boot-mode extras — softer welcome row and a filling progress bar.
+ * Only rendered on first-visit-per-session via the `boot` prop. */
+.accessing-boot .accessing-text {
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-weight: 600;
+}
+
+.accessing-meta {
+  font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+  opacity: 0.85;
+  line-height: 1.4;
+}
+
+[data-theme="dark"] .accessing-meta {
+  color: var(--color-text-secondary);
+  opacity: 0.95;
+}
+
+.accessing-progress {
+  display: block;
+  width: 100%;
+  height: 4px;
+  background: var(--color-bg-secondary);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.accessing-progress-fill {
+  display: block;
+  width: 0%;
+  height: 100%;
+  background: var(--color-text-muted);
+  border-radius: 2px;
+  animation: accessing-progress-fill 1.1s ease-out forwards;
+}
+
+[data-theme="dark"] .accessing-progress-fill {
+  background: var(--lcars-blue);
+}
+
+@keyframes accessing-progress-fill {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
+.accessing-boot .accessing-panel {
+  min-width: 320px;
 }

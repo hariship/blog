@@ -10,6 +10,8 @@ import { RSSFeedButton, Subscribe, CoffeeLink } from '@/components/widgets'
 import { Shuffle, HelpCircle } from 'lucide-react'
 import ViewSwitcher, { ViewMode } from '@/components/ViewSwitcher'
 import AccessingOverlay from '@/components/AccessingOverlay'
+import AckToast from '@/components/AckToast'
+import Decoded from '@/components/Decoded'
 import { useLikes } from '@/contexts/LikesContext'
 import { useSounds } from '@/contexts/SoundContext'
 import { useAdmin } from '@/contexts/AdminContext'
@@ -66,6 +68,37 @@ function HomePageContent() {
   const searchInputRef = useRef<HTMLInputElement>(null)
   const [showShortcuts, setShowShortcuts] = useState<boolean>(false)
   const [accessingMessage, setAccessingMessage] = useState<string | null>(null)
+  // Computer-voice ack toast for read-toggles from the feed.
+  const [ack, setAck] = useState<string | null>(null)
+  // Boot overlay — only shows if the initial /api/posts fetch is actually
+  // slow (>300ms). Once posts arrive it hides immediately. Gated by
+  // sessionStorage so even slow loads only flash this on the first visit
+  // per session; subsequent navigations rely on the lighter
+  // accessingMessage path. Fast loads skip the overlay entirely.
+  const [booting, setBooting] = useState<boolean>(false)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    let alreadyBooted = false
+    try { alreadyBooted = window.sessionStorage.getItem('booted') === '1' } catch { /* private mode */ }
+    if (alreadyBooted) return
+    const showTimer = setTimeout(() => {
+      // Only flash the overlay if we're still loading 300ms in.
+      if (loading) {
+        setBooting(true)
+        try { window.sessionStorage.setItem('booted', '1') } catch { /* ignore */ }
+      } else {
+        // Fast load — count this as "booted" so we don't try again later.
+        try { window.sessionStorage.setItem('booted', '1') } catch { /* ignore */ }
+      }
+    }, 300)
+    return () => clearTimeout(showTimer)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Hide the boot overlay as soon as posts finish loading.
+  useEffect(() => {
+    if (!loading && booting) setBooting(false)
+  }, [loading, booting])
 
   // Mirror filters into the URL with router.replace so the browser history
   // entry for the home page captures the filter state. When the user clicks
@@ -213,6 +246,7 @@ function HomePageContent() {
     const newLikesCount = newStatus ? currentLikes + 1 : Math.max(0, currentLikes - 1)
 
     updateLikesData(slug, post.title, newLikesCount, newStatus)
+    setAck(newStatus ? 'Acknowledged.' : 'Marked unread.')
 
     try {
       await fetch('/api/update-likes', {
@@ -301,11 +335,15 @@ function HomePageContent() {
 
   const renderListView = () => (
     <div className="view-list">
-      {posts.map((post) => (
+      {posts.map((post, idx) => {
+        // "CURRENT" tag only on the truly-newest entry: first card of page 1
+        // with no category filter and no search active.
+        const isCurrent = idx === 0 && currentPage === 1 && !selectedCategory && !searchQuery
+        return (
         <Link
           key={post.id}
           href={`/post/${post.normalized_title}`}
-          className="list-item"
+          className={`list-item${isCurrent ? ' list-item-current' : ''}`}
           onClick={handlePostClick}
           style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
         >
@@ -322,7 +360,14 @@ function HomePageContent() {
               </div>
             )}
             <div className="list-item-text">
-              <span className="list-item-log-id">LOG&middot;{String(post.id).padStart(3, '0')}</span>
+              <span className="list-item-log-id">
+                <Decoded text={`LOG·${String(post.id).padStart(3, '0')}`} />
+                {isCurrent && (
+                  <span className="list-item-log-current">
+                    {' '}&middot; <Decoded text="LATEST" />
+                  </span>
+                )}
+              </span>
               <div className="list-item-header">
                 <h3 className="list-item-title">{post.title}</h3>
                 {post.category && (
@@ -354,7 +399,8 @@ function HomePageContent() {
             </div>
           </div>
         </Link>
-      ))}
+        )
+      })}
     </div>
   )
 
@@ -594,7 +640,15 @@ function HomePageContent() {
   return (
     <>
       <Navbar />
+      <AckToast message={ack} onDismiss={() => setAck(null)} />
       {accessingMessage && <AccessingOverlay fullscreen message={accessingMessage} />}
+      {booting && !accessingMessage && (
+        <AccessingOverlay
+          fullscreen
+          boot
+          entryCount={totalPosts || undefined}
+        />
+      )}
       {showShortcuts && (
         <div
           className="shortcuts-overlay"
@@ -826,7 +880,8 @@ function HomePageContent() {
                   I am Haripriya. Welcome to my corner of the internet. I write about life, tech, and everything in between.
                 </p>
                 <div className="mobile-about-links">
-                  <CoffeeLink text="Buy me a coffee" />
+                  {/* Coffee link hidden — restore by uncommenting this line.
+                      <CoffeeLink text="Buy me a coffee" /> */}
                 </div>
               </div>
             </div>
@@ -836,28 +891,29 @@ function HomePageContent() {
           <aside className="rss-feed-sidebar">
             <div className="sidebar-widget">
               <h3 className="sidebar-widget-title">
+                <span className="widget-name widget-name-prose">About</span>
                 <span className="widget-code">01</span>
-                <span>About</span>
               </h3>
               <div className="sidebar-about">
                 <p className="sidebar-about-text">
                   I am Haripriya. Welcome to my corner of the internet. I write about life, tech, and everything in between. Thanks for stopping by!
                 </p>
                 <div className="sidebar-about-links">
-                  {/* TODO: re-enable once a /now entry is written.
-                      <Link href="/now">What I&apos;m up to now →</Link> */}
+                  {/* Apps link hidden — restore by uncommenting.
                   <a href="https://apps.haripriya.org" target="_blank" rel="noopener noreferrer">
                     View My Apps →
                   </a>
-                  <CoffeeLink text="Buy me a coffee →" />
+                  */}
+                  {/* Coffee link hidden — restore by uncommenting this line.
+                      <CoffeeLink text="Buy me a coffee →" /> */}
                 </div>
               </div>
             </div>
 
             <div className="sidebar-widget">
               <h3 className="sidebar-widget-title">
+                <span className="widget-name widget-name-prose">Stats</span>
                 <span className="widget-code">02</span>
-                <span>Blog Stats</span>
               </h3>
               <div className="sidebar-stats">
                 <div className="sidebar-stat-item">
@@ -873,8 +929,8 @@ function HomePageContent() {
 
             <div className="sidebar-widget">
               <h3 className="sidebar-widget-title">
+                <span className="widget-name widget-name-prose">Categories</span>
                 <span className="widget-code">03</span>
-                <span>Categories</span>
               </h3>
               <div className="sidebar-categories">
                 <button

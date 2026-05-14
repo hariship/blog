@@ -18,7 +18,17 @@ export const posts = pgTable('posts', {
   image_url: text('image_url'),
   enclosure: text('enclosure'),
   pub_date: timestamp('pub_date', { withTimezone: true }).defaultNow(),
+  updated_at: timestamp('updated_at', { withTimezone: true }),
   inkhouse_published: boolean('inkhouse_published').default(false),
+})
+
+// Personal Log entries — short tweet-style notes rendered only at /now.
+// Separate from posts on purpose: no title, no category, no slug, no image.
+export const personalLogs = pgTable('personal_logs', {
+  id: serial('id').primaryKey(),
+  body: text('body').notNull(),
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  updated_at: timestamp('updated_at', { withTimezone: true }),
 })
 
 export const likes = pgTable('likes', {

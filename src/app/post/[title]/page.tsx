@@ -18,6 +18,7 @@ export interface PostData {
   likesCount: number
   description?: string
   inkhouse_published?: boolean
+  updated_at?: string
 }
 
 export interface AdjacentPost {
@@ -47,6 +48,7 @@ async function getPost(title: string): Promise<PostData | null> {
       enclosure: posts.enclosure,
       description: posts.description,
       inkhouse_published: posts.inkhouse_published,
+      updated_at: posts.updated_at,
       likes_count: likes.likes_count,
     })
     .from(posts)
@@ -68,7 +70,8 @@ async function getPost(title: string): Promise<PostData | null> {
     enclosure: post.enclosure || '',
     likesCount: post.likes_count || 0,
     description: post.description ?? undefined,
-    inkhouse_published: post.inkhouse_published || false
+    inkhouse_published: post.inkhouse_published || false,
+    updated_at: post.updated_at?.toISOString() || undefined,
   }
 }
 

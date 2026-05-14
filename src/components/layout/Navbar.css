@@ -11,6 +11,23 @@
   transition: background-color var(--transition-normal), border-color var(--transition-normal);
 }
 
+/* Active-link underline (dark mode only) — quiet 2px accent under the
+ * link currently matching the route. */
+[data-theme="dark"] .nav-links a.active {
+  position: relative;
+}
+
+[data-theme="dark"] .nav-links a.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 2px;
+  background: var(--lcars-blue);
+  border-radius: 1px;
+}
+
 /* Coffee Button - Inline with nav links */
 .navbar-coffee-item {
   display: flex;
