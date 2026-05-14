@@ -122,13 +122,10 @@
   }
 }
 
-/* Boot-mode extras — softer welcome row and a filling progress bar.
- * Only rendered on first-visit-per-session via the `boot` prop. */
-.accessing-boot .accessing-text {
-  text-transform: none;
-  letter-spacing: 0.02em;
-  font-weight: 600;
-}
+/* Boot-mode extras — entry-count line and a filling progress bar.
+ * Only rendered on first-visit-per-session via the `boot` prop. The
+ * primary message ("WELCOME") inherits the same uppercase style as
+ * "ACCESSING DATABASE" so the overlay is visually consistent. */
 
 .accessing-meta {
   font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;

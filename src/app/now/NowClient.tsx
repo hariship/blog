@@ -74,7 +74,6 @@ export default function NowClient({ entries }: NowClientProps) {
 
         <div className="now-panel">
           <span className="now-panel-code">PERSONAL LOG &middot; HARI</span>
-          <p className="now-tagline">Let&apos;s see what&apos;s out there.</p>
         </div>
 
         {entries.length === 0 ? (

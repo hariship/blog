@@ -21,7 +21,7 @@ export default function AccessingOverlay({
   boot = false,
   entryCount,
 }: AccessingOverlayProps) {
-  const effectiveMessage = boot ? 'Welcome' : message
+  const effectiveMessage = boot ? 'WELCOME' : message
   return (
     <div className={`accessing-root${fullscreen ? ' accessing-fullscreen' : ''}${boot ? ' accessing-boot' : ''}`} role="status" aria-live="polite">
       <div className="accessing-panel">
