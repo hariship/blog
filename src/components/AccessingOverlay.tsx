@@ -33,11 +33,6 @@ export default function AccessingOverlay({
         {boot && typeof entryCount === 'number' && entryCount > 0 && (
           <span className="accessing-meta">{entryCount} entries since 2020</span>
         )}
-        {boot && (
-          <span className="accessing-progress" aria-hidden="true">
-            <span className="accessing-progress-fill" />
-          </span>
-        )}
         <span className="accessing-bar" aria-hidden="true" />
       </div>
     </div>

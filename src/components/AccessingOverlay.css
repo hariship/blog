@@ -141,34 +141,6 @@
   opacity: 0.95;
 }
 
-.accessing-progress {
-  display: block;
-  width: 100%;
-  height: 4px;
-  background: var(--color-bg-secondary);
-  border-radius: 2px;
-  overflow: hidden;
-  margin-top: 8px;
-}
-
-.accessing-progress-fill {
-  display: block;
-  width: 0%;
-  height: 100%;
-  background: var(--color-text-muted);
-  border-radius: 2px;
-  animation: accessing-progress-fill 1.1s ease-out forwards;
-}
-
-[data-theme="dark"] .accessing-progress-fill {
-  background: var(--lcars-blue);
-}
-
-@keyframes accessing-progress-fill {
-  from { width: 0%; }
-  to   { width: 100%; }
-}
-
 .accessing-boot .accessing-panel {
   min-width: 320px;
 }
