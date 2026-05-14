@@ -1333,6 +1333,9 @@ button.theme-toggle:hover svg {
   padding: var(--spacing-md);
   padding-top: 0;
   margin: 0;
+  /* Reserve space while content loads so the panel doesn't snap from
+   * tiny → tall when /api/posts resolves. ~10 list-view cards' worth. */
+  min-height: 70vh;
 }
 
 .rss-feed-item {
