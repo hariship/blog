@@ -48,9 +48,10 @@
   gap: var(--spacing-xl);
   align-items: center;
   padding: var(--spacing-xl);
-  /* Light: cream-distinct from page bg so the card actually reads as a card.
+  /* Light: a touch warmer than page bg (#fbfaf7) so the card reads,
+   * but only a few shades off — not the heavier --color-bg-secondary.
    * Dark: card token already contrasts cleanly with primary. */
-  background: var(--color-bg-secondary);
+  background: #f8f6ef;
   border: 1px solid var(--color-border-medium);
   border-left: 3px solid var(--color-accent-warm);
   border-radius: 28px 4px 4px 4px;
