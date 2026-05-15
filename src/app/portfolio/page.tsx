@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
 import Image from 'next/image'
-import { Navbar } from '@/components/layout'
 import { ThemeToggle, SoundToggle } from '@/components/common'
 import Decoded from '@/components/Decoded'
 import Typewriter from '@/components/Typewriter'
@@ -22,7 +21,6 @@ export const metadata: Metadata = {
 export default function PortfolioPage() {
   return (
     <>
-      <Navbar />
       <main className="portfolio-container">
 
         {/* Hero */}
