@@ -1,0 +1,407 @@
+@import url('https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap');
+
+.portfolio-container {
+  max-width: 880px;
+  margin: var(--spacing-xl) auto var(--spacing-2xl);
+  padding: 0 var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xl);
+}
+
+/* =========================================================
+ * Hero — big circular avatar + name + tagline
+ * ========================================================= */
+.portfolio-hero {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--spacing-xl);
+  align-items: center;
+  padding: var(--spacing-xl);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-light);
+  border-radius: 28px 4px 4px 4px;
+  box-shadow: var(--shadow-medium);
+}
+
+.portfolio-hero-avatar {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--color-bg-secondary);
+  box-shadow: var(--shadow-light);
+}
+
+.portfolio-hero-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+[data-theme="dark"] .portfolio-hero-avatar {
+  box-shadow: 0 0 0 2px var(--lcars-blue), var(--shadow-medium);
+}
+
+.portfolio-hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.portfolio-hero-controls {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: inline-flex;
+  gap: 8px;
+}
+
+.portfolio-code {
+  font-family: 'Saira Condensed', 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  line-height: 1;
+}
+
+[data-theme="dark"] .portfolio-code {
+  color: var(--lcars-blue);
+}
+
+.portfolio-name {
+  font-family: 'Space Grotesk', 'Source Sans Pro', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 600;
+  line-height: 1.05;
+  margin: 4px 0 0 0;
+  color: var(--color-text-primary);
+  letter-spacing: 0.5px;
+}
+
+[data-theme="dark"] .portfolio-name {
+  color: #979ca5;
+}
+
+.portfolio-tagline {
+  margin: 0;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 1.125rem;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+/* =========================================================
+ * Sections — Philosophy, Profile, Elsewhere
+ * ========================================================= */
+.portfolio-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.portfolio-section-head {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding-bottom: var(--spacing-xs);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.portfolio-section-name {
+  font-family: 'Space Grotesk', 'Source Sans Pro', sans-serif;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.portfolio-section-code {
+  margin-left: auto;
+  font-family: 'Saira Condensed', 'IBM Plex Mono', monospace;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  padding: 2px 6px;
+  border: 1px solid var(--color-border-light);
+  border-radius: 2px;
+  line-height: 1;
+}
+
+/* About prose */
+.portfolio-prose {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--color-text-primary);
+}
+
+.portfolio-prose p {
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+.portfolio-prose p:last-child {
+  margin-bottom: 0;
+}
+
+/* About — bulleted points */
+.portfolio-about-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--spacing-md) 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.portfolio-about-list li {
+  position: relative;
+  padding-left: 24px;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--color-text-primary);
+}
+
+.portfolio-about-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: 12px;
+  height: 2px;
+  background: var(--color-text-muted);
+  border-radius: 1px;
+  opacity: 0.6;
+}
+
+/* Dark mode — use the lcars-blue value directly. The --lcars-blue
+ * custom property is defined in RSSFeed.css (only loaded on the blog
+ * page), so referencing the variable from portfolio.css resolves to
+ * nothing and the marker goes invisible. Hardcoded hex avoids that. */
+[data-theme="dark"] .portfolio-about-list li::before {
+  background: #6b8caf;
+  opacity: 0.85;
+}
+
+.portfolio-about-closer {
+  margin: var(--spacing-md) 0 0 0;
+  font-style: italic;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+/* Profile — label/value rows */
+.portfolio-profile {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.portfolio-profile li {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: var(--spacing-md);
+  align-items: baseline;
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1px dashed var(--color-border-light);
+}
+
+.portfolio-profile li:last-child {
+  border-bottom: none;
+}
+
+.portfolio-profile-label {
+  font-family: 'Saira Condensed', 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+[data-theme="dark"] .portfolio-profile-label {
+  color: var(--lcars-blue);
+}
+
+.portfolio-profile-value {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 1rem;
+  color: var(--color-text-primary);
+  line-height: 1.5;
+}
+
+/* Elsewhere — link cards */
+.portfolio-elsewhere {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--spacing-sm);
+}
+
+.portfolio-link {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--spacing-md);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-light);
+  border-radius: 12px 4px 4px 4px;
+  text-decoration: none;
+  color: inherit;
+  transition: all var(--transition-fast);
+}
+
+.portfolio-link:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-light);
+}
+
+[data-theme="dark"] .portfolio-link::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  background: var(--lcars-blue);
+  border-radius: 2px 0 0 2px;
+  opacity: 0.55;
+}
+
+[data-theme="dark"] .portfolio-link:hover::before {
+  opacity: 1;
+}
+
+.portfolio-link-name {
+  font-family: 'Space Grotesk', 'Source Sans Pro', sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.portfolio-link-host {
+  font-family: 'Saira Condensed', 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+
+/* =========================================================
+ * Section reveal animations.
+ *
+ * Profile: each row slides in from the left — reads label-first,
+ * value-second, like a console populating fields.
+ * Elsewhere: each card scale-pops from 0.9 into place with a fade,
+ * like a panel materialising.
+ * Both run on a stagger via nth-child animation-delay.
+ * ========================================================= */
+
+/* About bullets and Profile rows: each row stays hidden until its
+ * Typewriter is about to start, so the dash marker / label appears
+ * AT THE SAME TIME the value begins typing — not before. The
+ * animation-delay values mirror each Typewriter's startDelayMs. */
+@keyframes portfolio-row-show {
+  to { opacity: 1; }
+}
+
+.portfolio-about-list li,
+.portfolio-about-closer,
+.portfolio-profile li {
+  opacity: 0;
+  animation: portfolio-row-show 0.15s ease-out forwards;
+}
+
+/* About bullet stagger — matches startDelayMs in page.tsx */
+.portfolio-about-list li:nth-child(1) { animation-delay: 200ms; }
+.portfolio-about-list li:nth-child(2) { animation-delay: 750ms; }
+.portfolio-about-list li:nth-child(3) { animation-delay: 1350ms; }
+.portfolio-about-list li:nth-child(4) { animation-delay: 1950ms; }
+.portfolio-about-list li:nth-child(5) { animation-delay: 2400ms; }
+.portfolio-about-list li:nth-child(6) { animation-delay: 3100ms; }
+.portfolio-about-list li:nth-child(7) { animation-delay: 3900ms; }
+.portfolio-about-closer        { animation-delay: 4800ms; }
+
+/* Profile row stagger */
+.portfolio-profile li:nth-child(1) { animation-delay: 300ms; }
+.portfolio-profile li:nth-child(2) { animation-delay: 700ms; }
+.portfolio-profile li:nth-child(3) { animation-delay: 1100ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-about-list li,
+  .portfolio-about-closer,
+  .portfolio-profile li {
+    opacity: 1;
+    animation: none;
+  }
+}
+
+/* Elsewhere — scale-pop materialise (cranked for visibility) */
+@keyframes portfolio-materialise {
+  from { opacity: 0; transform: scale(0.5); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.portfolio-elsewhere li {
+  opacity: 0;
+  animation: portfolio-materialise 1s cubic-bezier(0.2, 0.8, 0.3, 1.1) forwards;
+}
+
+.portfolio-elsewhere li:nth-child(1) { animation-delay: 500ms; }
+.portfolio-elsewhere li:nth-child(2) { animation-delay: 800ms; }
+.portfolio-elsewhere li:nth-child(3) { animation-delay: 1100ms; }
+.portfolio-elsewhere li:nth-child(4) { animation-delay: 1400ms; }
+.portfolio-elsewhere li:nth-child(5) { animation-delay: 1700ms; }
+.portfolio-elsewhere li:nth-child(6) { animation-delay: 2000ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-profile li,
+  .portfolio-elsewhere li {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
+
+/* =========================================================
+ * Responsive
+ * ========================================================= */
+@media (max-width: 720px) {
+  .portfolio-hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding: var(--spacing-lg);
+  }
+  .portfolio-hero-avatar {
+    width: 140px;
+    height: 140px;
+    margin: 0 auto;
+  }
+  .portfolio-hero-text {
+    align-items: center;
+  }
+  .portfolio-hero-controls {
+    position: static;
+    margin-top: 8px;
+  }
+  .portfolio-name {
+    font-size: 2rem;
+  }
+  .portfolio-profile li {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}

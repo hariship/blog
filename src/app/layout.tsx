@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import "./globals.css";
 import { Providers } from "./providers";
 
@@ -48,11 +49,18 @@ const themeScript = `
   })();
 `;
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // The IndieWebClub webring is part of the *blog* identity, not the
+  // personal site. Show it only when serving blog.haripriya.org (and
+  // localhost / preview deploys, so dev still sees it).
+  const h = await headers()
+  const host = (h.get('host') || '').toLowerCase()
+  const isPersonalSite = host === 'haripriya.org' || host === 'www.haripriya.org'
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -66,20 +74,22 @@ export default function RootLayout({
             {children}
           </Providers>
         </div>
-        <footer style={{
-          textAlign: 'center',
-          padding: '1.5rem',
-          fontSize: '0.85rem',
-          opacity: 0.6,
-          borderTop: '1px solid var(--color-border, #333)',
-          marginTop: '2rem',
-        }}>
-          <a href="https://blr.indiewebclub.org/webring/previous.html">← Previous</a>
-          {' · '}
-          <a href="https://blr.indiewebclub.org/">IndieWebClub Bangalore</a>
-          {' · '}
-          <a href="https://blr.indiewebclub.org/webring/next.html">Next →</a>
-        </footer>
+        {!isPersonalSite && (
+          <footer style={{
+            textAlign: 'center',
+            padding: '1.5rem',
+            fontSize: '0.85rem',
+            opacity: 0.6,
+            borderTop: '1px solid var(--color-border, #333)',
+            marginTop: '2rem',
+          }}>
+            <a href="https://blr.indiewebclub.org/webring/previous.html">← Previous</a>
+            {' · '}
+            <a href="https://blr.indiewebclub.org/">IndieWebClub Bangalore</a>
+            {' · '}
+            <a href="https://blr.indiewebclub.org/webring/next.html">Next →</a>
+          </footer>
+        )}
       </body>
     </html>
   );

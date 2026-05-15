@@ -1,0 +1,27 @@
+.typewriter {
+  display: inline;
+}
+
+.typewriter-caret {
+  display: inline-block;
+  margin-left: 2px;
+  color: var(--color-text-muted);
+  animation: typewriter-caret 0.9s steps(2, end) infinite;
+  font-weight: 400;
+}
+
+[data-theme="dark"] .typewriter-caret {
+  color: var(--lcars-blue);
+}
+
+@keyframes typewriter-caret {
+  0%, 50%   { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typewriter-caret {
+    animation: none;
+    display: none;
+  }
+}
