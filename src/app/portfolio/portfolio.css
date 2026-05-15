@@ -23,7 +23,7 @@
 }
 
 .portfolio-nav-link:hover {
-  color: var(--color-text-primary);
+  color: var(--color-accent-warm);
 }
 
 [data-theme="dark"] .portfolio-nav-link:hover {
@@ -49,9 +49,15 @@
   align-items: center;
   padding: var(--spacing-xl);
   background: var(--color-bg-card);
-  border: 1px solid var(--color-border-light);
+  border: 1px solid var(--color-border-medium);
+  border-left: 3px solid var(--color-accent-warm);
   border-radius: 28px 4px 4px 4px;
   box-shadow: var(--shadow-medium);
+}
+
+[data-theme="dark"] .portfolio-hero {
+  border: 1px solid var(--color-border-light);
+  border-left: 3px solid var(--lcars-blue);
 }
 
 .portfolio-hero-avatar {
@@ -62,7 +68,7 @@
   border-radius: 50%;
   overflow: hidden;
   background: var(--color-bg-secondary);
-  box-shadow: var(--shadow-light);
+  box-shadow: 0 0 0 2px var(--color-accent-warm), var(--shadow-light);
 }
 
 .portfolio-hero-avatar img {
@@ -97,7 +103,7 @@
   font-weight: 500;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--color-accent-warm);
   line-height: 1;
 }
 
@@ -158,11 +164,15 @@
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--color-accent-warm);
   padding: 2px 6px;
   border: 1px solid var(--color-border-light);
   border-radius: 2px;
   line-height: 1;
+}
+
+[data-theme="dark"] .portfolio-section-code {
+  color: var(--color-text-muted);
 }
 
 /* About prose */
@@ -207,9 +217,9 @@
   top: 0.7em;
   width: 12px;
   height: 2px;
-  background: var(--color-text-muted);
+  background: var(--color-accent-warm);
   border-radius: 1px;
-  opacity: 0.6;
+  opacity: 0.85;
 }
 
 /* Dark mode — use the lcars-blue value directly. The --lcars-blue
@@ -256,7 +266,7 @@
   font-size: 0.75rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--color-accent-warm);
 }
 
 [data-theme="dark"] .portfolio-profile-label {
@@ -295,25 +305,34 @@
 }
 
 .portfolio-link:hover {
-  border-color: var(--color-primary);
+  border-color: var(--color-accent-warm);
   transform: translateY(-1px);
   box-shadow: var(--shadow-light);
 }
 
-[data-theme="dark"] .portfolio-link::before {
+.portfolio-link::before {
   content: '';
   position: absolute;
   left: 0;
   top: 8px;
   bottom: 8px;
   width: 3px;
-  background: var(--lcars-blue);
+  background: var(--color-accent-warm);
   border-radius: 2px 0 0 2px;
   opacity: 0.55;
+  transition: opacity var(--transition-fast);
 }
 
-[data-theme="dark"] .portfolio-link:hover::before {
+.portfolio-link:hover::before {
   opacity: 1;
+}
+
+[data-theme="dark"] .portfolio-link::before {
+  background: var(--lcars-blue);
+}
+
+[data-theme="dark"] .portfolio-link:hover {
+  border-color: var(--color-primary);
 }
 
 .portfolio-link-name {
