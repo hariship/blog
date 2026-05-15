@@ -22,8 +22,8 @@ export default function PortfolioPage() {
   return (
     <>
       <nav className="portfolio-nav" aria-label="Primary">
-        <a href="https://blog.haripriya.org" className="portfolio-nav-link">Blog</a>
-        <a href="https://blog.haripriya.org/now" className="portfolio-nav-link">Log</a>
+        <a href="https://blog.haripriya.org" target="_blank" rel="noopener noreferrer" className="portfolio-nav-link">Blog</a>
+        <a href="https://blog.haripriya.org/now" target="_blank" rel="noopener noreferrer" className="portfolio-nav-link">Log</a>
       </nav>
       <main className="portfolio-container">
 

@@ -4,8 +4,8 @@
  * Lives outside .portfolio-container so it spans full viewport width. */
 .portfolio-nav {
   display: flex;
-  justify-content: flex-end;
-  gap: var(--spacing-lg);
+  justify-content: center;
+  gap: var(--spacing-xl);
   padding: var(--spacing-md) var(--spacing-xl);
   max-width: 1200px;
   margin: 0 auto;
