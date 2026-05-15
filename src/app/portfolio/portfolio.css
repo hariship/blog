@@ -48,7 +48,9 @@
   gap: var(--spacing-xl);
   align-items: center;
   padding: var(--spacing-xl);
-  background: var(--color-bg-card);
+  /* Light: cream-distinct from page bg so the card actually reads as a card.
+   * Dark: card token already contrasts cleanly with primary. */
+  background: var(--color-bg-secondary);
   border: 1px solid var(--color-border-medium);
   border-left: 3px solid var(--color-accent-warm);
   border-radius: 28px 4px 4px 4px;
@@ -56,6 +58,7 @@
 }
 
 [data-theme="dark"] .portfolio-hero {
+  background: var(--color-bg-card);
   border: 1px solid var(--color-border-light);
   border-left: 3px solid var(--lcars-blue);
 }
