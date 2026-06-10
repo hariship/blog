@@ -2,14 +2,10 @@ import { db } from '@/lib/db'
 import { posts, likes } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
+import { unstable_cache } from 'next/cache'
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ title: string }> }
-) {
-  const { title } = await params
-
-  try {
+const fetchPostByNormalizedTitle = unstable_cache(
+  async (title: string) => {
     const rows = await db
       .select({
         id: posts.id,
@@ -29,11 +25,25 @@ export async function GET(
       .where(eq(posts.normalized_title, title))
       .limit(1)
 
-    if (rows.length === 0) {
+    return rows[0] ?? null
+  },
+  ['post-by-normalized-title'],
+  { tags: ['posts'], revalidate: 3600 }
+)
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ title: string }> }
+) {
+  const { title } = await params
+
+  try {
+    const row = await fetchPostByNormalizedTitle(title)
+
+    if (!row) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 })
     }
 
-    const row = rows[0]
     const transformedPost = {
       id: row.id,
       title: row.title,
@@ -48,7 +58,9 @@ export async function GET(
       likesCount: row.likes_count || 0,
     }
 
-    return NextResponse.json(transformedPost)
+    const response = NextResponse.json(transformedPost)
+    response.headers.set('Cache-Control', 'no-store, max-age=0')
+    return response
   } catch (error) {
     console.error('Error in post API:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

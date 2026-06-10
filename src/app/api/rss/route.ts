@@ -2,9 +2,10 @@ import { db } from '@/lib/db'
 import { posts, likes } from '@/lib/db/schema'
 import { eq, ne, desc } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
+import { unstable_cache } from 'next/cache'
 
-export async function GET() {
-  try {
+const fetchRssData = unstable_cache(
+  async () => {
     const rows = await db
       .select({
         title: posts.title,
@@ -20,8 +21,7 @@ export async function GET() {
       .where(ne(posts.normalized_title, 'now'))
       .orderBy(desc(posts.pub_date))
 
-    // Transform posts for RSS feed / likes context
-    const transformedPosts = rows.map(row => ({
+    return rows.map(row => ({
       title: row.title,
       normalized_title: row.normalized_title,
       description: row.description,
@@ -29,10 +29,19 @@ export async function GET() {
       pubDate: row.pub_date,
       category: row.category,
       likesCount: row.likes_count || 0,
-      isLiked: false // Client will merge with localStorage
+      isLiked: false, // Client will merge with localStorage
     }))
+  },
+  ['rss-feed'],
+  { tags: ['posts'], revalidate: 3600 }
+)
 
-    return NextResponse.json(transformedPosts)
+export async function GET() {
+  try {
+    const transformedPosts = await fetchRssData()
+    const response = NextResponse.json(transformedPosts)
+    response.headers.set('Cache-Control', 'no-store, max-age=0')
+    return response
   } catch (error) {
     console.error('Error in RSS API:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

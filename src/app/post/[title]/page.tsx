@@ -1,8 +1,13 @@
 import { Metadata } from 'next'
+import { unstable_cache } from 'next/cache'
 import { db } from '@/lib/db'
 import { posts, likes } from '@/lib/db/schema'
 import { eq, ne, and, lt, gt, desc, asc } from 'drizzle-orm'
 import PostClient from './PostClient'
+
+// ISR: cache the rendered page per (title) for 1 hour. Admin writes invalidate
+// via revalidateTag('posts').
+export const revalidate = 3600
 
 interface Props {
   params: Promise<{ title: string }>
@@ -35,70 +40,78 @@ const normalizeTitle = (title: string): string => {
     .replace(/-+/g, '-')
 }
 
-async function getPost(title: string): Promise<PostData | null> {
-  const normalized = normalizeTitle(title)
+const getPost = unstable_cache(
+  async (title: string): Promise<PostData | null> => {
+    const normalized = normalizeTitle(title)
 
-  const rows = await db
-    .select({
-      id: posts.id,
-      content: posts.content,
-      title: posts.title,
-      pub_date: posts.pub_date,
-      category: posts.category,
-      enclosure: posts.enclosure,
-      description: posts.description,
-      inkhouse_published: posts.inkhouse_published,
-      updated_at: posts.updated_at,
-      likes_count: likes.likes_count,
-    })
-    .from(posts)
-    .leftJoin(likes, eq(posts.id, likes.post_id))
-    .where(eq(posts.normalized_title, normalized))
-    .limit(1)
+    const rows = await db
+      .select({
+        id: posts.id,
+        content: posts.content,
+        title: posts.title,
+        pub_date: posts.pub_date,
+        category: posts.category,
+        enclosure: posts.enclosure,
+        description: posts.description,
+        inkhouse_published: posts.inkhouse_published,
+        updated_at: posts.updated_at,
+        likes_count: likes.likes_count,
+      })
+      .from(posts)
+      .leftJoin(likes, eq(posts.id, likes.post_id))
+      .where(eq(posts.normalized_title, normalized))
+      .limit(1)
 
-  if (rows.length === 0) {
-    return null
-  }
+    if (rows.length === 0) {
+      return null
+    }
 
-  const post = rows[0]
-  return {
-    id: post.id,
-    content: post.content,
-    title: post.title,
-    pub_date: post.pub_date?.toISOString() || '',
-    category: post.category || '',
-    enclosure: post.enclosure || '',
-    likesCount: post.likes_count || 0,
-    description: post.description ?? undefined,
-    inkhouse_published: post.inkhouse_published || false,
-    updated_at: post.updated_at?.toISOString() || undefined,
-  }
-}
+    const post = rows[0]
+    return {
+      id: post.id,
+      content: post.content,
+      title: post.title,
+      pub_date: post.pub_date?.toISOString() || '',
+      category: post.category || '',
+      enclosure: post.enclosure || '',
+      likesCount: post.likes_count || 0,
+      description: post.description ?? undefined,
+      inkhouse_published: post.inkhouse_published || false,
+      updated_at: post.updated_at?.toISOString() || undefined,
+    }
+  },
+  ['post-by-title'],
+  { tags: ['posts'], revalidate: 3600 }
+)
 
 // Adjacent log entries by id (insertion order, matching the LOG·NNN scheme).
 // Excludes the /now row. Returns nulls at the ends.
-async function getAdjacentPosts(currentId: number): Promise<{ prev: AdjacentPost | null; next: AdjacentPost | null }> {
-  const select = { id: posts.id, title: posts.title, normalized_title: posts.normalized_title }
+const getAdjacentPosts = unstable_cache(
+  async (currentId: number): Promise<{ prev: AdjacentPost | null; next: AdjacentPost | null }> => {
+    const select = { id: posts.id, title: posts.title, normalized_title: posts.normalized_title }
 
-  const [prevRow] = await db
-    .select(select)
-    .from(posts)
-    .where(and(lt(posts.id, currentId), ne(posts.normalized_title, 'now')))
-    .orderBy(desc(posts.id))
-    .limit(1)
+    const [prevRow] = await db
+      .select(select)
+      .from(posts)
+      .where(and(lt(posts.id, currentId), ne(posts.normalized_title, 'now')))
+      .orderBy(desc(posts.id))
+      .limit(1)
 
-  const [nextRow] = await db
-    .select(select)
-    .from(posts)
-    .where(and(gt(posts.id, currentId), ne(posts.normalized_title, 'now')))
-    .orderBy(asc(posts.id))
-    .limit(1)
+    const [nextRow] = await db
+      .select(select)
+      .from(posts)
+      .where(and(gt(posts.id, currentId), ne(posts.normalized_title, 'now')))
+      .orderBy(asc(posts.id))
+      .limit(1)
 
-  return {
-    prev: prevRow ? { id: prevRow.id, title: prevRow.title, normalized_title: prevRow.normalized_title } : null,
-    next: nextRow ? { id: nextRow.id, title: nextRow.title, normalized_title: nextRow.normalized_title } : null,
-  }
-}
+    return {
+      prev: prevRow ? { id: prevRow.id, title: prevRow.title, normalized_title: prevRow.normalized_title } : null,
+      next: nextRow ? { id: nextRow.id, title: nextRow.title, normalized_title: nextRow.normalized_title } : null,
+    }
+  },
+  ['post-adjacent'],
+  { tags: ['posts'], revalidate: 3600 }
+)
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { title } = await params
