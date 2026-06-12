@@ -2,19 +2,22 @@ import { db } from '@/lib/db'
 import { posts } from '@/lib/db/schema'
 import { desc, ne } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
+import { unstable_cache } from 'next/cache'
 
-export async function GET() {
-  const domain = (process.env.NEXT_PUBLIC_DOMAIN || 'https://blog.haripriya.org').trim()
-
-  try {
-    const rows = await db
+// Cache the feed in-process. CDN cache-control still applies separately;
+// this layer makes Vercel-region cold reads cheap. Tagged 'posts' so admin
+// writes invalidate via revalidateTag.
+const fetchFeedRows = unstable_cache(
+  async () => {
+    return db
       .select({
         title: posts.title,
         normalized_title: posts.normalized_title,
         description: posts.description,
         image_url: posts.image_url,
         pub_date: posts.pub_date,
-        content: posts.content,
+        // NB: content intentionally NOT selected — RSS items use description
+        // only. Pulling content was the dominant egress on this route.
         category: posts.category,
         enclosure: posts.enclosure,
       })
@@ -22,6 +25,16 @@ export async function GET() {
       .where(ne(posts.normalized_title, 'now'))
       .orderBy(desc(posts.pub_date))
       .limit(50)
+  },
+  ['blog-feed-xml'],
+  { tags: ['posts'], revalidate: 3600 }
+)
+
+export async function GET() {
+  const domain = (process.env.NEXT_PUBLIC_DOMAIN || 'https://blog.haripriya.org').trim()
+
+  try {
+    const rows = await fetchFeedRows()
 
     const rssItems = rows.map(post => {
       const pubDate = new Date(post.pub_date!).toUTCString()
