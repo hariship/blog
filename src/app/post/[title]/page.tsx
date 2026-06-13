@@ -5,9 +5,12 @@ import { posts, likes } from '@/lib/db/schema'
 import { eq, ne, and, lt, gt, desc, asc } from 'drizzle-orm'
 import PostClient from './PostClient'
 
-// ISR: cache the rendered page per (title) for 1 hour. Admin writes invalidate
-// via revalidateTag('posts').
-export const revalidate = 3600
+// ISR: cache the rendered page per (title) for 7 days. Posts almost never
+// change after publish; admin writes invalidate immediately via
+// revalidateTag('posts'), so freshness is unaffected. The long revalidate
+// suppresses the dominant egress source (regional ISR rebuilds pulling
+// post content from Postgres on a 1h cadence).
+export const revalidate = 604800
 
 interface Props {
   params: Promise<{ title: string }>
@@ -81,7 +84,7 @@ const getPost = unstable_cache(
     }
   },
   ['post-by-title'],
-  { tags: ['posts'], revalidate: 3600 }
+  { tags: ['posts'], revalidate: 604800 }
 )
 
 // Adjacent log entries by id (insertion order, matching the LOG·NNN scheme).
@@ -110,7 +113,7 @@ const getAdjacentPosts = unstable_cache(
     }
   },
   ['post-adjacent'],
-  { tags: ['posts'], revalidate: 3600 }
+  { tags: ['posts'], revalidate: 604800 }
 )
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

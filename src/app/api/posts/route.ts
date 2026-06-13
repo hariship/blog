@@ -54,7 +54,7 @@ const fetchPostsList = unstable_cache(
     return { rows, totalItems: countResult?.total || 0 }
   },
   ['posts-list'],
-  { tags: ['posts'], revalidate: 3600 }
+  { tags: ['posts'], revalidate: 604800 }
 )
 
 export async function GET(request: NextRequest) {

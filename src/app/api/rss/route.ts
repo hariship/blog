@@ -33,7 +33,7 @@ const fetchRssData = unstable_cache(
     }))
   },
   ['rss-feed'],
-  { tags: ['posts'], revalidate: 3600 }
+  { tags: ['posts'], revalidate: 604800 }
 )
 
 export async function GET() {
