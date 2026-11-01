@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { IoIosArrowBack } from 'react-icons/io'
 import { Navbar } from '@/components/layout'
 import { ThemeToggle, SoundToggle } from '@/components/common'
-import '../post/[title]/Post.css'
 import './now.css'
 
 export interface LogEntry {
@@ -59,48 +58,53 @@ export default function NowClient({ entries }: NowClientProps) {
   const groups = groupByDay(entries)
 
   return (
-    <>
+    <div className="rv rv-page rv-now">
       <Navbar />
-      <div className="post-container now-container">
-        <div className="post-header">
-          <Link href="/" className="back-button" aria-label="Back to home">
-            <IoIosArrowBack className="back-icon" />
-          </Link>
-          <div className="post-theme-toggle">
-            <SoundToggle />
-            <ThemeToggle />
+      <div className="rv-pageWrap">
+        <div className="rv-pageCol">
+          <div className="rv-postTop">
+            <div className="rv-grp">
+              <Link href="/" className="rv-ibtn" aria-label="Back to home" data-tip="Home">
+                <IoIosArrowBack size={16} />
+              </Link>
+              <span className="rv-label rv-kicker">Personal log &middot; <b>Hari</b></span>
+            </div>
+            <div className="rv-grp">
+              <SoundToggle />
+              <ThemeToggle />
+            </div>
           </div>
-        </div>
 
-        <div className="now-panel">
-          <span className="now-panel-code">PERSONAL LOG &middot; HARI</span>
-        </div>
+          <h1 className="rv-pageTitle">Personal Log</h1>
+          <div className="rv-pageSub">Short entries as they happen{entries.length > 0 && <> &middot; {entries.length} entries</>}</div>
+          <hr className="rv-titleRule" />
 
-        {entries.length === 0 ? (
-          <div className="now-empty">
-            <span className="now-empty-code">QUERY&middot;NULL</span>
-            <p>No log entries yet.</p>
-          </div>
-        ) : (
-          <div className="now-stream">
-            {groups.map((group, gi) => (
-              <section key={`${group.label}-${gi}`} className="now-group">
-                <h2 className="now-group-label">{group.label}</h2>
-                <ul className="now-entries">
-                  {group.items.map(entry => (
-                    <li key={entry.id} className="now-entry">
-                      <p className="now-entry-body">{entry.body}</p>
-                      <span className="now-entry-time" aria-hidden="true">
-                        {formatTime(entry.created_at)}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ))}
-          </div>
-        )}
+          {entries.length === 0 ? (
+            <div className="rv-empty">
+              <div className="rv-label">QUERY&middot;NULL</div>
+              <p className="rv-emptyTitle">No log entries yet.</p>
+            </div>
+          ) : (
+            <div className="rv-logStream">
+              {groups.map((group, gi) => (
+                <section key={`${group.label}-${gi}`} className="rv-logGroup">
+                  <h2 className="rv-logDay">{group.label}</h2>
+                  <ul className="rv-logEntries">
+                    {group.items.map(entry => (
+                      <li key={entry.id} className="rv-logEntry">
+                        <p className="rv-logBody">{entry.body}</p>
+                        <span className="rv-logTime" aria-hidden="true" suppressHydrationWarning>
+                          {formatTime(entry.created_at)}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    </>
+    </div>
   )
 }

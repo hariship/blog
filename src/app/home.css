@@ -5,13 +5,21 @@
  * ===================================================================== */
 
 /* ---------- Intro ---------- */
+.rv-home { --rv-side: 220px; } /* sidebar width — shared by intro + shell grids */
 .rv-intro {
+  /* Same grid as .rv-shell so the title centres over the LIST column,
+   * not the whole page (the sidebar would otherwise pull it off-centre —
+   * very visible in dark mode where the cards have panel edges). */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--rv-side);
+  column-gap: 40px;
   text-align: center;
-  padding: 18px 16px 14px;
+  padding: 18px 28px 14px;
   border-bottom: 3px double var(--rv-rule);
   max-width: 1360px;
   margin: 0 auto;
 }
+.rv-intro > * { grid-column: 1; }
 .rv-introName {
   font-family: var(--rv-display);
   font-weight: 700;
@@ -33,7 +41,7 @@
   margin: 0 auto;
   padding: 14px 28px 24px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 260px;
+  grid-template-columns: minmax(0, 1fr) var(--rv-side);
   gap: 40px;
 }
 .rv-main { min-width: 0; }
@@ -292,10 +300,6 @@
 .rv-magItem .rv-meta { margin-top: 3px; }
 
 /* ---------- Empty / loader / error ---------- */
-.rv-empty { text-align: center; padding: 36px 12px; border-bottom: 1px solid var(--rv-rule); }
-.rv-emptyTitle { font-family: var(--rv-display); font-weight: 600; font-size: 18px; color: var(--rv-title); margin: 6px 0 4px; }
-.rv-emptyText { font-size: 14px; color: var(--rv-ink2); margin: 0 0 14px; }
-.rv-empty b { color: var(--rv-accent); font-weight: 600; }
 
 .rv-feed { min-height: 60vh; }
 
@@ -443,6 +447,7 @@
  * ≤1000px: sidebar folds away → dropdown appears, controls on two rows
  * ===================================================================== */
 @media (max-width: 1000px) {
+  .rv-intro { grid-template-columns: minmax(0, 1fr); }
   .rv-shell { grid-template-columns: minmax(0, 1fr); gap: 18px; }
   .rv-sidebar { display: none; }
   .rv-mobileWidgets { display: flex; gap: 22px; flex-wrap: wrap; align-items: center; padding-top: 10px; border-top: 1px solid var(--rv-rule); }

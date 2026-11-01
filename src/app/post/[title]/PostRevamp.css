@@ -7,18 +7,6 @@
 
 .rv-postWrap { max-width: 1320px; margin: 0 auto; padding: 12px 32px 32px; }
 
-.rv-postTop {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--rv-rule);
-}
-.rv-grp { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-.rv-kicker { margin-left: 8px; }
-.rv-kicker b { color: var(--rv-accent); font-weight: 500; text-shadow: var(--rv-glow); }
 .rv-supplemental { color: var(--rv-accent); }
 .rv-adminGrp { padding-left: 10px; margin-left: 4px; border-left: 1px solid var(--rv-rule); }
 .rv-btn.rv-static { cursor: default; }
@@ -47,7 +35,6 @@
   color: var(--rv-mute);
 }
 .rv-postSub .rv-btn { margin-left: 4px; padding: 4px 10px; }
-.rv-titleRule { border: 0; border-top: 3px double var(--rv-rule); margin: 0; }
 
 /* ---------- Content ---------- */
 .rv-post .post-content.rv-content {
@@ -202,7 +189,6 @@
 /* ---------- Phones ---------- */
 @media (max-width: 640px) {
   .rv-postWrap { padding: 8px 12px 24px; }
-  .rv-kicker { order: 3; width: 100%; margin: 4px 0 0; }
   .rv-adminGrp { display: none; }
   .rv-postTitle { font-size: 26px; margin: 10px 0 6px; }
   .rv-post .post-content.rv-content { font-size: 18px; }

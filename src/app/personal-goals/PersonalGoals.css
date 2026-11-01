@@ -1,96 +1,73 @@
-.container {
-  max-width: 600px;
-  margin: 50px auto;
-  padding: var(--spacing-lg);
-  background: var(--color-bg-card);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-medium);
-  text-align: center;
-  font-family: 'Merriweather', sans-serif;
-  transition: background-color var(--transition-normal), box-shadow var(--transition-normal);
-}
+/* =====================================================================
+ * Personal Goals — revamp. Same reading column as posts.
+ * (Old file used global .container/.header/.title/.post-card selectors
+ * that leaked onto other pages after visiting Goals — all scoped now.)
+ * ===================================================================== */
 
-/* Header with title on the left and pagination on the right */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-md);
-}
+.rv-pageHead { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; padding-top: 6px; }
+.rv-pageHead .rv-kicker { margin-left: 0; }
+.rv-pageHead .rv-pageTitle { margin-bottom: 12px; }
 
-.title {
-  font-size: 20px;
-  font-weight: bold;
-  color: var(--color-text-primary);
-  margin: 0;
-  flex: 1;
-  text-align: left;
-  transition: color var(--transition-fast);
-}
-
-/* Pagination styles */
-.pagination {
-  display: flex;
-}
-
-.page-button {
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border-medium);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  margin-left: var(--spacing-xs);
+.rv-pageNums { display: inline-flex; border: 1px solid var(--rv-rule); border-radius: var(--rv-lcars); overflow: hidden; margin-bottom: 14px; flex: 0 0 auto; }
+.rv-pageNums button {
+  font-family: var(--rv-mono);
+  font-size: 11px;
+  letter-spacing: .1em;
+  color: var(--rv-mute);
+  background: transparent;
+  border: 0;
+  border-left: 1px solid var(--rv-rule);
+  padding: 6px 12px;
   cursor: pointer;
-  border-radius: var(--radius-sm);
-  font-size: 16px;
-  color: var(--color-text-primary);
-  transition: all var(--transition-fast);
 }
+.rv-pageNums button:first-child { border-left: 0; }
+.rv-pageNums button:hover { color: var(--rv-accent); background: var(--rv-accent-soft); }
+.rv-pageNums button.on { background: var(--rv-accent); color: var(--rv-on-accent); }
 
-.page-button:hover {
-  background: var(--color-bg-secondary);
-  border-color: var(--color-border-dark);
-}
-
-.page-button.active {
-  background: var(--color-button-primary);
-  color: var(--color-text-inverse);
-  border-color: var(--color-button-primary);
-}
-
-/* Styling for each goal */
-.post-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--color-bg-secondary);
-  padding: var(--spacing-md);
-  margin: var(--spacing-sm) 0;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-light);
-  transition: all var(--transition-fast);
-}
-
-.post-card:hover {
-  box-shadow: var(--shadow-medium);
-  transform: translateY(-1px);
-}
-
-.goal-text {
-  font-size: 18px;
-  text-align: left;
-  flex: 1;
-  color: var(--color-text-primary);
+.rv-goalList { list-style: none; margin: 0; padding: 6px 0 0; }
+.rv-goal {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  transition: color var(--transition-fast);
+  gap: 14px;
+  padding: 13px 4px 13px 2px;
+  border-bottom: 1px solid var(--rv-rule);
+}
+.rv-goal:last-child { border-bottom: 0; }
+.rv-goalIcon {
+  flex: 0 0 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  color: var(--rv-accent);
+  border: 1px solid var(--rv-rule);
+  border-radius: var(--rv-lcars);
+}
+.rv-goalText {
+  flex: 1 1 auto;
+  font-family: var(--font-reading), 'Source Sans 3', 'Source Sans Pro', var(--rv-body);
+  font-size: 19px;
+  line-height: 1.4;
+  color: var(--rv-ink);
+}
+.rv-goal.done .rv-goalText { color: var(--rv-mute); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--rv-mute) 70%, transparent); }
+.rv-goal.done .rv-goalIcon { color: var(--rv-mute); }
+.rv-goalDone {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+  font-family: var(--rv-mono);
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--rv-on-accent);
+  background: var(--rv-accent);
+  border-radius: var(--rv-lcars);
+  padding: 4px 9px;
 }
 
-.goal-text.completed {
-  text-decoration: line-through;
-  color: var(--color-text-muted);
-}
-
-.checkmark {
-  font-size: 20px;
-  color: var(--color-success);
+@media (max-width: 640px) {
+  .rv-goalText { font-size: 17px; }
+  .rv-goal { gap: 10px; }
+  .rv-goalIcon { flex-basis: 30px; height: 30px; }
 }
