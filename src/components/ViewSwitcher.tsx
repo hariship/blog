@@ -9,9 +9,12 @@ interface ViewSwitcherProps {
   currentView: ViewMode
   onViewChange: (view: ViewMode) => void
   hideMagazine?: boolean
+  /** Text labels (List / Grid / Compact / Magazine) instead of icons —
+   * used by the revamped home page's segmented control. */
+  labels?: boolean
 }
 
-const ViewSwitcher = ({ currentView, onViewChange, hideMagazine = false }: ViewSwitcherProps) => {
+const ViewSwitcher = ({ currentView, onViewChange, hideMagazine = false, labels = false }: ViewSwitcherProps) => {
   const { playToggleSound } = useSounds()
 
   const getIcon = (mode: ViewMode) => {
@@ -53,25 +56,30 @@ const ViewSwitcher = ({ currentView, onViewChange, hideMagazine = false }: ViewS
     { mode: 'grid' as ViewMode, label: 'Grid' }
   ]
 
-  const views = hideMagazine
-    ? allViews.filter(view => view.mode !== 'magazine')
+  const ordered = labels
+    ? (['list', 'grid', 'compact', 'magazine'] as ViewMode[]).map(m => allViews.find(v => v.mode === m)!)
     : allViews
+
+  const views = hideMagazine
+    ? ordered.filter(view => view.mode !== 'magazine')
+    : ordered
 
   return (
     <div className="view-switcher">
       {views.map(({ mode, label }) => (
         <button
           key={mode}
-          className={`view-btn ${currentView === mode ? 'active' : ''}`}
+          className={`view-btn view-btn-${mode} ${currentView === mode ? 'active' : ''}`}
           onClick={(e) => {
             playToggleSound()
             onViewChange(mode)
             e.currentTarget.blur()
           }}
-          title={label}
+          title={labels ? undefined : label}
           aria-label={`Switch to ${label} view`}
+          aria-pressed={currentView === mode}
         >
-          {getIcon(mode)}
+          {labels ? label : getIcon(mode)}
         </button>
       ))}
     </div>

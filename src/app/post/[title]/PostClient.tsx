@@ -13,7 +13,9 @@ import { CommentsWidget } from '@/components/widgets'
 import { ThemeToggle, SoundToggle } from '@/components/common'
 import type { PostData, AdjacentPost } from './page'
 import AckToast from '@/components/AckToast'
+import Decoded from '@/components/Decoded'
 import './Post.css'
+import './PostRevamp.css'
 
 interface PostClientProps {
   title: string
@@ -69,6 +71,30 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
   const [newsletterMessage, setNewsletterMessage] = useState<string | null>(null)
   // Computer-voice ack toast shown after a successful read-toggle.
   const [ack, setAck] = useState<string | null>(null)
+  // Image lightbox: click any picture in the post to see it bigger.
+  const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(null)
+
+  useEffect(() => {
+    if (!lightbox) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setLightbox(null) }
+    document.addEventListener('keydown', onKey)
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prevOverflow
+    }
+  }, [lightbox])
+
+  const handleContentClick = (e: React.MouseEvent<HTMLElement>) => {
+    const target = e.target as HTMLElement
+    if (target.tagName !== 'IMG') return
+    // Images wrapped in a link keep behaving like links.
+    if (target.closest('a')) return
+    const img = target as HTMLImageElement
+    playButtonSound()
+    setLightbox({ src: img.currentSrc || img.src, alt: img.alt || '' })
+  }
 
   const router = useRouter()
   const { playButtonSound } = useSounds()
@@ -378,122 +404,124 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
     }
   }
 
+  // SUPPLEMENTAL = post edited >24h after publish. Mirrors Picard's
+  // "Captain's log, supplemental..." for log addendums.
+  const pubMs = postDate ? new Date(postDate).getTime() : 0
+  const updMs = postUpdatedAt ? new Date(postUpdatedAt).getTime() : 0
+  const isSupplemental = pubMs > 0 && updMs > 0 && updMs - pubMs > 86_400_000
+  const logCode = postId ? `LOG·${String(postId).padStart(3, '0')}` : ''
+
+  const readButton = (where: 'top' | 'bottom') => (
+    <button
+      type="button"
+      className={`rv-btn rv-readBtn rv-readBtn-${where}${isLiked ? ' on' : ''}`}
+      aria-pressed={isLiked}
+      onClick={() => {
+        playButtonSound()
+        handleLikeToggle()
+      }}
+    >
+      <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M3.5 8.5l3 3 6-7" />
+      </svg>
+      {isLiked ? 'Read' : 'Mark as read'}
+    </button>
+  )
+
   return (
-    <div className={`post-container ${isJournal ? 'journal-post' : ''}`}>
+    <div className={`rv rv-post${isJournal ? ' journal-post' : ''}`}>
       <AckToast message={ack} onDismiss={() => setAck(null)} />
+      {lightbox && (
+        <div
+          className="rv-lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label={lightbox.alt || 'Image preview'}
+          onClick={() => setLightbox(null)}
+        >
+          <button
+            type="button"
+            className="rv-ibtn rv-lightboxClose"
+            aria-label="Close image"
+            data-tip="Close (Esc)"
+            onClick={() => setLightbox(null)}
+          >
+            &times;
+          </button>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={lightbox.src} alt={lightbox.alt} onClick={(e) => e.stopPropagation()} />
+        </div>
+      )}
       {loading ? (
-        <div className="loader"></div>
+        <div className="rv-postWrap"><div className="rv-loader" aria-label="Loading"><span /></div></div>
       ) : (
-        <>
-          <div className="post-header">
-            <div className="post-nav-buttons">
-              <button
-                type="button"
-                className="back-button"
-                onClick={handleGoBack}
-                title="Back"
-                aria-label="Go back"
-              >
-                <IoIosArrowBack className="back-icon" />
+        <div className="rv-postWrap">
+          {/* Reading column: ~820px measure; top bar, title, text and pictures all share its edges. */}
+          <div className="rv-readCol">
+          {/* One slim row: back/home + LOG code … admin + sound/theme */}
+          <div className="rv-postTop">
+            <div className="rv-grp">
+              <button type="button" className="rv-ibtn" onClick={handleGoBack} data-tip="Back" aria-label="Go back">
+                <IoIosArrowBack size={16} />
               </button>
-              <button
-                type="button"
-                className="home-button"
-                onClick={handleGoHome}
-                title="Home"
-                aria-label="Go to home"
-              >
-                <Home size={16} />
+              <button type="button" className="rv-ibtn" onClick={handleGoHome} data-tip="Home" aria-label="Go to home">
+                <Home size={15} />
               </button>
+              {postId && (
+                <span className="rv-label rv-kicker">
+                  <Decoded text={logCode} />
+                  {postCategory && <> &middot; <b>{postCategory}</b></>}
+                  {isSupplemental && <span className="rv-supplemental"> &middot; Supplemental</span>}
+                </span>
+              )}
             </div>
-            {isAdmin && adminMounted && (
-              <div className="admin-inkhouse-controls">
-                <button
-                  onClick={handleEditPost}
-                  disabled={!postId}
-                  className="admin-edit-btn"
-                >
-                  Edit
-                </button>
-                {inkHousePublished ? (
-                  <span className="inkhouse-badge">Published to InkHouse</span>
-                ) : (
+            <div className="rv-grp">
+              {isAdmin && adminMounted && (
+                <div className="rv-grp rv-adminGrp">
+                  <button onClick={handleEditPost} disabled={!postId} className="rv-btn">Edit</button>
+                  {inkHousePublished ? (
+                    <span className="rv-btn on rv-static">Published to InkHouse</span>
+                  ) : (
+                    <button onClick={handlePublishToInkHouse} disabled={isPublishingToInkHouse || !postId} className="rv-btn">
+                      {isPublishingToInkHouse ? 'Publishing...' : 'Publish to InkHouse'}
+                    </button>
+                  )}
                   <button
-                    onClick={handlePublishToInkHouse}
-                    disabled={isPublishingToInkHouse || !postId}
-                    className="inkhouse-publish-btn"
+                    onClick={handleSendNewsletter}
+                    disabled={isSendingNewsletter || !postId}
+                    className="rv-btn"
+                    data-tip="Send to all active subscribers"
                   >
-                    {isPublishingToInkHouse ? 'Publishing...' : 'Publish to InkHouse'}
+                    {isSendingNewsletter ? 'Sending...' : 'Email subscribers'}
                   </button>
-                )}
-                {inkHouseMessage && (
-                  <span className={`inkhouse-message ${inkHouseMessage.startsWith('Failed') ? 'error' : 'success'}`}>
-                    {inkHouseMessage}
-                  </span>
-                )}
-                <button
-                  onClick={handleSendNewsletter}
-                  disabled={isSendingNewsletter || !postId}
-                  className="admin-newsletter-btn"
-                  title="Send this entry as a newsletter to all active subscribers"
-                >
-                  {isSendingNewsletter ? 'Sending...' : 'Email subscribers'}
-                </button>
-                {newsletterMessage && (
-                  <span className={`inkhouse-message ${newsletterMessage.startsWith('Failed') ? 'error' : 'success'}`}>
-                    {newsletterMessage}
-                  </span>
-                )}
-              </div>
-            )}
-            <div className="post-theme-toggle">
+                </div>
+              )}
               <SoundToggle />
               <ThemeToggle />
             </div>
           </div>
-          {postId && (() => {
-            // SUPPLEMENTAL = post edited >24h after publish. Mirrors Picard's
-            // "Captain's log, supplemental..." for log addendums.
-            const pub = postDate ? new Date(postDate).getTime() : 0
-            const upd = postUpdatedAt ? new Date(postUpdatedAt).getTime() : 0
-            const isSupplemental = pub > 0 && upd > 0 && upd - pub > 86_400_000
-            return (
-              <span className="post-log-id">
-                LOG&middot;{String(postId).padStart(3, '0')}
-                {postCategory && <> &middot; {postCategory.toUpperCase()}</>}
-                {isSupplemental && <span className="post-log-supplemental"> &middot; SUPPLEMENTAL</span>}
-              </span>
-            )
-          })()}
-          <h1 className="post-title">{parse(postTitle)}</h1>
-          <div className="post-meta">
-            <span className="author-name">Hari</span> &bull;
-            <span className="post-date">
-              &nbsp;{formatDate(postDate)} &bull;
-            </span>
-            <span className="post-category">&nbsp;{postCategory}</span>
-            <span
-              className="like-button read-button read-button-top"
-              onClick={() => {
-                playButtonSound()
-                handleLikeToggle()
-              }}
-            >
-              &bull;&nbsp;
-              {isLiked ? (
-                <svg className="heart-icon liked" stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 16 16" height="1.2em" width="1.2em">
-                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-                </svg>
-              ) : (
-                <svg className="heart-icon not-liked" stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 16 16" height="1.2em" width="1.2em">
-                  <path d="M4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm2.625.547a3 3 0 0 0-5.584.953H.5a.5.5 0 0 0 0 1h.541A3 3 0 0 0 7 8a1 1 0 0 1 2 0 3 3 0 0 0 5.959.5h.541a.5.5 0 0 0 0-1h-.541a3 3 0 0 0-5.584-.953A1.993 1.993 0 0 0 8 6c-.532 0-1.016.208-1.375.547zM14 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
-                </svg>
-              )}
-              <span className="read-text">{isLiked ? 'Read' : 'Mark as read'}</span>
-            </span>
-            {isJournal && <hr className="hr-journal" />}
+          {(inkHouseMessage || newsletterMessage) && isAdmin && adminMounted && (
+            <div className="rv-adminMsgs">
+              {inkHouseMessage && <span className={`rv-msg ${inkHouseMessage.startsWith('Failed') ? 'error' : ''}`}>{inkHouseMessage}</span>}
+              {newsletterMessage && <span className={`rv-msg ${newsletterMessage.startsWith('Failed') ? 'error' : ''}`}>{newsletterMessage}</span>}
+            </div>
+          )}
+
+          <h1 className="rv-postTitle">{parse(postTitle)}</h1>
+          <div className="rv-postSub">
+            <span>Hari · {formatDate(postDate)}</span>
+            {postCategory && (
+              <>
+                <span aria-hidden="true">·</span>
+                <Link className="rv-link" href={`/?category=${encodeURIComponent(postCategory)}`}>{postCategory}</Link>
+              </>
+            )}
+            {readButton('top')}
           </div>
-          <div className="post-content">
+          {isJournal && <hr className="hr-journal" />}
+          <hr className="rv-titleRule" />
+
+          <article className="post-content rv-content" onClick={handleContentClick}>
             {parse(processToggleBlocks(postContent), {
               replace: (domNode: unknown) => {
                 const node = domNode as { attribs?: { style?: string } }
@@ -502,76 +530,50 @@ export default function PostClient({ title, initialPost, adjacent }: PostClientP
                 }
               }
             })}
-          </div>
+          </article>
 
-          <span
-            className="like-button read-button read-button-bottom"
-            onClick={() => {
-              playButtonSound()
-              handleLikeToggle()
-            }}
-          >
-            {isLiked ? (
-              <svg className="heart-icon liked" stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 16 16" height="1.2em" width="1.2em">
-                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-              </svg>
-            ) : (
-              <svg className="heart-icon not-liked" stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 16 16" height="1.2em" width="1.2em">
-                <path d="M4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm2.625.547a3 3 0 0 0-5.584.953H.5a.5.5 0 0 0 0 1h.541A3 3 0 0 0 7 8a1 1 0 0 1 2 0 3 3 0 0 0 5.959.5h.541a.5.5 0 0 0 0-1h-.541a3 3 0 0 0-5.584-.953A1.993 1.993 0 0 0 8 6c-.532 0-1.016.208-1.375.547zM14 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
-              </svg>
-            )}
-            <span className="read-text">{isLiked ? 'Read' : 'Mark as read'}</span>
-          </span>
-          <br/>
-          <br/>
-          <hr/>
+          <div className="rv-bottomRead">{readButton('bottom')}</div>
+
           {(adjacent?.prev || adjacent?.next) && (
-            <nav className="post-log-nav" aria-label="Adjacent log entries">
-              <div className="post-log-nav-prev">
-                {adjacent?.prev && (
-                  <Link href={`/post/${adjacent.prev.normalized_title}`} className="post-log-nav-link">
-                    <span className="post-log-nav-arrow">&larr;</span>
-                    <span className="post-log-nav-id">LOG&middot;{String(adjacent.prev.id).padStart(3, '0')}</span>
-                    <span className="post-log-nav-title">{adjacent.prev.title}</span>
-                  </Link>
-                )}
-              </div>
-              <div className="post-log-nav-next">
-                {adjacent?.next && (
-                  <Link href={`/post/${adjacent.next.normalized_title}`} className="post-log-nav-link post-log-nav-link-right">
-                    <span className="post-log-nav-id">LOG&middot;{String(adjacent.next.id).padStart(3, '0')}</span>
-                    <span className="post-log-nav-title">{adjacent.next.title}</span>
-                    <span className="post-log-nav-arrow">&rarr;</span>
-                  </Link>
-                )}
-              </div>
+            <nav className="rv-adjacent" aria-label="Adjacent log entries">
+              {adjacent?.prev ? (
+                <Link href={`/post/${adjacent.prev.normalized_title}`} className="rv-adj">
+                  <div className="rv-label">&larr; <Decoded text={`LOG·${String(adjacent.prev.id).padStart(3, '0')}`} /></div>
+                  <div className="t">{adjacent.prev.title}</div>
+                </Link>
+              ) : <span />}
+              {adjacent?.next ? (
+                <Link href={`/post/${adjacent.next.normalized_title}`} className="rv-adj next">
+                  <div className="rv-label"><Decoded text={`LOG·${String(adjacent.next.id).padStart(3, '0')}`} /> &rarr;</div>
+                  <div className="t">{adjacent.next.title}</div>
+                </Link>
+              ) : <span />}
             </nav>
           )}
-          <section className="comments-section" aria-label="Discussion">
-            <div className="comments-section-head">
-              <h2 className="comments-section-title">Discussion</h2>
+
+          <section className="rv-discussion" aria-label="Discussion">
+            <div className="rv-discussionHead">
+              <h2>Discussion</h2>
+              <button
+                type="button"
+                className="rv-btn"
+                aria-expanded={showComments}
+                onClick={() => {
+                  playButtonSound()
+                  setShowComments(!showComments)
+                }}
+              >
+                {showComments ? '▾ Hide comments' : '▸ Show comments'}
+              </button>
             </div>
-            <button
-              className="comments-toggle"
-              onClick={() => {
-                playButtonSound()
-                setShowComments(!showComments)
-              }}
-            >
-              <div className="comments-toggle-icon">
-                {showComments ? '▼' : '▶'}
-              </div>
-              <span className="comments-toggle-text">
-                {showComments ? 'Hide comments' : 'Show comments'}
-              </span>
-            </button>
             {showComments && (
-              <div className="comments-widget-container">
+              <div className="rv-comments">
                 <CommentsWidget pageSlug={`/${normalizeTitle(title || '')}`} />
               </div>
             )}
           </section>
-        </>
+          </div>
+        </div>
       )}
     </div>
   )

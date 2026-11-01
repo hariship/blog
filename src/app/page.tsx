@@ -16,7 +16,7 @@ import { useLikes } from '@/contexts/LikesContext'
 import { useSounds } from '@/contexts/SoundContext'
 import { useAdmin } from '@/contexts/AdminContext'
 import { PostWithLikes } from '@/types'
-import './RSSFeed.css'
+import './home.css'
 
 const formatDate = (dateString: string): string => {
   try {
@@ -333,123 +333,122 @@ function HomePageContent() {
     )
   }
 
+  const selectCategory = (cat: string) => {
+    playButtonSound()
+    setSelectedCategory(cat)
+    setCurrentPage(1)
+  }
+
+  // Category on a feed card is itself a filter link. It lives inside the
+  // card's <Link>, so it swallows the click instead of opening the post.
+  const renderCategoryTag = (category?: string | null) => {
+    if (!category) return null
+    const go = (e: React.SyntheticEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      selectCategory(category)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+    return (
+      <span
+        role="button"
+        tabIndex={0}
+        className={`rv-tag${selectedCategory === category ? ' on' : ''}`}
+        data-tip={`Show all ${category}`}
+        onClick={go}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') go(e) }}
+      >
+        {category}
+      </span>
+    )
+  }
+
+  const renderReadToggle = (post: PostWithLikes) => {
+    const read = isPostRead(post.normalized_title)
+    return (
+      <span
+        role="button"
+        tabIndex={0}
+        className={`rv-read${read ? ' on' : ''}`}
+        data-tip={read ? 'Mark as unread' : 'Mark as read'}
+        aria-label={read ? 'Mark as unread' : 'Mark as read'}
+        aria-pressed={read}
+        onClick={(e) => { e.preventDefault(); e.stopPropagation(); playButtonSound(); handleReadToggle(post) }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); playButtonSound(); handleReadToggle(post) }
+        }}
+      >
+        <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M3.5 8.5l3 3 6-7" />
+        </svg>
+      </span>
+    )
+  }
+
+  const logId = (post: PostWithLikes) => `LOG·${String(post.id).padStart(3, '0')}`
+
   const renderListView = () => (
-    <div className="view-list">
+    <div className="rv-cards">
       {posts.map((post, idx) => {
-        // "CURRENT" tag only on the truly-newest entry: first card of page 1
+        // "LATEST" tag only on the truly-newest entry: first card of page 1
         // with no category filter and no search active.
         const isCurrent = idx === 0 && currentPage === 1 && !selectedCategory && !searchQuery
         return (
-        <Link
-          key={post.id}
-          href={`/post/${post.normalized_title}`}
-          className={`list-item${isCurrent ? ' list-item-current' : ''}`}
-          onClick={handlePostClick}
-          style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
-        >
-          <div className="list-item-content">
+          <Link
+            key={post.id}
+            href={`/post/${post.normalized_title}`}
+            className={`rv-card${isCurrent ? ' latest' : ''}${post.enclosure ? '' : ' noThumb'}`}
+            onClick={handlePostClick}
+          >
             {post.enclosure && (
-              <div className="list-item-image">
-                <Image
-                  src={post.enclosure}
-                  alt={post.title}
-                  width={120}
-                  height={80}
-                  style={{ objectFit: 'cover' }}
-                />
+              <div className="rv-thumb">
+                <Image src={post.enclosure} alt={post.title} width={240} height={164} />
               </div>
             )}
-            <div className="list-item-text">
-              <span className="list-item-log-id">
-                <Decoded text={`LOG·${String(post.id).padStart(3, '0')}`} />
-                {isCurrent && (
-                  <span className="list-item-log-current">
-                    {' '}&middot; <Decoded text="LATEST" />
-                  </span>
-                )}
-              </span>
-              <div className="list-item-header">
-                <h3 className="list-item-title">{post.title}</h3>
-                {post.category && (
-                  <span className="list-item-category">{post.category}</span>
-                )}
+            <div className="rv-cardBody">
+              <div className="rv-logid">
+                <Decoded text={logId(post)} />
+                {isCurrent && <b> &middot; <Decoded text="LATEST" /></b>}
               </div>
-              {post.description && (
-                <p className="list-item-description">{post.description}</p>
-              )}
-              <div className="list-item-meta">
+              <div className="rv-titleRow">
+                <h3 className="rv-title">{post.title}</h3>
+                {renderCategoryTag(post.category)}
+              </div>
+              {post.description && <p className="rv-desc">{post.description}</p>}
+              <div className="rv-meta">
                 <span>Hari · {formatDate(post.pub_date)}</span>
                 {renderInkHouseControl(post)}
-                <span
-                  className="favorite-icon read-icon"
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); playButtonSound(); handleReadToggle(post); }}
-                  title={isPostRead(post.normalized_title) ? "Mark as unread" : "Mark as read"}
-                >
-                  {isPostRead(post.normalized_title) ? (
-                    <svg className="heart-icon liked" viewBox="0 0 16 16" height="1.2em" width="1.2em" fill="currentColor">
-                      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-                    </svg>
-                  ) : (
-                    <svg className="heart-icon not-liked" viewBox="0 0 16 16" height="1.2em" width="1.2em" fill="currentColor">
-                      <path d="M4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm2.625.547a3 3 0 0 0-5.584.953H.5a.5.5 0 0 0 0 1h.541A3 3 0 0 0 7 8a1 1 0 0 1 2 0 3 3 0 0 0 5.959.5h.541a.5.5 0 0 0 0-1h-.541a3 3 0 0 0-5.584-.953A1.993 1.993 0 0 0 8 6c-.532 0-1.016.208-1.375.547zM14 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
-                    </svg>
-                  )}
-                </span>
+                {renderReadToggle(post)}
               </div>
             </div>
-          </div>
-        </Link>
+          </Link>
         )
       })}
     </div>
   )
 
   const renderGridView = () => (
-    <div className="view-grid">
+    <div className="rv-grid">
       {posts.map((post) => (
         <Link
           key={post.id}
           href={`/post/${post.normalized_title}`}
-          className="grid-card"
+          className="rv-gridCard"
           onClick={handlePostClick}
-          style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
         >
           {post.enclosure && (
-            <div className="grid-card-image">
-              <Image
-                src={post.enclosure}
-                alt={post.title}
-                width={280}
-                height={180}
-                style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-              />
+            <div className="rv-gridThumb">
+              <Image src={post.enclosure} alt={post.title} width={420} height={240} />
             </div>
           )}
-          <div className="grid-card-content">
-            <h3 className="grid-card-title">{post.title}</h3>
-            {post.description && (
-              <p className="grid-card-description">{post.description}</p>
-            )}
-            <div className="grid-card-meta">
-              <span>{formatDate(post.pub_date)}</span>
-              {post.category && <span>{post.category}</span>}
-              {renderInkHouseControl(post)}
-              <span
-                className="favorite-icon read-icon"
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); playButtonSound(); handleReadToggle(post); }}
-                title={isPostRead(post.normalized_title) ? "Mark as unread" : "Mark as read"}
-              >
-                {isPostRead(post.normalized_title) ? (
-                  <svg className="heart-icon liked" viewBox="0 0 16 16" height="1.2em" width="1.2em" fill="currentColor">
-                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-                  </svg>
-                ) : (
-                  <svg className="heart-icon not-liked" viewBox="0 0 16 16" height="1.2em" width="1.2em" fill="currentColor">
-                    <path d="M4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm2.625.547a3 3 0 0 0-5.584.953H.5a.5.5 0 0 0 0 1h.541A3 3 0 0 0 7 8a1 1 0 0 1 2 0 3 3 0 0 0 5.959.5h.541a.5.5 0 0 0 0-1h-.541a3 3 0 0 0-5.584-.953A1.993 1.993 0 0 0 8 6c-.532 0-1.016.208-1.375.547zM14 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
-                  </svg>
-                )}
-              </span>
-            </div>
+          <div className="rv-logid"><Decoded text={logId(post)} /></div>
+          <h3 className="rv-title">{post.title}</h3>
+          {post.description && <p className="rv-desc">{post.description}</p>}
+          <div className="rv-meta">
+            <span>{formatDate(post.pub_date)}</span>
+            {renderCategoryTag(post.category)}
+            {renderInkHouseControl(post)}
+            {renderReadToggle(post)}
           </div>
         </Link>
       ))}
@@ -457,36 +456,19 @@ function HomePageContent() {
   )
 
   const renderCompactView = () => (
-    <div className="view-compact">
+    <div className="rv-compact">
       {posts.map((post) => (
         <Link
           key={post.id}
           href={`/post/${post.normalized_title}`}
-          className="compact-item"
+          className="rv-compactRow"
           onClick={handlePostClick}
-          style={{ textDecoration: 'none', color: 'inherit', display: 'flex' }}
         >
-          <span className="compact-date">{formatDate(post.pub_date)}</span>
-          <span className="compact-title">{post.title}</span>
-          {post.category && (
-            <span className="compact-category">{post.category}</span>
-          )}
+          <span className="rv-compactDate">{formatDate(post.pub_date)}</span>
+          <span className="rv-compactTitle">{post.title}</span>
+          {renderCategoryTag(post.category)}
           {renderInkHouseControl(post)}
-          <span
-            className="compact-read-icon favorite-icon read-icon"
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); playButtonSound(); handleReadToggle(post); }}
-            title={isPostRead(post.normalized_title) ? "Mark as unread" : "Mark as read"}
-          >
-            {isPostRead(post.normalized_title) ? (
-              <svg className="heart-icon liked" viewBox="0 0 16 16" height="1em" width="1em" fill="currentColor">
-                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-              </svg>
-            ) : (
-              <svg className="heart-icon not-liked" viewBox="0 0 16 16" height="1em" width="1em" fill="currentColor">
-                <path d="M4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm2.625.547a3 3 0 0 0-5.584.953H.5a.5.5 0 0 0 0 1h.541A3 3 0 0 0 7 8a1 1 0 0 1 2 0 3 3 0 0 0 5.959.5h.541a.5.5 0 0 0 0-1h-.541a3 3 0 0 0-5.584-.953A1.993 1.993 0 0 0 8 6c-.532 0-1.016.208-1.375.547zM14 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
-              </svg>
-            )}
-          </span>
+          {renderReadToggle(post)}
         </Link>
       ))}
     </div>
@@ -495,92 +477,44 @@ function HomePageContent() {
   const renderMagazineView = () => {
     const [featured, ...rest] = posts
     return (
-      <div className="view-magazine">
+      <div className="rv-magazine">
         {featured && (
           <Link
             href={`/post/${featured.normalized_title}`}
-            className="magazine-featured"
+            className="rv-magFeatured"
             onClick={handlePostClick}
-            style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
           >
             {featured.enclosure && (
-              <div className="magazine-featured-image">
-                <Image
-                  src={featured.enclosure}
-                  alt={featured.title}
-                  width={600}
-                  height={300}
-                  style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-                />
+              <div className="rv-magImage">
+                <Image src={featured.enclosure} alt={featured.title} width={900} height={420} />
               </div>
             )}
-            <div className="magazine-featured-content">
-              <h2 className="magazine-featured-title">{featured.title}</h2>
-              {featured.description && (
-                <p className="magazine-featured-description">{featured.description}</p>
-              )}
-              <div className="magazine-featured-meta">
-                <span>{formatDate(featured.pub_date)}</span>
-                {featured.category && (
-                  <span className="magazine-featured-category">{featured.category}</span>
-                )}
-                <span
-                  className="favorite-icon read-icon"
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); playButtonSound(); handleReadToggle(featured); }}
-                  title={isPostRead(featured.normalized_title) ? "Mark as unread" : "Mark as read"}
-                >
-                  {isPostRead(featured.normalized_title) ? (
-                    <svg className="heart-icon liked" viewBox="0 0 16 16" height="1.2em" width="1.2em" fill="currentColor">
-                      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-                    </svg>
-                  ) : (
-                    <svg className="heart-icon not-liked" viewBox="0 0 16 16" height="1.2em" width="1.2em" fill="currentColor">
-                      <path d="M4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm2.625.547a3 3 0 0 0-5.584.953H.5a.5.5 0 0 0 0 1h.541A3 3 0 0 0 7 8a1 1 0 0 1 2 0 3 3 0 0 0 5.959.5h.541a.5.5 0 0 0 0-1h-.541a3 3 0 0 0-5.584-.953A1.993 1.993 0 0 0 8 6c-.532 0-1.016.208-1.375.547zM14 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
-                    </svg>
-                  )}
-                </span>
-              </div>
+            <div className="rv-logid"><Decoded text={logId(featured)} /></div>
+            <h2 className="rv-magTitle">{featured.title}</h2>
+            {featured.description && <p className="rv-desc">{featured.description}</p>}
+            <div className="rv-meta">
+              <span>{formatDate(featured.pub_date)}</span>
+              {renderCategoryTag(featured.category)}
+              {renderReadToggle(featured)}
             </div>
           </Link>
         )}
-        <div className="magazine-secondary">
+        <div className="rv-magSecondary">
           {rest.map((post) => (
             <Link
               key={post.id}
               href={`/post/${post.normalized_title}`}
-              className="magazine-item"
+              className="rv-magItem"
               onClick={handlePostClick}
-              style={{ textDecoration: 'none', color: 'inherit', display: 'flex' }}
             >
               {post.enclosure && (
-                <Image
-                  src={post.enclosure}
-                  alt={post.title}
-                  width={60}
-                  height={60}
-                  className="magazine-item-image"
-                  style={{ objectFit: 'cover' }}
-                />
+                <Image src={post.enclosure} alt={post.title} width={120} height={120} className="rv-magItemImage" />
               )}
-              <div className="magazine-item-content">
-                <h4 className="magazine-item-title">{post.title}</h4>
-                <div className="magazine-item-meta">
-                  <span className="magazine-item-date">{formatDate(post.pub_date)}</span>
-                  <span
-                    className="magazine-read-icon favorite-icon read-icon"
-                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); playButtonSound(); handleReadToggle(post); }}
-                    title={isPostRead(post.normalized_title) ? "Mark as unread" : "Mark as read"}
-                  >
-                    {isPostRead(post.normalized_title) ? (
-                      <svg className="heart-icon liked" viewBox="0 0 16 16" height="0.9em" width="0.9em" fill="currentColor">
-                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-                      </svg>
-                    ) : (
-                      <svg className="heart-icon not-liked" viewBox="0 0 16 16" height="0.9em" width="0.9em" fill="currentColor">
-                        <path d="M4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm2.625.547a3 3 0 0 0-5.584.953H.5a.5.5 0 0 0 0 1h.541A3 3 0 0 0 7 8a1 1 0 0 1 2 0 3 3 0 0 0 5.959.5h.541a.5.5 0 0 0 0-1h-.541a3 3 0 0 0-5.584-.953A1.993 1.993 0 0 0 8 6c-.532 0-1.016.208-1.375.547zM14 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
-                      </svg>
-                    )}
-                  </span>
+              <div className="rv-magItemBody">
+                <h4 className="rv-magItemTitle">{post.title}</h4>
+                <div className="rv-meta">
+                  <span>{formatDate(post.pub_date)}</span>
+                  {renderReadToggle(post)}
                 </div>
               </div>
             </Link>
@@ -591,22 +525,18 @@ function HomePageContent() {
   }
 
   const renderEmptyState = () => (
-    <div className="feed-empty-state" role="status">
-      <span className="feed-empty-code">QUERY&middot;NULL</span>
-      <p className="feed-empty-title">NO RECORDS LOCATED</p>
+    <div className="rv-empty" role="status">
+      <div className="rv-label">QUERY&middot;NULL</div>
+      <p className="rv-emptyTitle">No records located</p>
       {searchQuery ? (
-        <p className="feed-empty-text">
-          NO ENTRIES MATCH &ldquo;{searchQuery}&rdquo;
-        </p>
+        <p className="rv-emptyText">No entries match &ldquo;<b>{searchQuery}</b>&rdquo;{selectedCategory && <> in <b>{selectedCategory}</b></>}</p>
       ) : (
-        <p className="feed-empty-text">
-          DATABASE RETURNED 0 ENTRIES FOR THIS FILTER.
-        </p>
+        <p className="rv-emptyText">Database returned 0 entries for {selectedCategory ? <b>{selectedCategory}</b> : 'this filter'}.</p>
       )}
       {(searchQuery || selectedCategory) && (
         <button
           type="button"
-          className="feed-empty-clear"
+          className="rv-btn"
           onClick={() => {
             playButtonSound()
             setSearchQuery('')
@@ -614,8 +544,7 @@ function HomePageContent() {
             setCurrentPage(1)
           }}
         >
-          <span className="feed-empty-clear-arrow">&larr;</span>
-          <span>CLEAR QUERY</span>
+          &larr; Clear query
         </button>
       )}
     </div>
@@ -637,8 +566,13 @@ function HomePageContent() {
     }
   }
 
+  const pages = totalPages || 1
+  const goPrev = () => { playButtonSound(); setCurrentPage((p) => Math.max(1, p - 1)) }
+  const goNext = () => { playButtonSound(); setCurrentPage((p) => Math.min(pages, p + 1)) }
+  const scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
+
   return (
-    <>
+    <div className="rv rv-home">
       <Navbar />
       <AckToast message={ack} onDismiss={() => setAck(null)} />
       {accessingMessage && <AccessingOverlay fullscreen message={accessingMessage} />}
@@ -651,335 +585,250 @@ function HomePageContent() {
       )}
       {showShortcuts && (
         <div
-          className="shortcuts-overlay"
+          className="rv-scOverlay"
           onClick={() => setShowShortcuts(false)}
           role="dialog"
           aria-label="Keyboard shortcuts and quick actions"
         >
-          <div
-            className="shortcuts-panel"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="shortcuts-header">
-              <span className="shortcuts-code">CMD&middot;HELP</span>
+          <div className="rv-scPanel" onClick={(e) => e.stopPropagation()}>
+            <div className="rv-scHead">
+              <span className="rv-label">CMD&middot;HELP</span>
               <button
                 type="button"
-                className="shortcuts-close"
+                className="rv-ibtn"
                 onClick={() => setShowShortcuts(false)}
                 aria-label="Close shortcuts"
+                data-tip="Close (Esc)"
               >
                 &times;
               </button>
             </div>
-            <h2 className="shortcuts-title">SHORTCUTS &middot; QUICK ACTIONS</h2>
-            <p className="shortcuts-subtitle">Tap a row, or press the key on a keyboard.</p>
-            <div className="shortcuts-list">
+            <h2 className="rv-scTitle">Shortcuts &middot; quick actions</h2>
+            <p className="rv-scSub">Tap a row, or press the key on a keyboard.</p>
+            <div className="rv-scList">
               <button
                 type="button"
-                className="shortcuts-row shortcuts-row-action"
+                className="rv-scRow"
                 onClick={() => {
                   setShowShortcuts(false)
                   searchInputRef.current?.focus()
                 }}
               >
-                <span className="shortcuts-key"><kbd>/</kbd></span>
-                <span className="shortcuts-desc">Focus search</span>
+                <kbd>/</kbd><span>Focus search</span>
               </button>
               <button
                 type="button"
-                className="shortcuts-row shortcuts-row-action"
+                className="rv-scRow"
                 onClick={() => {
                   setShowShortcuts(false)
                   accessAndGo('/api/latest-post', 'ACCESSING NEWEST LOG')
                 }}
               >
-                <span className="shortcuts-key"><kbd>n</kbd></span>
-                <span className="shortcuts-desc">Open the newest log</span>
+                <kbd>n</kbd><span>Open the newest log</span>
               </button>
               <button
                 type="button"
-                className="shortcuts-row shortcuts-row-action"
+                className="rv-scRow"
                 onClick={() => {
                   setShowShortcuts(false)
                   accessAndGo('/api/random-post', 'ACCESSING RANDOM LOG')
                 }}
               >
-                <span className="shortcuts-key"><kbd>r</kbd></span>
-                <span className="shortcuts-desc">Open a random log</span>
+                <kbd>r</kbd><span>Open a random log</span>
               </button>
               <button
                 type="button"
-                className="shortcuts-row shortcuts-row-action"
+                className="rv-scRow"
                 onClick={() => {
                   setShowShortcuts(false)
                   const subscribeBtn = document.querySelector<HTMLButtonElement>('.subscribe-icon-btn')
                   subscribeBtn?.click()
                 }}
               >
-                <span className="shortcuts-key"><kbd>s</kbd></span>
-                <span className="shortcuts-desc">Subscribe to newsletter</span>
+                <kbd>s</kbd><span>Subscribe to newsletter</span>
               </button>
-              <div className="shortcuts-row shortcuts-row-static">
-                <span className="shortcuts-key"><kbd>?</kbd></span>
-                <span className="shortcuts-desc">Toggle this panel</span>
-              </div>
-              <div className="shortcuts-row shortcuts-row-static">
-                <span className="shortcuts-key"><kbd>Esc</kbd></span>
-                <span className="shortcuts-desc">Close this panel</span>
-              </div>
+              <div className="rv-scRow static"><kbd>?</kbd><span>Toggle this panel</span></div>
+              <div className="rv-scRow static"><kbd>Esc</kbd><span>Close this panel</span></div>
             </div>
           </div>
         </div>
       )}
-      <div className="rss-feed">
-        <div className="rss-feed-layout">
-          <div className="rss-feed-main">
-            {/* Header */}
-            <div className="blog-header">
-              <div className="nav-home-container">
-                <div className="desktop-view-switcher">
-                  <ViewSwitcher currentView={viewMode} onViewChange={setViewMode} />
-                </div>
-                <div className="mobile-view-switcher">
-                  <ViewSwitcher currentView={viewMode} onViewChange={setViewMode} hideMagazine />
-                </div>
-              </div>
-              <div className="header-controls">
-                <div className="controls-group">
-                  <SoundToggle />
-                  <ThemeToggle />
-                  <RSSFeedButton />
-                  <Subscribe />
-                  <a
-                    href="/api/random-post"
-                    rel="nofollow"
-                    className="random-log-button"
-                    title="Random log"
-                    aria-label="Open a random log entry"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      playButtonSound()
-                      accessAndGo('/api/random-post', 'ACCESSING RANDOM LOG')
-                    }}
-                  >
-                    <Shuffle size={18} />
-                  </a>
-                  <button
-                    type="button"
-                    className="help-button"
-                    title="Keyboard shortcuts (?)"
-                    aria-label="Show keyboard shortcuts"
-                    onClick={() => {
-                      playButtonSound()
-                      setShowShortcuts(true)
-                    }}
-                  >
-                    <HelpCircle size={18} />
-                  </button>
-                </div>
+
+      <header className="rv-intro">
+        <h1 className="rv-introName">Hari</h1>
+        <div className="rv-introSub rv-label">Notes · Essays · Logs · Since 2024</div>
+      </header>
+
+      <div className="rv-shell">
+        <main className="rv-main">
+          <div className="rv-topControls">
+            {/* Row 1: view switcher + icon controls */}
+            <div className="rv-headerRow">
+              <ViewSwitcher currentView={viewMode} onViewChange={setViewMode} labels />
+              <div className="rv-actions controls-group">
+                <SoundToggle />
+                <ThemeToggle />
+                <RSSFeedButton />
+                <Subscribe />
+                <a
+                  href="/api/random-post"
+                  rel="nofollow"
+                  className="random-log-button"
+                  title="Random log"
+                  aria-label="Open a random log entry"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    playButtonSound()
+                    accessAndGo('/api/random-post', 'ACCESSING RANDOM LOG')
+                  }}
+                >
+                  <Shuffle size={15} />
+                </a>
+                <button
+                  type="button"
+                  className="help-button"
+                  title="Keyboard shortcuts (?)"
+                  aria-label="Show keyboard shortcuts"
+                  onClick={() => {
+                    playButtonSound()
+                    setShowShortcuts(true)
+                  }}
+                >
+                  <HelpCircle size={15} />
+                </button>
               </div>
             </div>
 
-            {/* Filter Controls */}
-            <div className="category-dropdown">
-              <div className="filter-controls">
-                <div className="filter-section">
-                  <select
-                    className="category-select"
-                    value={selectedCategory}
-                    onChange={(e) => {
-                      playButtonSound()
-                      setSelectedCategory(e.target.value)
-                      setCurrentPage(1)
-                    }}
-                  >
-                    <option value="">All Categories</option>
-                    {categories.map((cat) => (
-                      <option key={cat} value={cat}>
-                        {cat}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="search-section">
+            {/* Row 2: category dropdown (≤1000px only) + search + pager */}
+            <div className="rv-toolbar">
+              <select
+                className="rv-field rv-catSelect"
+                aria-label="Category"
+                value={selectedCategory}
+                onChange={(e) => selectCategory(e.target.value)}
+              >
+                <option value="">All categories</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+              <div className="rv-toolRight">
+                <label
+                  className={`rv-search${searchQuery ? ' open' : ''}`}
+                  data-tip="Search ( / )"
+                >
+                  <span className="rv-searchIcon" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><line x1="16.5" y1="16.5" x2="21" y2="21" /></svg>
+                  </span>
                   <input
                     ref={searchInputRef}
                     type="text"
-                    className="search-input"
-                    placeholder="Search...  (press /)"
+                    placeholder="Search entries…"
+                    aria-label="Search"
                     value={searchQuery}
                     onChange={(e) => {
                       setSearchQuery(e.target.value)
                       setCurrentPage(1)
                     }}
                     onKeyDown={(e) => {
+                      if (e.key === 'Escape') {
+                        e.currentTarget.blur()
+                        return
+                      }
                       if (e.key.length === 1 || e.key === 'Backspace') {
                         playKeypadBeep()
                       }
                     }}
                   />
-                </div>
-                <div className="pagination-controls-inline">
-                  <button
-                    className="pagination-button"
-                    onClick={() => {
-                      playButtonSound()
-                      setCurrentPage((p) => Math.max(1, p - 1))
-                    }}
-                    disabled={currentPage === 1}
-                  >
-                    ←
-                  </button>
-                  <span className="pagination-info">
-                    {currentPage}/{totalPages || 1}
-                  </span>
-                  <button
-                    className="pagination-button"
-                    onClick={() => {
-                      playButtonSound()
-                      setCurrentPage((p) => Math.min(totalPages, p + 1))
-                    }}
-                    disabled={currentPage === totalPages || totalPages === 0}
-                  >
-                    →
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Content */}
-            {inkHouseError && (
-              <div className="inkhouse-error-banner">
-                InkHouse error: {inkHouseError}
-              </div>
-            )}
-            <div className="rss-feed-list">
-              {loading ? (
-                // Skip the in-content spinner while the boot overlay is
-                // already covering the screen — otherwise two loaders fire
-                // simultaneously on first visit.
-                booting ? null : <div className="loader"></div>
-              ) : (
-                <div className="feed-content">{renderFeedContent()}</div>
-              )}
-            </div>
-
-            {/* Mobile Widgets */}
-            <div className="mobile-widgets">
-              <div className="mobile-widget mobile-stats-widget">
-                <div className="mobile-stat-item">
-                  <span className="mobile-stat-value">{totalPosts || 79}</span>
-                  <span className="mobile-stat-label">Posts</span>
-                </div>
-                <div className="mobile-stat-separator"></div>
-                <div className="mobile-stat-item">
-                  <span className="mobile-stat-value">{categories.length}</span>
-                  <span className="mobile-stat-label">Categories</span>
-                </div>
-              </div>
-              <div className="mobile-widget">
-                <h4 className="mobile-widget-title">About</h4>
-                <p className="mobile-about-text">
-                  I am Haripriya. Welcome to my corner of the internet. I write about life, tech, and everything in between.
-                </p>
-                <div className="mobile-about-links">
-                  {/* Coffee link hidden — restore by uncommenting this line.
-                      <CoffeeLink text="Buy me a coffee" /> */}
+                </label>
+                <div className="rv-pager">
+                  <button className="rv-ibtn" onClick={goPrev} disabled={currentPage === 1} data-tip="Previous page" aria-label="Previous page">←</button>
+                  <b>{currentPage}</b><span>/{pages}</span>
+                  <button className="rv-ibtn" onClick={goNext} disabled={currentPage >= pages} data-tip="Next page" aria-label="Next page">→</button>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Sidebar */}
-          <aside className="rss-feed-sidebar">
-            <div className="sidebar-widget">
-              <h3 className="sidebar-widget-title">
-                <span className="widget-name widget-name-prose">About</span>
-                <span className="widget-code">01</span>
-              </h3>
-              <div className="sidebar-about">
-                <p className="sidebar-about-text">
-                  I am Haripriya. Welcome to my corner of the internet. I write about life, tech, and everything in between. Thanks for stopping by!
-                </p>
-                <div className="sidebar-about-links">
-                  {/* Apps link hidden — restore by uncommenting.
-                  <a href="https://apps.haripriya.org" target="_blank" rel="noopener noreferrer">
-                    View My Apps →
-                  </a>
-                  */}
-                  {/* Coffee link hidden — restore by uncommenting this line.
-                      <CoffeeLink text="Buy me a coffee →" /> */}
-                </div>
-              </div>
-            </div>
+          {inkHouseError && (
+            <div className="rv-error">InkHouse error: {inkHouseError}</div>
+          )}
+          <div className="rv-feed">
+            {loading ? (
+              // Skip the in-content loader while the boot overlay is already
+              // covering the screen — otherwise two loaders fire at once.
+              booting ? null : <div className="rv-loader" aria-label="Loading"><span /></div>
+            ) : (
+              renderFeedContent()
+            )}
+          </div>
 
-            <div className="sidebar-widget">
-              <h3 className="sidebar-widget-title">
-                <span className="widget-name widget-name-prose">Stats</span>
-                <span className="widget-code">02</span>
-              </h3>
-              <div className="sidebar-stats">
-                <div className="sidebar-stat-item">
-                  <span className="sidebar-stat-value">{totalPosts || 79}</span>
-                  <span className="sidebar-stat-label">Posts</span>
-                </div>
-                <div className="sidebar-stat-item">
-                  <span className="sidebar-stat-value">{categories.length}</span>
-                  <span className="sidebar-stat-label">Categories</span>
-                </div>
-              </div>
-            </div>
+          {!loading && posts.length > 0 && (
+            <nav className="rv-bottomPager" aria-label="Pagination">
+              <button className="rv-btn" onClick={() => { goPrev(); scrollTop() }} disabled={currentPage === 1}>← Newer</button>
+              <span className="rv-label">Page <b>{currentPage}</b> of {pages}</span>
+              <button className="rv-btn" onClick={() => { goNext(); scrollTop() }} disabled={currentPage >= pages}>Older →</button>
+            </nav>
+          )}
+        </main>
 
-            <div className="sidebar-widget">
-              <h3 className="sidebar-widget-title">
-                <span className="widget-name widget-name-prose">Categories</span>
-                <span className="widget-code">03</span>
-              </h3>
-              <div className="sidebar-categories">
-                <button
-                  className={`sidebar-category-btn ${selectedCategory === '' ? 'active' : ''}`}
-                  onClick={() => {
-                    playButtonSound()
-                    setSelectedCategory('')
-                    setCurrentPage(1)
-                  }}
-                >
-                  All
+        <aside className="rv-sidebar">
+          <section className="rv-widget">
+            <div className="rv-widgetHead"><span className="name">About</span><span className="code">01</span></div>
+            <p>
+              I am Haripriya. Welcome to my corner of the internet. I write about life, tech, and everything in between. Thanks for stopping by!
+            </p>
+            {/* Apps link hidden — restore by uncommenting.
+            <a className="rv-link" href="https://apps.haripriya.org" target="_blank" rel="noopener noreferrer">View My Apps →</a>
+            */}
+            {/* Coffee link hidden — restore by uncommenting this line.
+                <CoffeeLink text="Buy me a coffee →" /> */}
+          </section>
+
+          <section className="rv-widget">
+            <div className="rv-widgetHead"><span className="name">Categories</span><span className="code">02</span></div>
+            <nav className="rv-catList" aria-label="Categories">
+              <button className={selectedCategory === '' ? 'on' : ''} onClick={() => selectCategory('')}>All categories</button>
+              {categories.map((cat) => (
+                <button key={cat} className={selectedCategory === cat ? 'on' : ''} onClick={() => selectCategory(cat)}>
+                  {cat}
                 </button>
-                {categories.slice(0, 8).map((cat) => (
-                  <button
-                    key={cat}
-                    className={`sidebar-category-btn ${selectedCategory === cat ? 'active' : ''}`}
-                    onClick={() => {
-                      playButtonSound()
-                      setSelectedCategory(cat)
-                      setCurrentPage(1)
-                    }}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
+              ))}
+            </nav>
+          </section>
+
+          <section className="rv-widget">
+            <div className="rv-widgetHead"><span className="name">Stats</span><span className="code">03</span></div>
+            <div className="rv-stats">
+              <div className="rv-stat"><div className="n">{totalPosts || 79}</div><div className="l">Posts</div></div>
+              <div className="rv-stat"><div className="n">{categories.length}</div><div className="l">Categories</div></div>
             </div>
-          </aside>
+          </section>
+        </aside>
+
+        {/* ≤1000px: sidebar folds into this strip below the feed */}
+        <div className="rv-mobileWidgets">
+          <div className="rv-stat"><div className="n">{totalPosts || 79}</div><div className="l">Posts</div></div>
+          <div className="rv-stat"><div className="n">{categories.length}</div><div className="l">Categories</div></div>
+          <p>I am Haripriya. Welcome to my corner of the internet. I write about life, tech, and everything in between.</p>
+          {/* Coffee link hidden — restore by uncommenting this line.
+              <CoffeeLink text="Buy me a coffee" /> */}
         </div>
-        <footer className="feed-footer-strip" aria-label="System status">
-          <span className="feed-footer-segment">{totalPosts || 0} ENTRIES</span>
-          <span className="feed-footer-divider">&middot;</span>
-          <span className="feed-footer-segment">{categories.length} CATEGORIES</span>
-          <span className="feed-footer-divider">&middot;</span>
-          <span className="feed-footer-segment">ACTIVE SINCE 2020</span>
-          <span className="feed-footer-divider">&middot;</span>
+
+        <footer className="rv-footStrip" aria-label="System status">
+          <span className="rv-label"><b>{totalPosts || 0}</b> entries</span>
+          <span className="rv-label"><b>{categories.length}</b> categories</span>
+          <span className="rv-label">Active since 2024</span>
           <button
             type="button"
-            className="feed-footer-help"
+            className="rv-link rv-label"
             onClick={() => setShowShortcuts(true)}
             aria-label="Show keyboard shortcuts"
           >
-            PRESS ? FOR HELP
+            Press ? for help
           </button>
         </footer>
       </div>
-    </>
+    </div>
   )
 }

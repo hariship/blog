@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import { Space_Grotesk, Inter, JetBrains_Mono, Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 
@@ -36,6 +37,15 @@ export const metadata: Metadata = {
   },
 };
 
+// Revamp type stack (Nov 2026): Space Grotesk titles, Inter body,
+// JetBrains Mono for labels/codes. Exposed as CSS variables and consumed
+// by src/styles/revamp.css (--rv-display / --rv-body / --rv-mono).
+const fontDisplay = Space_Grotesk({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-display", display: "swap" });
+const fontBody = Inter({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-body", display: "swap" });
+const fontMono = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-mono", display: "swap" });
+// Long-form reading face for post bodies (matches the live blog's Source Sans Pro).
+const fontReading = Source_Sans_3({ subsets: ["latin"], weight: ["400", "600", "700"], style: ["normal", "italic"], variable: "--font-reading", display: "swap" });
+
 // Theme detection script to prevent flash on load
 const themeScript = `
   (function() {
@@ -62,7 +72,7 @@ export default async function RootLayout({
   const isPersonalSite = host === 'haripriya.org' || host === 'www.haripriya.org'
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={`${fontDisplay.variable} ${fontBody.variable} ${fontMono.variable} ${fontReading.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <link rel="manifest" href="/manifest.json" />
