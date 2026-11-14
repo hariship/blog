@@ -575,7 +575,29 @@ function CMSPostEditorInner() {
     setInkHouseError(null)
 
     // Replace &nbsp; with regular spaces for proper word wrapping
-    const cleanedContent = content.replace(/&nbsp;/g, ' ').trim()
+    let cleanedContent = content.replace(/&nbsp;/g, ' ').trim()
+
+    // Images pasted/dragged into Quill are embedded as base64 data URLs,
+    // which can push the request past Vercel's 4.5 MB body limit (413).
+    // Upload each one to Cloudinary first and swap in the URL.
+    const inlineImages = Array.from(new Set(cleanedContent.match(/data:image\/[a-zA-Z+.-]+;base64,[A-Za-z0-9+/=]+/g) || []))
+    if (inlineImages.length) {
+      try {
+        setSubmitStatus({ type: 'success', message: `Uploading ${inlineImages.length} pasted image(s)…` })
+        for (const [i, dataUrl] of inlineImages.entries()) {
+          const blob = await (await fetch(dataUrl)).blob()
+          const file = new File([blob], `pasted-${i}.${blob.type.split('/')[1] || 'png'}`, { type: blob.type })
+          const compressed = await compressImage(file, 300, 0, '')
+          const { url } = await uploadToCloudinaryDirect(compressed)
+          cleanedContent = cleanedContent.split(dataUrl).join(url)
+        }
+        setContent(cleanedContent)
+      } catch (err) {
+        setIsSubmitting(false)
+        setSubmitStatus({ type: 'error', message: `Pasted image upload failed: ${(err as Error).message}` })
+        return
+      }
+    }
 
     const postData = {
       ...(editingPostId ? { id: editingPostId } : {}),
